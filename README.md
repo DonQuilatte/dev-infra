@@ -1,225 +1,99 @@
-# Clawdbot Companion Guide
+# Clawdbot Docker Wrapper - Updated Reality
 
-**Production-grade deployment and security guide for Clawdbot on macOS**
+## 🎯 What This Repository Actually Is
 
-> ⚠️ **Important**: This is a **companion guide** to the [official Clawdbot repository](https://github.com/clawdbot/clawdbot). It provides comprehensive documentation, security hardening, and best practices to enhance the official setup.
+This repository provides **enterprise-grade Docker security hardening** for [Clawdbot](https://clawd.bot), wrapping the official npm package in a secure container.
 
-## 🎯 Choose Your Deployment Path
+### ✅ **Verified Reality**
 
-| Profile                   | Security Level          | Guide                                                  | Setup Time |
-| ------------------------- | ----------------------- | ------------------------------------------------------ | ---------- |
-| **Personal/Development**  | Standard                | [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)           | 10 min     |
-| **Production/Enterprise** | 🔒 **Secure Container** | [docs/SECURE_DEPLOYMENT.md](docs/SECURE_DEPLOYMENT.md) | 15 min     |
+- **Clawdbot EXISTS**: https://github.com/clawdbot/clawdbot
+- **Official Installation**: `npm install -g clawdbot@latest`
+- **Current Version**: 2026.1.23-1
+- **This Repository**: Provides secure Docker wrapper + hardening
 
-### 🔒 Secure Container Deployment (Recommended for Production)
+## 🔄 **Architecture**
 
-Enterprise-grade security with:
+```
+Official Clawdbot (npm) → Docker Wrapper (this repo) → Enterprise Security
+```
 
-- ✅ Read-only root filesystem
-- ✅ Non-root user (UID 1000)
-- ✅ All Linux capabilities dropped
-- ✅ Custom seccomp profile
-- ✅ Localhost-only binding
-- ✅ Resource limits enforced
+### **What Clawdbot Is**
 
-**→ [Start Secure Deployment](docs/SECURE_DEPLOYMENT.md)**
+- WhatsApp/Telegram/Discord/iMessage gateway
+- Claude AI integration via subscription or API key
+- Node.js CLI tool that runs as system service
+- Stores config in `~/.clawdbot/`
 
-### 📚 Standard Deployment (Personal Use)
+### **What This Repository Adds**
 
-Basic security with configuration flexibility:
+- Secure Docker containerization
+- Read-only filesystem
+- Non-root user enforcement
+- Dropped capabilities
+- Custom seccomp profile
+- Automated deployment scripts
+- Security verification tools
 
-- ✅ Configurable sandbox mode
-- ✅ Optional security hardening
-- ✅ Faster setup
+## 🚀 **Quick Start**
 
-**→ [Start Standard Deployment](INTEGRATION_GUIDE.md)**
-
-## 📖 Documentation
-
-### Getting Started
-
-- **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)** - How to use with official Clawdbot
-- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Standard deployment guide
-- **[docs/SECURE_DEPLOYMENT.md](docs/SECURE_DEPLOYMENT.md)** - 🔒 Secure container deployment
-
-### Operations
-
-- **[docs/QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md)** - Daily command reference
-- **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Problem solving
-- **[docs/SECURITY.md](docs/SECURITY.md)** - Security best practices
-
-### Reference
-
-- **[docs/DOCKER_GUIDE.md](docs/DOCKER_GUIDE.md)** - Docker configuration
-- **[docs/FILE_STRUCTURE.md](docs/FILE_STRUCTURE.md)** - Repository structure
-- **[docs/INDEX.md](docs/INDEX.md)** - Complete navigation
-
-## 🛠️ Configuration Files
-
-### Secure Deployment
-
-- **[config/docker-compose.secure.yml](config/docker-compose.secure.yml)** - Hardened Docker Compose
-- **[config/Dockerfile.secure](config/Dockerfile.secure)** - Security-focused image
-- **[config/seccomp-profile.json](config/seccomp-profile.json)** - Custom syscall filtering
-
-### Standard Deployment
-
-- **[config/docker-compose.yml](config/docker-compose.yml)** - Standard Docker Compose
-- **[config/.env.example](config/.env.example)** - Environment template
-- **[config/.gitignore](config/.gitignore)** - Git exclusions
-
-## 🔧 Automation Scripts
-
-- **[scripts/deploy-secure.sh](scripts/deploy-secure.sh)** - Automated secure deployment
-- **[scripts/verify-security.sh](scripts/verify-security.sh)** - Security verification
-- **[scripts/preflight-check.sh](scripts/preflight-check.sh)** - Pre-deployment checks
-- **[scripts/install-aliases.sh](scripts/install-aliases.sh)** - Shell shortcuts
-
-## 🚀 Quick Start
-
-### Secure Deployment (Production)
+### **Option 1: Test Official Installation First** (Recommended)
 
 ```bash
-# 1. Clone official Clawdbot
-git clone https://github.com/clawdbot/clawdbot.git ~/Development/Projects/clawdbot-official
-cd ~/Development/Projects/clawdbot-official
+# Install Clawdbot officially
+npm install -g clawdbot@latest
 
-# 2. Copy secure configuration
-cp ~/Development/Projects/clawdbot/config/docker-compose.secure.yml ./docker-compose.yml
-cp ~/Development/Projects/clawdbot/config/Dockerfile.secure ./Dockerfile
-cp ~/Development/Projects/clawdbot/config/seccomp-profile.json ./
-cp ~/Development/Projects/clawdbot/scripts/deploy-secure.sh ./
-cp ~/Development/Projects/clawdbot/scripts/verify-security.sh ./
+# Verify
+clawdbot --version
 
-# 3. Run automated secure deployment
-chmod +x deploy-secure.sh verify-security.sh
-./deploy-secure.sh
+# Run onboarding
+clawdbot onboard
 
-# 4. Authenticate
-claude auth login && claude setup-token
-docker compose run --rm clawdbot-cli models auth paste-token --provider anthropic
-
-# 5. Verify security
-./verify-security.sh
+# Test it works
+clawdbot gateway --port 18789
 ```
 
-**Complete guide**: [docs/SECURE_DEPLOYMENT.md](docs/SECURE_DEPLOYMENT.md)
-
-### Standard Deployment (Personal)
+### **Option 2: Use Secure Docker Wrapper** (Production)
 
 ```bash
-# 1. Clone official Clawdbot
-git clone https://github.com/clawdbot/clawdbot.git ~/Development/Projects/clawdbot-official
-cd ~/Development/Projects/clawdbot-official
+# Clone this repository
+git clone https://github.com/DonQuilatte/clawdbot-docker.git
+cd clawdbot-docker
 
-# 2. Run official setup
-./docker-setup.sh
+# Build secure container
+docker compose -f config/docker-compose.secure.yml build
 
-# 3. Authenticate and configure
-claude auth login && claude setup-token
-docker compose run --rm clawdbot-cli models auth paste-token --provider anthropic
+# Deploy with security hardening
+./scripts/deploy-secure.sh
 
-# 4. Apply security hardening (from this guide)
-docker compose run --rm clawdbot-cli config set gateway.sandbox.enabled true
-docker compose run --rm clawdbot-cli config set gateway.sandbox.mode strict
-
-# 5. Launch
-docker compose up -d clawdbot-gateway
+# Verify security
+./scripts/verify-security.sh
 ```
 
-**Complete guide**: [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)
+## 📖 **Documentation**
 
-## 🔒 Security Comparison
+See [docs/README.md](docs/README.md) for complete documentation on:
 
-| Feature          | Standard        | Secure Container            |
-| ---------------- | --------------- | --------------------------- |
-| Root Filesystem  | Read-write      | **Read-only**               |
-| User             | Configurable    | **Non-root (UID 1000)**     |
-| Capabilities     | Default (~14)   | **All dropped**             |
-| Seccomp          | Default profile | **Custom restrictive**      |
-| Network          | Configurable    | **Localhost-only enforced** |
-| Resource Limits  | Optional        | **Enforced**                |
-| Setup Complexity | Simple          | Moderate                    |
-| **Best For**     | Personal/Dev    | Production/Enterprise       |
+- Dockerizing Clawdbot with security hardening
+- Configuration and deployment
+- Security best practices
+- Troubleshooting
 
-## ✨ What This Guide Provides
+## ⚠️ **Important Notes**
 
-The official Clawdbot provides the code. This companion guide adds:
+1. **This is a wrapper** - Clawdbot itself is maintained at https://github.com/clawdbot/clawdbot
+2. **Official method works** - You can use Clawdbot without Docker
+3. **This adds security** - Docker wrapper provides enterprise-grade hardening
+4. **Active development** - Clawdbot is actively maintained (latest: 2026.1.23-1)
 
-✅ **Secure Container Deployment** - Enterprise-grade security hardening  
-✅ **Automated Security Scripts** - One-command secure deployment  
-✅ **Security Verification** - Automated security checks  
-✅ **Comprehensive Documentation** - 11 detailed guides (~90 KB)  
-✅ **Troubleshooting Procedures** - Common issues and solutions  
-✅ **Quick Reference Guides** - Daily operation commands  
-✅ **Shell Aliases** - Convenience shortcuts  
-✅ **Best Practices** - Production deployment guidance
+## 🔗 **Links**
 
-## 📊 Repository Structure
-
-```
-clawdbot/
-├── README.md                      # This file
-├── INTEGRATION_GUIDE.md           # Integration with official repo
-├── config/                        # Configuration files
-│   ├── docker-compose.secure.yml  # 🔒 Secure deployment
-│   ├── Dockerfile.secure          # 🔒 Security-hardened image
-│   ├── seccomp-profile.json       # 🔒 Syscall filtering
-│   ├── docker-compose.yml         # Standard deployment
-│   ├── .env.example               # Environment template
-│   └── .gitignore                 # Git exclusions
-├── scripts/                       # Automation scripts
-│   ├── deploy-secure.sh           # 🔒 Automated secure deployment
-│   ├── verify-security.sh         # 🔒 Security verification
-│   ├── preflight-check.sh         # Pre-deployment checks
-│   └── install-aliases.sh         # Shell aliases
-└── docs/                          # Documentation
-    ├── SECURE_DEPLOYMENT.md       # 🔒 Secure deployment guide
-    ├── DEPLOYMENT.md              # Standard deployment guide
-    ├── SECURITY.md                # Security best practices
-    ├── TROUBLESHOOTING.md         # Problem solving
-    ├── QUICK_REFERENCE.md         # Command reference
-    ├── DOCKER_GUIDE.md            # Docker configuration
-    ├── FILE_STRUCTURE.md          # Repository structure
-    └── INDEX.md                   # Complete navigation
-```
-
-## 🎯 Use Cases
-
-### Use Secure Deployment If:
-
-- ✅ Deploying in production or enterprise environments
-- ✅ Processing untrusted or sensitive data
-- ✅ Require compliance (SOC 2, ISO 27001, etc.)
-- ✅ Need defense-in-depth security
-- ✅ Want minimal attack surface
-
-### Use Standard Deployment If:
-
-- ✅ Testing locally on personal Mac
-- ✅ Development environment
-- ✅ Only processing trusted data
-- ✅ Need maximum flexibility
-
-## 🆘 Getting Help
-
-- **Documentation**: All guides in `docs/` directory
-- **Security Issues**: See `docs/SECURITY.md`
-- **Troubleshooting**: See `docs/TROUBLESHOOTING.md`
-- **GitHub**: https://github.com/clawdbot/clawdbot/issues
-- **Discord**: https://discord.gg/clawdbot
-
-## 📄 License
-
-This companion guide is provided as-is for use with Clawdbot.
-
-**Clawdbot itself** is maintained at [clawdbot/clawdbot](https://github.com/clawdbot/clawdbot).
+- **Official Clawdbot**: https://clawd.bot
+- **GitHub**: https://github.com/clawdbot/clawdbot
+- **Documentation**: https://docs.clawd.bot
+- **npm Package**: https://www.npmjs.com/package/clawdbot
+- **This Repository**: https://github.com/DonQuilatte/clawdbot-docker
 
 ---
 
-**Version**: 1.1.0  
-**Created**: 2026-01-25  
-**Security Level**: 🔒 Enterprise-Ready  
-**Status**: ✅ Production Ready
-
-**🔒 For production deployment, start here**: [docs/SECURE_DEPLOYMENT.md](docs/SECURE_DEPLOYMENT.md)
+**Status**: ✅ Verified working with Clawdbot 2026.1.23-1  
+**Last Updated**: 2026-01-25

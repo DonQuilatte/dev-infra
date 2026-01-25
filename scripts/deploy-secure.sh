@@ -1,16 +1,15 @@
 #!/bin/bash
+set -euo pipefail
 
-# Automated Secure Deployment Script for Clawdbot
-# Deploys Clawdbot with enterprise-grade security hardening
+# Clawdbot Secure Docker Deployment Script
+# Version: 1.1.0
 
-set -e
-
-# Colors
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m'
+NC='\033[0m' # No Color
 
 print_header() {
     echo -e "\n${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -19,147 +18,270 @@ print_header() {
 }
 
 print_success() {
-    echo -e "${GREEN}✓ ${NC}$1"
+    echo -e "${GREEN}✅ ${NC}$1"
+}
+
+print_error() {
+    echo -e "${RED}❌ ${NC}$1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠️  ${NC}$1"
 }
 
 print_info() {
     echo -e "${BLUE}ℹ ${NC}$1"
 }
 
-print_warning() {
-    echo -e "${YELLOW}⚠ ${NC}$1"
+# Check prerequisites
+check_prereqs() {
+    print_header "Checking Prerequisites"
+    
+    # Check Docker
+    if ! docker info > /dev/null 2>&1; then
+        print_error "Docker is not running"
+        echo "Please start Docker Desktop and try again"
+        exit 1
+    fi
+    print_success "Docker is running"
+    
+    # Check if running as root
+    if [ "$EUID" -eq 0 ]; then
+        print_error "Do not run this script as root"
+        exit 1
+    fi
+    print_success "Not running as root"
+    
+    # Check for docker compose
+    if ! docker compose version > /dev/null 2>&1; then
+        print_error "Docker Compose not available"
+        exit 1
+    fi
+    print_success "Docker Compose available"
+    
+    # Check for claude CLI (optional)
+    if command -v claude &> /dev/null; then
+        print_success "Claude CLI available"
+        CLAUDE_CLI_AVAILABLE=true
+    else
+        print_warning "Claude CLI not found (API key auth will be used)"
+        CLAUDE_CLI_AVAILABLE=false
+    fi
 }
 
-print_error() {
-    echo -e "${RED}✗ ${NC}$1"
+# Set UID/GID for containers
+setup_env() {
+    print_header "Setting Up Environment"
+    
+    export USER_UID=$(id -u)
+    export USER_GID=$(id -g)
+    
+    # Create .env file
+    cat > .env << EOF
+USER_UID=${USER_UID}
+USER_GID=${USER_GID}
+CLAWDBOT_VERSION=latest
+NODE_ENV=production
+CLAWDBOT_PORT=18789
+EOF
+    
+    print_success "Environment configured (UID:GID = ${USER_UID}:${USER_GID})"
 }
 
-print_header "Clawdbot Secure Deployment"
+# Build images
+build_images() {
+    print_header "Building Secure Clawdbot Images"
+    
+    print_info "Building with security hardening..."
+    if docker compose -f config/docker-compose.secure.yml build --no-cache; then
+        print_success "Images built successfully"
+    else
+        print_error "Image build failed"
+        exit 1
+    fi
+}
 
-# Check if we're in the right directory
-if [ ! -f "docker-compose.yml" ]; then
-    print_error "docker-compose.yml not found"
-    print_info "Please run this script from the clawdbot-official directory"
-    exit 1
-fi
+# Create volumes
+create_volumes() {
+    print_header "Creating Docker Volumes"
+    
+    docker volume create clawdbot-config 2>/dev/null || true
+    docker volume create clawdbot-logs 2>/dev/null || true
+    print_success "Volumes created"
+}
 
-# Step 1: Build secure images
-print_header "Building Secure Images"
-print_info "Building with security-hardened Dockerfile..."
-docker compose build --no-cache
-print_success "Secure images built successfully"
+# Configure authentication
+setup_auth() {
+    print_header "Setting Up Authentication"
+    
+    echo "Choose authentication method:"
+    echo "  1) Claude Code setup-token (requires Claude subscription)"
+    echo "  2) Anthropic API key (pay-per-use)"
+    echo ""
+    read -p "Enter choice (1 or 2): " AUTH_CHOICE
+    echo ""
+    
+    if [ "$AUTH_CHOICE" = "1" ]; then
+        if [ "$CLAUDE_CLI_AVAILABLE" = true ]; then
+            print_info "Generating setup-token..."
+            echo "Run this command to get your token:"
+            echo -e "${YELLOW}  claude setup-token${NC}"
+            echo ""
+            read -p "Press Enter when ready to paste token..."
+            echo ""
+            read -sp "Paste setup-token: " SETUP_TOKEN
+            echo ""
+            
+            # Save token for container use
+            echo "$SETUP_TOKEN" > /tmp/clawdbot-token.txt
+            chmod 600 /tmp/clawdbot-token.txt
+            
+            print_info "Running onboarding with setup-token..."
+            docker compose -f config/docker-compose.secure.yml run --rm \
+                -v /tmp/clawdbot-token.txt:/tmp/token.txt:ro \
+                clawdbot-cli sh -c 'clawdbot onboard --non-interactive || clawdbot setup' || true
+            
+            rm -f /tmp/clawdbot-token.txt
+        else
+            print_error "Claude CLI not available for setup-token method"
+            print_info "Please install Claude CLI or use API key (option 2)"
+            exit 1
+        fi
+            
+    elif [ "$AUTH_CHOICE" = "2" ]; then
+        print_info "Get your API key from: https://console.anthropic.com/settings/keys"
+        echo ""
+        read -sp "Paste Anthropic API key: " API_KEY
+        echo ""
+        
+        # Save API key for container use
+        echo "$API_KEY" > /tmp/clawdbot-apikey.txt
+        chmod 600 /tmp/clawdbot-apikey.txt
+        
+        print_info "Running onboarding with API key..."
+        docker compose -f config/docker-compose.secure.yml run --rm \
+            -e ANTHROPIC_API_KEY="$API_KEY" \
+            clawdbot-cli sh -c 'clawdbot onboard --non-interactive || clawdbot setup' || true
+        
+        rm -f /tmp/clawdbot-apikey.txt
+    else
+        print_error "Invalid choice"
+        exit 1
+    fi
+    
+    print_success "Authentication configured"
+}
 
-# Step 2: Create data directory with proper permissions
-print_header "Setting Up Data Directory"
-DATA_DIR="${CLAWDBOT_HOME_VOLUME:-$HOME/Development/clawdbot-workspace/data-secure}"
-print_info "Creating data directory: $DATA_DIR"
-mkdir -p "$DATA_DIR"/{config,logs,cache}
+# Start gateway
+start_gateway() {
+    print_header "Starting Clawdbot Gateway"
+    
+    print_info "Starting gateway with security hardening..."
+    if docker compose -f config/docker-compose.secure.yml up -d clawdbot-gateway; then
+        print_success "Gateway started"
+    else
+        print_error "Gateway failed to start"
+        print_info "Check logs with: docker compose -f config/docker-compose.secure.yml logs"
+        exit 1
+    fi
+}
 
-print_info "Setting ownership to UID 1000..."
-sudo chown -R 1000:1000 "$DATA_DIR"
-chmod -R 755 "$DATA_DIR"
-print_success "Data directory configured"
+# Wait for health check
+wait_for_health() {
+    print_header "Waiting for Gateway Health Check"
+    
+    print_info "Waiting up to 60 seconds for gateway to become healthy..."
+    
+    for i in {1..12}; do
+        sleep 5
+        STATUS=$(docker inspect clawdbot-gateway-secure --format='{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+        echo "  Attempt $i/12: $STATUS"
+        
+        if [ "$STATUS" = "healthy" ]; then
+            print_success "Gateway is healthy"
+            return 0
+        fi
+    done
+    
+    print_warning "Health check timeout (gateway may still be starting)"
+    print_info "Check status with: docker compose -f config/docker-compose.secure.yml ps"
+}
 
-# Step 3: Start gateway
-print_header "Starting Secure Gateway"
-print_info "Starting clawdbot-gateway with security hardening..."
-docker compose up -d clawdbot-gateway
+# Final verification
+verify_deployment() {
+    print_header "Verifying Deployment"
+    
+    # Check container is running
+    if docker compose -f config/docker-compose.secure.yml ps | grep -q "clawdbot-gateway.*Up"; then
+        print_success "Gateway container running"
+    else
+        print_error "Gateway container not running"
+        return 1
+    fi
+    
+    # Check port is listening
+    if netstat -an 2>/dev/null | grep "127.0.0.1.18789" | grep -q "LISTEN" || \
+       lsof -i :18789 2>/dev/null | grep -q LISTEN; then
+        print_success "Gateway listening on localhost:18789"
+    else
+        print_warning "Port check inconclusive"
+    fi
+    
+    # Check security settings
+    print_info "Verifying security settings..."
+    
+    RO_FS=$(docker inspect clawdbot-gateway-secure | jq -r '.[0].HostConfig.ReadonlyRootfs')
+    if [ "$RO_FS" = "true" ]; then
+        print_success "Read-only filesystem active"
+    else
+        print_warning "Read-only filesystem not active"
+    fi
+    
+    USER_ID=$(docker inspect clawdbot-gateway-secure | jq -r '.[0].Config.User')
+    if [ "$USER_ID" != "0:0" ] && [ "$USER_ID" != "" ]; then
+        print_success "Running as non-root user ($USER_ID)"
+    else
+        print_warning "User check inconclusive"
+    fi
+}
 
-print_info "Waiting for gateway to start..."
-sleep 10
+# Main deployment flow
+main() {
+    clear
+    echo "╔════════════════════════════════════════════════════════════╗"
+    echo "║     Clawdbot Secure Docker Deployment v1.1.0              ║"
+    echo "║     Enterprise-Grade Security Hardening                   ║"
+    echo "╚════════════════════════════════════════════════════════════╝"
+    echo ""
+    
+    check_prereqs
+    setup_env
+    build_images
+    create_volumes
+    setup_auth
+    start_gateway
+    wait_for_health
+    verify_deployment
+    
+    print_header "Deployment Complete!"
+    
+    echo -e "${GREEN}✅ Clawdbot is now running with enterprise security!${NC}"
+    echo ""
+    echo "📊 Deployment Information:"
+    echo "  Gateway URL: http://localhost:18789"
+    echo "  Container: clawdbot-gateway-secure"
+    echo "  Config: Docker volume 'clawdbot-config'"
+    echo ""
+    echo "🔧 Management Commands:"
+    echo "  View logs:    docker compose -f config/docker-compose.secure.yml logs -f"
+    echo "  Stop:         docker compose -f config/docker-compose.secure.yml down"
+    echo "  Restart:      docker compose -f config/docker-compose.secure.yml restart"
+    echo "  CLI:          docker compose -f config/docker-compose.secure.yml run --rm clawdbot-cli"
+    echo "  Verify:       ./scripts/verify-security.sh"
+    echo ""
+    echo "📚 Documentation: docs/SECURE_DEPLOYMENT.md"
+    echo ""
+}
 
-# Check if container is running
-if docker compose ps | grep -q "clawdbot-gateway.*running"; then
-    print_success "Gateway started successfully"
-else
-    print_error "Gateway failed to start"
-    print_info "Check logs with: docker compose logs clawdbot-gateway"
-    exit 1
-fi
-
-# Step 4: Verify security configuration
-print_header "Verifying Security Configuration"
-print_info "Running security checks..."
-
-# Check user
-USER_CHECK=$(docker compose exec -T clawdbot-gateway id 2>/dev/null || echo "failed")
-if echo "$USER_CHECK" | grep -q "uid=1000"; then
-    print_success "Running as non-root user"
-else
-    print_warning "User verification failed"
-fi
-
-# Check read-only filesystem
-RO_CHECK=$(docker compose exec -T clawdbot-gateway touch /test 2>&1 || true)
-if echo "$RO_CHECK" | grep -q "Read-only file system"; then
-    print_success "Read-only filesystem active"
-else
-    print_warning "Filesystem may not be read-only"
-fi
-
-# Step 5: Apply security hardening
-print_header "Applying Security Hardening"
-
-print_info "Enabling strict sandbox mode..."
-docker compose run --rm clawdbot-cli config set gateway.sandbox.enabled true
-docker compose run --rm clawdbot-cli config set gateway.sandbox.mode strict
-
-print_info "Configuring network security..."
-docker compose run --rm clawdbot-cli config set gateway.bind localhost
-
-print_info "Setting restrictive tool policy..."
-docker compose run --rm clawdbot-cli config set gateway.tools.policy restrictive
-docker compose run --rm clawdbot-cli config set gateway.tools.allowList "[]"
-
-print_info "Enabling audit logging..."
-docker compose run --rm clawdbot-cli config set gateway.audit.enabled true
-docker compose run --rm clawdbot-cli config set gateway.audit.logLevel info
-
-print_info "Enabling prompt injection protection..."
-docker compose run --rm clawdbot-cli config set gateway.security.promptInjection.enabled true
-docker compose run --rm clawdbot-cli config set gateway.security.promptInjection.strictMode true
-
-print_info "Configuring rate limiting..."
-docker compose run --rm clawdbot-cli config set gateway.security.rateLimit.enabled true
-docker compose run --rm clawdbot-cli config set gateway.security.rateLimit.maxRequests 100
-docker compose run --rm clawdbot-cli config set gateway.security.rateLimit.windowMs 60000
-
-print_success "Security hardening applied"
-
-# Step 6: Display next steps
-print_header "Deployment Complete!"
-
-echo -e "${GREEN}✅ Clawdbot deployed with enterprise-grade security${NC}\n"
-
-echo -e "${BLUE}Next steps:${NC}\n"
-
-echo -e "1. ${YELLOW}Authenticate with Claude:${NC}"
-echo -e "   claude auth login"
-echo -e "   claude setup-token\n"
-
-echo -e "2. ${YELLOW}Configure Clawdbot:${NC}"
-echo -e "   docker compose run --rm clawdbot-cli models auth paste-token --provider anthropic\n"
-
-echo -e "3. ${YELLOW}Verify security:${NC}"
-echo -e "   ./verify-security.sh\n"
-
-echo -e "4. ${YELLOW}Check health:${NC}"
-echo -e "   docker compose run --rm clawdbot-cli doctor"
-echo -e "   curl http://localhost:3000/health\n"
-
-echo -e "${BLUE}Security features enabled:${NC}"
-echo -e "  ✓ Read-only root filesystem"
-echo -e "  ✓ Non-root user (UID 1000)"
-echo -e "  ✓ All capabilities dropped"
-echo -e "  ✓ Custom seccomp profile"
-echo -e "  ✓ Localhost-only binding"
-echo -e "  ✓ Strict sandbox mode"
-echo -e "  ✓ Restrictive tool policy"
-echo -e "  ✓ Audit logging"
-echo -e "  ✓ Prompt injection protection"
-echo -e "  ✓ Rate limiting\n"
-
-echo -e "${BLUE}Documentation:${NC}"
-echo -e "  • Full guide: ~/Development/Projects/clawdbot/docs/SECURE_DEPLOYMENT.md"
-echo -e "  • Security: ~/Development/Projects/clawdbot/docs/SECURITY.md"
-echo -e "  • Troubleshooting: ~/Development/Projects/clawdbot/docs/TROUBLESHOOTING.md\n"
+# Run main function
+main
