@@ -16,3 +16,17 @@ deployment*.log
 
 # Temporary files
 /tmp/
+*.tmp
+*.swp
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# 1Password cache
+.op/
+
+# Docker build cache
+.docker/

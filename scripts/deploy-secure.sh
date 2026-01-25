@@ -73,8 +73,10 @@ check_prereqs() {
 setup_env() {
     print_header "Setting Up Environment"
 
-    export USER_UID=$(id -u)
-    export USER_GID=$(id -g)
+    USER_UID=$(id -u)
+    USER_GID=$(id -g)
+    export USER_UID
+    export USER_GID
 
     # Check for 1Password CLI
     if command -v op &> /dev/null && op account get &> /dev/null 2>&1; then
@@ -151,7 +153,7 @@ setup_auth() {
     echo "  1) Claude Code setup-token (requires Claude subscription)"
     echo "  2) Anthropic API key (pay-per-use)"
     echo ""
-    read -p "Enter choice (1 or 2): " AUTH_CHOICE
+    read -rp "Enter choice (1 or 2): " AUTH_CHOICE
     echo ""
     
     if [ "$AUTH_CHOICE" = "1" ]; then
@@ -160,9 +162,9 @@ setup_auth() {
             echo "Run this command to get your token:"
             echo -e "${YELLOW}  claude setup-token${NC}"
             echo ""
-            read -p "Press Enter when ready to paste token..."
+            read -rp "Press Enter when ready to paste token..."
             echo ""
-            read -sp "Paste setup-token: " SETUP_TOKEN
+            read -rsp "Paste setup-token: " SETUP_TOKEN
             echo ""
             
             # Save token for container use
@@ -196,7 +198,7 @@ setup_auth() {
         if [ -z "$API_KEY" ]; then
             print_info "Get your API key from: https://console.anthropic.com/settings/keys"
             echo ""
-            read -sp "Paste Anthropic API key: " API_KEY
+            read -rsp "Paste Anthropic API key: " API_KEY
             echo ""
         fi
 

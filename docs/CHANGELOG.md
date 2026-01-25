@@ -18,6 +18,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Quick reference guide
 - Docker configuration guide
 
+## [1.1.1] - 2026-01-25
+
+### Fixed
+
+- Fixed 48 docker compose commands to include `--env-file .env` flag
+- Fixed shellcheck warnings in `deploy-secure.sh` (SC2155, SC2162)
+- Fixed docker compose path consistency in `verify-security.sh`
+
+### Added
+
+- Added `docs/REVIEW_REPORT.md` - Comprehensive code review documentation
+- Added `docs/OPTIMIZATION_SUMMARY.md` - Summary of optimizations applied
+- Enhanced `.gitignore` with IDE, temp, and 1Password cache entries
+
+### Changed
+
+- All docker compose commands now consistently use `--env-file .env -f config/docker-compose.secure.yml`
+- `deploy-secure.sh` now passes shellcheck with 0 warnings
+
+## [1.1.0] - 2026-01-25
+
+### Added
+
+- 1Password integration for secrets management
+- macOS-specific Docker compose configuration
+- Seccomp profile for enhanced container security
+- Comprehensive security verification script
+
+### Security
+
+- Restricted 1Password access to Developer vault only
+- Removed all hardcoded credentials
+- Added read-only filesystem enforcement
+- Added capability dropping (ALL)
+- Added no-new-privileges flag
+
 ## [1.0.0] - 2026-01-25
 
 ### Added

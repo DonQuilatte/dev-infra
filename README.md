@@ -31,6 +31,8 @@ Official Clawdbot (npm) → Docker Wrapper (this repo) → Enterprise Security
 - Non-root user enforcement
 - Dropped capabilities
 - Custom seccomp profile
+- **Apple Silicon Optimized**: Native ARM64 support (M1/M2/M3)
+- **macOS Feature Bridge**: Securely access Apple Notes and host data
 - Automated deployment scripts
 - Security verification tools
 
@@ -60,7 +62,7 @@ git clone https://github.com/DonQuilatte/clawdbot-docker.git
 cd clawdbot-docker
 
 # Build secure container
-docker compose -f config/docker-compose.secure.yml build
+docker compose --env-file .env -f config/docker-compose.secure.yml build
 
 # Deploy with security hardening
 ./scripts/deploy-secure.sh

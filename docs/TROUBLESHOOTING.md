@@ -4,6 +4,7 @@ Common issues and solutions for Clawdbot Docker setup.
 
 ## Table of Contents
 
+- [Modern Docker Issues (2026)](#modern-docker-issues-2026)
 - [Installation Issues](#installation-issues)
 - [Authentication Issues](#authentication-issues)
 - [Gateway Issues](#gateway-issues)
@@ -11,6 +12,36 @@ Common issues and solutions for Clawdbot Docker setup.
 - [Performance Issues](#performance-issues)
 - [Data & Storage Issues](#data--storage-issues)
 - [Diagnostic Tools](#diagnostic-tools)
+
+## Modern Docker Issues (2026)
+
+### Gateway Lock Errors
+
+**Issue**: `Gateway failed to start: failed to acquire gateway lock`
+**Cause**: Persistent lock file from a crash or hard stop.
+**Solution**: Clear the lock file using the volume fixer:
+
+```bash
+docker run --rm -v config_clawdbot-config:/data alpine rm -f /data/*.lock
+```
+
+### Module Not Found (Apple Silicon / ARM64)
+
+**Issue**: `@mariozechner/clipboard-linux-arm64-musl` not found.
+**Cause**: Binary mismatch in Alpine Linux on ARM64.
+**Solution**: Ensure `Dockerfile.secure` uses `node:22-bookworm-slim` (Debian-based) instead of Alpine. This version contains the correct `glibc` libraries for native modules.
+
+### Permission Denied (EACCES) on Volumes
+
+**Issue**: Container cannot write to `/home/node/.clawdbot` or read auth keys.
+**Cause**: UID mismatch (Mac is 501, Container is 1000).
+**Solution**: Run the deployment script `./scripts/deploy-secure.sh` which now includes an automatic permission fixer.
+
+### "brew not installed" UI Warning
+
+**Issue**: Skills page shows Homebrew requirement error.
+**Cause**: Operating system mismatch.
+**Solution**: A shim is now included in the default `Dockerfile.secure` to satisfy the UI check.
 
 ## Installation Issues
 
