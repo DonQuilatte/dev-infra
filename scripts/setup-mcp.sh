@@ -30,11 +30,16 @@ ARROW="→"
 # Configuration
 #------------------------------------------------------------------------------
 
-# 1Password item references
+# 1Password vault restriction
+# SECURITY: Only allow access to the Developer vault
+OP_ALLOWED_VAULT_ID="rtbdzfkcstpqfcot4gl66xbeky"
+OP_ALLOWED_VAULT_NAME="Developer"
+
+# 1Password item references (all items MUST be in Developer vault)
 OP_DOCKER_ITEM="Docker"
-OP_DOCKER_VAULT="Developer"
+OP_DOCKER_VAULT="$OP_ALLOWED_VAULT_NAME"
 OP_EXA_ITEM="exa.ai"
-OP_EXA_VAULT="Private"
+OP_EXA_VAULT="$OP_ALLOWED_VAULT_NAME"
 
 # DockerHub settings
 DOCKERHUB_USERNAME="juniperdocent"
@@ -198,17 +203,34 @@ validate_exa() {
 # 1Password Operations
 #------------------------------------------------------------------------------
 
+# Secure wrapper functions - enforce Developer vault only
 op_get_field() {
     local item="$1"
     local field="$2"
-    op item get "$item" --fields label="$field" 2>/dev/null
+    # SECURITY: Always scope to Developer vault
+    op item get "$item" --vault "$OP_ALLOWED_VAULT_ID" --fields label="$field" 2>/dev/null
 }
 
 op_update_field() {
     local item="$1"
     local field="$2"
     local value="$3"
-    op item edit "$item" "$field=$value" &>/dev/null
+    # SECURITY: Always scope to Developer vault
+    op item edit "$item" --vault "$OP_ALLOWED_VAULT_ID" "$field=$value" &>/dev/null
+}
+
+# Validate that an item exists in the allowed vault
+op_validate_vault_access() {
+    local item="$1"
+    local vault_id
+    vault_id=$(op item get "$item" --vault "$OP_ALLOWED_VAULT_ID" --format json 2>/dev/null | grep -o '"vault":{"id":"[^"]*"' | head -1 | cut -d'"' -f6)
+
+    if [[ "$vault_id" != "$OP_ALLOWED_VAULT_ID" ]]; then
+        log_error "SECURITY: Item '$item' is not in the Developer vault"
+        log_error "This project only allows access to vault: $OP_ALLOWED_VAULT_NAME ($OP_ALLOWED_VAULT_ID)"
+        return 1
+    fi
+    return 0
 }
 
 #------------------------------------------------------------------------------
