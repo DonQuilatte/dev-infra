@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   clawdbot-gateway:
     build:
@@ -6,16 +8,15 @@ services:
       args:
         USER_ID: ${USER_UID:-1000}
         GROUP_ID: ${USER_GID:-1000}
-    image: clawdbot/gateway:secure
-    container_name: clawdbot-gateway-secure
+    image: clawdbot/gateway:secure-macos
+    container_name: clawdbot-gateway-secure-macos
     restart: unless-stopped
 
     # SECURITY: Network isolation
     networks:
       - clawdbot-internal
     ports:
-      - "127.0.0.1:18789:18789" # Clawdbot gateway port
-      - "127.0.0.1:18791:18791" # Browser control interface
+      - "127.0.0.1:18789:18789" # Clawdbot default port
 
     # SECURITY: Resource limits
     deploy:
@@ -34,7 +35,6 @@ services:
       - /tmp:mode=1777,size=512M,noexec,nosuid,nodev
       - /run:mode=755,size=128M,noexec,nosuid,nodev
       - /home/node/.npm:mode=755,size=256M
-      - /home/node/clawd:mode=1777,size=256M
 
     # SECURITY: Drop all capabilities
     cap_drop:
@@ -48,28 +48,31 @@ services:
     # SECURITY: Prevent privilege escalation
     security_opt:
       - no-new-privileges:true
-      # - seccomp=seccomp-profile.json  # Disabled: incompatible with macOS Docker Desktop
+      - seccomp=seccomp-profile.json
 
-    # SECURITY: Run as non-root user (matching host UID for volume permissions)
-    user: "${USER_UID:-501}:${USER_GID:-20}"
+    # SECURITY: Run as non-root user (using node user from base image)
+    user: "1000:1000"
 
-    # SECURITY: Writable volumes (minimal)
-    # Optional host mounts can be added via docker-compose.override.yml
+    # VOLUMES: Config + macOS access
     volumes:
       - clawdbot-config:/home/node/.clawdbot:rw
       - clawdbot-logs:/home/node/logs:rw
+      # macOS Integration: Mount Homebrew and system tools (read-only)
+      - /opt/homebrew:/opt/homebrew:ro
+      - /usr/local/bin:/usr/local/bin:ro
+      - /usr/bin:/host/usr/bin:ro
+      - /bin:/host/bin:ro
+      # macOS Integration: User home for Notes access (if needed)
+      - ${HOME}/Library/Group Containers/group.com.apple.notes:/notes:ro
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-    # Environment variables (secrets from 1Password or .env)
+    # Environment variables
     environment:
       - NODE_ENV=production
       - CLAWDBOT_PORT=18789
       - HOME=/home/node
       - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - CLAWDBOT_GATEWAY_TOKEN=${CLAWDBOT_GATEWAY_TOKEN:-clawdbot-local-dev}
+      # Add Homebrew to PATH
+      - PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/host/usr/bin:/host/bin:/usr/bin:/bin
 
     # SECURITY: Health check
     healthcheck:
@@ -88,18 +91,7 @@ services:
         max-file: "3"
 
     # Run gateway command
-    command:
-      [
-        "clawdbot",
-        "gateway",
-        "--port",
-        "18789",
-        "--bind",
-        "lan",
-        "--allow-unconfigured",
-        "--token",
-        "${CLAWDBOT_GATEWAY_TOKEN:-clawdbot-local-dev}",
-      ]
+    command: ["gateway", "--port", "18789"]
 
   clawdbot-cli:
     build:
@@ -108,8 +100,8 @@ services:
       args:
         USER_ID: ${USER_UID:-1000}
         GROUP_ID: ${USER_GID:-1000}
-    image: clawdbot/cli:secure
-    container_name: clawdbot-cli-secure
+    image: clawdbot/cli:secure-macos
+    container_name: clawdbot-cli-secure-macos
 
     # SECURITY: Network isolation
     networks:
@@ -129,18 +121,23 @@ services:
     privileged: false
     security_opt:
       - no-new-privileges:true
-      # - seccomp=seccomp-profile.json  # Disabled: incompatible with macOS Docker Desktop
 
     # SECURITY: Run as non-root
     user: "1000:1000"
 
-    # SECURITY: Shared volumes
+    # VOLUMES: Shared config + macOS access
     volumes:
       - clawdbot-config:/home/node/.clawdbot:rw
+      # macOS Integration
+      - /opt/homebrew:/opt/homebrew:ro
+      - /usr/local/bin:/usr/local/bin:ro
+      - /usr/bin:/host/usr/bin:ro
+      - /bin:/host/bin:ro
 
     environment:
       - HOME=/home/node
       - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
+      - PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/host/usr/bin:/host/bin:/usr/bin:/bin
 
     # CLI entrypoint
     entrypoint: ["/usr/bin/dumb-init", "--", "clawdbot"]
@@ -152,6 +149,13 @@ services:
 networks:
   clawdbot-internal:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: clawdbot0
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
 
 volumes:
   clawdbot-config:
