@@ -41,7 +41,7 @@ check_warn() {
 print_header "Clawdbot Security Configuration Verification"
 
 # Check if container is running
-if ! docker compose ps | grep -q "clawdbot-gateway.*running"; then
+if ! docker compose --env-file .env ps | grep -q "clawdbot-gateway.*running"; then
     check_fail "Gateway container is not running"
     echo -e "\n${RED}Cannot verify security - container not running${NC}"
     exit 1
@@ -49,7 +49,7 @@ fi
 
 # 1. Check user
 print_header "User Configuration"
-USER_CHECK=$(docker compose exec -T clawdbot-gateway id 2>/dev/null || echo "failed")
+USER_CHECK=$(docker compose --env-file .env exec -T clawdbot-gateway id 2>/dev/null || echo "failed")
 if echo "$USER_CHECK" | grep -q "uid=1000"; then
     check_pass "Running as non-root user (UID 1000)"
 elif echo "$USER_CHECK" | grep -q "uid=0"; then
@@ -60,7 +60,7 @@ fi
 
 # 2. Check read-only filesystem
 print_header "Filesystem Security"
-RO_CHECK=$(docker compose exec -T clawdbot-gateway touch /test 2>&1 || true)
+RO_CHECK=$(docker compose --env-file .env exec -T clawdbot-gateway touch /test 2>&1 || true)
 if echo "$RO_CHECK" | grep -q "Read-only file system"; then
     check_pass "Root filesystem is read-only"
 else
@@ -96,7 +96,7 @@ fi
 
 # 6. Check network binding
 print_header "Network Configuration"
-PORT_CHECK=$(docker compose port clawdbot-gateway 3000 2>/dev/null || echo "")
+PORT_CHECK=$(docker compose --env-file .env -f config/docker-compose.secure.yml port clawdbot-gateway 18789 2>/dev/null || echo "")
 if echo "$PORT_CHECK" | grep -q "127.0.0.1"; then
     check_pass "Localhost-only binding (127.0.0.1)"
 elif echo "$PORT_CHECK" | grep -q "0.0.0.0"; then
@@ -107,12 +107,12 @@ fi
 
 # 7. Check sandbox mode
 print_header "Application Security Settings"
-SANDBOX_CHECK=$(docker compose run --rm clawdbot-cli config get gateway.sandbox.enabled 2>/dev/null || echo "false")
+SANDBOX_CHECK=$(docker compose --env-file .env run --rm clawdbot-cli config get gateway.sandbox.enabled 2>/dev/null || echo "false")
 if echo "$SANDBOX_CHECK" | grep -q "true"; then
     check_pass "Sandbox enabled"
     
     # Check sandbox mode
-    SANDBOX_MODE=$(docker compose run --rm clawdbot-cli config get gateway.sandbox.mode 2>/dev/null || echo "")
+    SANDBOX_MODE=$(docker compose --env-file .env run --rm clawdbot-cli config get gateway.sandbox.mode 2>/dev/null || echo "")
     if echo "$SANDBOX_MODE" | grep -q "strict"; then
         check_pass "Sandbox mode: strict"
     else
@@ -123,7 +123,7 @@ else
 fi
 
 # 8. Check tool policy
-TOOL_POLICY=$(docker compose run --rm clawdbot-cli config get gateway.tools.policy 2>/dev/null || echo "")
+TOOL_POLICY=$(docker compose --env-file .env run --rm clawdbot-cli config get gateway.tools.policy 2>/dev/null || echo "")
 if echo "$TOOL_POLICY" | grep -q "restrictive"; then
     check_pass "Tool policy: restrictive"
 else
@@ -131,7 +131,7 @@ else
 fi
 
 # 9. Check audit logging
-AUDIT_CHECK=$(docker compose run --rm clawdbot-cli config get gateway.audit.enabled 2>/dev/null || echo "false")
+AUDIT_CHECK=$(docker compose --env-file .env run --rm clawdbot-cli config get gateway.audit.enabled 2>/dev/null || echo "false")
 if echo "$AUDIT_CHECK" | grep -q "true"; then
     check_pass "Audit logging enabled"
 else
@@ -139,7 +139,7 @@ else
 fi
 
 # 10. Check prompt injection protection
-INJECTION_CHECK=$(docker compose run --rm clawdbot-cli config get gateway.security.promptInjection.enabled 2>/dev/null || echo "false")
+INJECTION_CHECK=$(docker compose --env-file .env run --rm clawdbot-cli config get gateway.security.promptInjection.enabled 2>/dev/null || echo "false")
 if echo "$INJECTION_CHECK" | grep -q "true"; then
     check_pass "Prompt injection protection enabled"
 else
@@ -147,7 +147,7 @@ else
 fi
 
 # 11. Check rate limiting
-RATE_CHECK=$(docker compose run --rm clawdbot-cli config get gateway.security.rateLimit.enabled 2>/dev/null || echo "false")
+RATE_CHECK=$(docker compose --env-file .env run --rm clawdbot-cli config get gateway.security.rateLimit.enabled 2>/dev/null || echo "false")
 if echo "$RATE_CHECK" | grep -q "true"; then
     check_pass "Rate limiting enabled"
 else

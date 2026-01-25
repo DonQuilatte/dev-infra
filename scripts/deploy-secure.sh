@@ -72,10 +72,29 @@ check_prereqs() {
 # Set UID/GID for containers
 setup_env() {
     print_header "Setting Up Environment"
-    
+
     export USER_UID=$(id -u)
     export USER_GID=$(id -g)
-    
+
+    # Check for 1Password CLI
+    if command -v op &> /dev/null && op account get &> /dev/null 2>&1; then
+        print_info "1Password CLI detected, fetching secrets..."
+        ANTHROPIC_API_KEY=$(op read "op://Developer/Anthropic Claude/API Key" 2>/dev/null || echo "")
+        if [ -n "$ANTHROPIC_API_KEY" ]; then
+            print_success "Anthropic API key loaded from 1Password"
+        else
+            print_warning "Could not fetch Anthropic API key from 1Password"
+            print_info "Ensure item exists: op://Developer/Anthropic Claude/API Key"
+        fi
+    else
+        print_warning "1Password CLI not available or not signed in"
+        print_info "To use 1Password: eval \$(op signin)"
+    fi
+
+    # macOS-specific paths
+    APPLE_NOTES_PATH="$HOME/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
+    CODEX_PATH="$HOME/.codex"
+
     # Create .env file
     cat > .env << EOF
 USER_UID=${USER_UID}
@@ -83,8 +102,14 @@ USER_GID=${USER_GID}
 CLAWDBOT_VERSION=latest
 NODE_ENV=production
 CLAWDBOT_PORT=18789
+ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+APPLE_NOTES_PATH=${APPLE_NOTES_PATH}
+CODEX_PATH=${CODEX_PATH}
 EOF
-    
+
+    # Secure the .env file
+    chmod 600 .env
+
     print_success "Environment configured (UID:GID = ${USER_UID}:${USER_GID})"
 }
 
@@ -93,7 +118,7 @@ build_images() {
     print_header "Building Secure Clawdbot Images"
     
     print_info "Building with security hardening..."
-    if docker compose -f config/docker-compose.secure.yml build --no-cache; then
+    if docker compose --env-file .env -f config/docker-compose.secure.yml build --no-cache; then
         print_success "Images built successfully"
     else
         print_error "Image build failed"
@@ -101,13 +126,21 @@ build_images() {
     fi
 }
 
-# Create volumes
+# Create volumes and fix permissions
 create_volumes() {
     print_header "Creating Docker Volumes"
     
-    docker volume create clawdbot-config 2>/dev/null || true
-    docker volume create clawdbot-logs 2>/dev/null || true
-    print_success "Volumes created"
+    docker volume create config_clawdbot-config 2>/dev/null || true
+    docker volume create config_clawdbot-logs 2>/dev/null || true
+    
+    print_info "Fixing volume permissions and clearing stale locks..."
+    # We use a temporary container to fix permissions from the outside
+    # This avoids EACCES errors when the container starts
+    docker run --rm \
+        -v config_clawdbot-config:/data \
+        alpine sh -c "chown -R 1000:1000 /data && chmod -R 755 /data && rm -f /data/*.lock"
+    
+    print_success "Volumes ready and permissions fixed"
 }
 
 # Configure authentication
@@ -137,7 +170,7 @@ setup_auth() {
             chmod 600 /tmp/clawdbot-token.txt
             
             print_info "Running onboarding with setup-token..."
-            docker compose -f config/docker-compose.secure.yml run --rm \
+            docker compose --env-file .env -f config/docker-compose.secure.yml run --rm \
                 -v /tmp/clawdbot-token.txt:/tmp/token.txt:ro \
                 clawdbot-cli sh -c 'clawdbot onboard --non-interactive || clawdbot setup' || true
             
@@ -149,21 +182,36 @@ setup_auth() {
         fi
             
     elif [ "$AUTH_CHOICE" = "2" ]; then
-        print_info "Get your API key from: https://console.anthropic.com/settings/keys"
-        echo ""
-        read -sp "Paste Anthropic API key: " API_KEY
-        echo ""
-        
-        # Save API key for container use
-        echo "$API_KEY" > /tmp/clawdbot-apikey.txt
-        chmod 600 /tmp/clawdbot-apikey.txt
-        
+        # Try to get API key from 1Password first
+        API_KEY=""
+        if command -v op &> /dev/null && op account get &> /dev/null 2>&1; then
+            print_info "Checking 1Password for Anthropic API key..."
+            API_KEY=$(op read "op://Developer/Anthropic Claude/API Key" 2>/dev/null || echo "")
+            if [ -n "$API_KEY" ]; then
+                print_success "API key loaded from 1Password"
+            fi
+        fi
+
+        # If not found in 1Password, prompt user
+        if [ -z "$API_KEY" ]; then
+            print_info "Get your API key from: https://console.anthropic.com/settings/keys"
+            echo ""
+            read -sp "Paste Anthropic API key: " API_KEY
+            echo ""
+        fi
+
+        # Update .env file with API key
+        if grep -q "^ANTHROPIC_API_KEY=" .env 2>/dev/null; then
+            sed -i.bak "s/^ANTHROPIC_API_KEY=.*/ANTHROPIC_API_KEY=${API_KEY}/" .env
+            rm -f .env.bak
+        else
+            echo "ANTHROPIC_API_KEY=${API_KEY}" >> .env
+        fi
+
         print_info "Running onboarding with API key..."
-        docker compose -f config/docker-compose.secure.yml run --rm \
+        docker compose --env-file .env -f config/docker-compose.secure.yml run --rm \
             -e ANTHROPIC_API_KEY="$API_KEY" \
             clawdbot-cli sh -c 'clawdbot onboard --non-interactive || clawdbot setup' || true
-        
-        rm -f /tmp/clawdbot-apikey.txt
     else
         print_error "Invalid choice"
         exit 1
@@ -177,11 +225,11 @@ start_gateway() {
     print_header "Starting Clawdbot Gateway"
     
     print_info "Starting gateway with security hardening..."
-    if docker compose -f config/docker-compose.secure.yml up -d clawdbot-gateway; then
+    if docker compose --env-file .env -f config/docker-compose.secure.yml up -d clawdbot-gateway; then
         print_success "Gateway started"
     else
         print_error "Gateway failed to start"
-        print_info "Check logs with: docker compose -f config/docker-compose.secure.yml logs"
+        print_info "Check logs with: docker compose --env-file .env -f config/docker-compose.secure.yml logs"
         exit 1
     fi
 }
@@ -204,7 +252,7 @@ wait_for_health() {
     done
     
     print_warning "Health check timeout (gateway may still be starting)"
-    print_info "Check status with: docker compose -f config/docker-compose.secure.yml ps"
+    print_info "Check status with: docker compose --env-file .env -f config/docker-compose.secure.yml ps"
 }
 
 # Final verification
@@ -212,7 +260,7 @@ verify_deployment() {
     print_header "Verifying Deployment"
     
     # Check container is running
-    if docker compose -f config/docker-compose.secure.yml ps | grep -q "clawdbot-gateway.*Up"; then
+    if docker compose --env-file .env -f config/docker-compose.secure.yml ps | grep -q "clawdbot-gateway.*Up"; then
         print_success "Gateway container running"
     else
         print_error "Gateway container not running"
@@ -273,10 +321,10 @@ main() {
     echo "  Config: Docker volume 'clawdbot-config'"
     echo ""
     echo "🔧 Management Commands:"
-    echo "  View logs:    docker compose -f config/docker-compose.secure.yml logs -f"
-    echo "  Stop:         docker compose -f config/docker-compose.secure.yml down"
-    echo "  Restart:      docker compose -f config/docker-compose.secure.yml restart"
-    echo "  CLI:          docker compose -f config/docker-compose.secure.yml run --rm clawdbot-cli"
+    echo "  View logs:    docker compose --env-file .env -f config/docker-compose.secure.yml logs -f"
+    echo "  Stop:         docker compose --env-file .env -f config/docker-compose.secure.yml down"
+    echo "  Restart:      docker compose --env-file .env -f config/docker-compose.secure.yml restart"
+    echo "  CLI:          docker compose --env-file .env -f config/docker-compose.secure.yml run --rm clawdbot-cli"
     echo "  Verify:       ./scripts/verify-security.sh"
     echo ""
     echo "📚 Documentation: docs/SECURE_DEPLOYMENT.md"

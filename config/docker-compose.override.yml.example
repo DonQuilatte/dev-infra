@@ -1,0 +1,12 @@
+# Docker Compose Override - Optional Host Mounts
+# Copy to docker-compose.override.yml and customize
+#
+# Usage: docker compose -f docker-compose.secure.yml -f docker-compose.override.yml up
+
+services:
+  clawdbot-gateway:
+    volumes:
+      # Apple Notes integration (macOS)
+      - "${HOME}/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite:/home/node/.notes/NoteStore.sqlite:ro"
+      # Codex directory
+      - "${HOME}/.codex:/home/node/.codex:ro"

@@ -1,0 +1,18 @@
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+deployment*.log
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+/tmp/

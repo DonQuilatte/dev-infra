@@ -49,20 +49,25 @@ services:
     security_opt:
       - no-new-privileges:true
 
-    # SECURITY: Run as non-root user (using node user from base image)
-    user: "1000:1000"
+    # SECURITY: Run as non-root user (matching host UID for volume permissions)
+    user: "${USER_UID:-501}:${USER_GID:-20}"
 
     # SECURITY: Writable volumes (minimal)
+    # Optional host mounts can be added via docker-compose.override.yml
     volumes:
       - clawdbot-config:/home/node/.clawdbot:rw
       - clawdbot-logs:/home/node/logs:rw
 
-    # Environment variables
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # Environment variables (secrets from 1Password or .env)
     environment:
       - NODE_ENV=production
       - CLAWDBOT_PORT=18789
       - HOME=/home/node
       - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - CLAWDBOT_GATEWAY_TOKEN=${CLAWDBOT_GATEWAY_TOKEN:-clawdbot-local-dev}
 
     # SECURITY: Health check
@@ -82,7 +87,16 @@ services:
         max-file: "3"
 
     # Run gateway command
-    command: ["clawdbot", "gateway", "--port", "18789", "--bind", "lan", "--allow-unconfigured"]
+    command:
+      [
+        "clawdbot",
+        "gateway",
+        "--port",
+        "18789",
+        "--bind",
+        "lan",
+        "--allow-unconfigured",
+      ]
 
   clawdbot-cli:
     build:
