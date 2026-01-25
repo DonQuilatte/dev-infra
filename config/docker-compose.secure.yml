@@ -1,9 +1,7 @@
-version: "3.8"
-
 services:
   clawdbot-gateway:
     build:
-      context: .
+      context: ..
       dockerfile: config/Dockerfile.secure
       args:
         USER_ID: ${USER_UID:-1000}
@@ -16,7 +14,8 @@ services:
     networks:
       - clawdbot-internal
     ports:
-      - "127.0.0.1:18789:18789" # Clawdbot default port
+      - "127.0.0.1:18789:18789" # Clawdbot gateway port
+      - "127.0.0.1:18791:18791" # Browser control interface
 
     # SECURITY: Resource limits
     deploy:
@@ -34,7 +33,8 @@ services:
     tmpfs:
       - /tmp:mode=1777,size=512M,noexec,nosuid,nodev
       - /run:mode=755,size=128M,noexec,nosuid,nodev
-      - /home/clawdbot/.npm:mode=755,size=256M
+      - /home/node/.npm:mode=755,size=256M
+      - /home/node/clawd:mode=1777,size=256M
 
     # SECURITY: Drop all capabilities
     cap_drop:
@@ -48,22 +48,22 @@ services:
     # SECURITY: Prevent privilege escalation
     security_opt:
       - no-new-privileges:true
-      - seccomp=config/seccomp-profile.json
 
-    # SECURITY: Run as non-root user
-    user: "${USER_UID:-1000}:${USER_GID:-1000}"
+    # SECURITY: Run as non-root user (using node user from base image)
+    user: "1000:1000"
 
     # SECURITY: Writable volumes (minimal)
     volumes:
-      - clawdbot-config:/home/clawdbot/.clawdbot:rw
-      - clawdbot-logs:/home/clawdbot/logs:rw
+      - clawdbot-config:/home/node/.clawdbot:rw
+      - clawdbot-logs:/home/node/logs:rw
 
     # Environment variables
     environment:
       - NODE_ENV=production
       - CLAWDBOT_PORT=18789
-      - HOME=/home/clawdbot
-      - CLAWDBOT_STATE_DIR=/home/clawdbot/.clawdbot
+      - HOME=/home/node
+      - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
+      - CLAWDBOT_GATEWAY_TOKEN=${CLAWDBOT_GATEWAY_TOKEN:-clawdbot-local-dev}
 
     # SECURITY: Health check
     healthcheck:
@@ -82,11 +82,11 @@ services:
         max-file: "3"
 
     # Run gateway command
-    command: ["gateway", "--port", "18789"]
+    command: ["clawdbot", "gateway", "--port", "18789", "--bind", "lan", "--allow-unconfigured"]
 
   clawdbot-cli:
     build:
-      context: .
+      context: ..
       dockerfile: config/Dockerfile.secure
       args:
         USER_ID: ${USER_UID:-1000}
@@ -102,7 +102,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp:mode=1777,size=256M,noexec,nosuid,nodev
-      - /home/clawdbot/.npm:mode=755,size=128M
+      - /home/node/.npm:mode=755,size=128M
 
     # SECURITY: Minimal capabilities
     cap_drop:
@@ -114,15 +114,15 @@ services:
       - no-new-privileges:true
 
     # SECURITY: Run as non-root
-    user: "${USER_UID:-1000}:${USER_GID:-1000}"
+    user: "1000:1000"
 
     # SECURITY: Shared volumes
     volumes:
-      - clawdbot-config:/home/clawdbot/.clawdbot:rw
+      - clawdbot-config:/home/node/.clawdbot:rw
 
     environment:
-      - HOME=/home/clawdbot
-      - CLAWDBOT_STATE_DIR=/home/clawdbot/.clawdbot
+      - HOME=/home/node
+      - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
 
     # CLI entrypoint
     entrypoint: ["/usr/bin/dumb-init", "--", "clawdbot"]
@@ -134,13 +134,6 @@ services:
 networks:
   clawdbot-internal:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: clawdbot0
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.28.0.0/16
-          gateway: 172.28.0.1
 
 volumes:
   clawdbot-config:
