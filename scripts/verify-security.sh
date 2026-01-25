@@ -3,7 +3,8 @@
 # Security Verification Script for Clawdbot
 # Verifies all security settings after deployment
 
-set -e
+# Don't exit on errors - we track pass/fail manually
+set +e
 
 # Colors for output
 RED='\033[0;31m'
@@ -40,8 +41,8 @@ check_warn() {
 
 print_header "Clawdbot Security Configuration Verification"
 
-# Check if container is running
-if ! docker compose --env-file .env -f config/docker-compose.secure.yml ps | grep -q "clawdbot-gateway.*running"; then
+# Check if container is running (docker compose shows "Up" or "running")
+if ! docker compose --env-file .env -f config/docker-compose.secure.yml ps | grep -qE "clawdbot-gateway.*(Up|running)"; then
     check_fail "Gateway container is not running"
     echo -e "\n${RED}Cannot verify security - container not running${NC}"
     exit 1
@@ -50,8 +51,9 @@ fi
 # 1. Check user
 print_header "User Configuration"
 USER_CHECK=$(docker compose --env-file .env -f config/docker-compose.secure.yml exec -T clawdbot-gateway id 2>/dev/null || echo "failed")
-if echo "$USER_CHECK" | grep -q "uid=1000"; then
-    check_pass "Running as non-root user (UID 1000)"
+if echo "$USER_CHECK" | grep -qE "uid=(1000|501)"; then
+    USER_UID=$(echo "$USER_CHECK" | grep -oE "uid=[0-9]+" | cut -d= -f2)
+    check_pass "Running as non-root user (UID $USER_UID)"
 elif echo "$USER_CHECK" | grep -q "uid=0"; then
     check_fail "Running as root (SECURITY RISK)"
 else
