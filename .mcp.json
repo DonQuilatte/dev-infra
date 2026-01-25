@@ -7,13 +7,49 @@
     }
   },
   "context7Libraries": {
-    "docker": "/docker/docs",
-    "compose": "/docker/compose",
-    "clawdbot": "/clawdbot/clawdbot",
-    "clawdbot-full": "/llmstxt/clawd_bot_llms-full_txt",
-    "antigravity": "/alphaperseii3000/google-antigravity-docs",
-    "antigravity-tools": "/lbjlaq/antigravity-manager",
-    "exa": "/websites/exa_ai",
-    "exa-api": "/llmstxt/exa_ai_llms_txt"
+    "clawdbot": {
+      "id": "/llmstxt/clawd_bot_llms-full_txt",
+      "description": "Full Clawdbot documentation (24k+ snippets)",
+      "topics": ["gateway", "plugins", "channels", "tools", "agents", "configuration"]
+    },
+    "clawdbot-repo": {
+      "id": "/clawdbot/clawdbot",
+      "description": "Official Clawdbot GitHub repo docs",
+      "topics": ["installation", "development", "testing", "extensions"]
+    },
+    "clawdbot-website": {
+      "id": "/websites/clawd_bot",
+      "description": "Clawdbot website documentation",
+      "topics": ["overview", "features", "quickstart"]
+    },
+    "clawdbot-nix": {
+      "id": "/clawdbot/nix-clawdbot",
+      "description": "Nix package for Clawdbot",
+      "topics": ["nix", "flake", "service", "darwin"]
+    },
+    "docker": {
+      "id": "/docker/docs",
+      "description": "Docker documentation (11k+ snippets)",
+      "topics": ["dockerfile", "compose", "security", "networking"]
+    },
+    "docker-compose": {
+      "id": "/docker/compose",
+      "description": "Docker Compose reference",
+      "topics": ["services", "volumes", "networks", "deploy"]
+    },
+    "antigravity": {
+      "id": "/alphaperseii3000/google-antigravity-docs",
+      "description": "Google Antigravity MCP & browser integration",
+      "topics": ["mcp", "browser", "skills", "agents"]
+    },
+    "exa": {
+      "id": "/websites/exa_ai",
+      "description": "Exa AI-powered search API",
+      "topics": ["search", "crawling", "research", "code-context"]
+    }
+  },
+  "context7Defaults": {
+    "tokens": 10000,
+    "primaryLibrary": "clawdbot"
   }
 }
