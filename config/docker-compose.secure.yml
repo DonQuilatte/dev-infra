@@ -1,13 +1,53 @@
+# Docker Compose configuration for secure Clawdbot deployment
+# Uses YAML anchors to reduce duplication between services
+
+#------------------------------------------------------------------------------
+# Shared Configuration (YAML Anchors)
+#------------------------------------------------------------------------------
+x-common-build: &common-build
+  context: ..
+  dockerfile: config/Dockerfile.secure
+  args:
+    USER_ID: ${USER_UID:-1000}
+    GROUP_ID: ${USER_GID:-1000}
+    # SECURITY: Pin version to prevent supply chain attacks
+    CLAWDBOT_VERSION: ${CLAWDBOT_VERSION:-2026.1.23-1}
+
+x-common-security: &common-security
+  # SECURITY: Read-only root filesystem
+  read_only: true
+  # SECURITY: Drop all capabilities
+  cap_drop:
+    - ALL
+  # SECURITY: No privileged mode
+  privileged: false
+  # SECURITY: Prevent privilege escalation
+  security_opt:
+    - no-new-privileges:true
+    # NOTE: Custom seccomp profile disabled for macOS Docker Desktop compatibility.
+    # macOS Docker runs containers in a Linux VM where custom seccomp profiles
+    # cause "operation not permitted" errors. The default Docker seccomp profile
+    # still provides syscall filtering. Enable on Linux hosts for stricter security:
+    # - seccomp=seccomp-profile.json
+
+x-common-logging: &common-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-common-healthcheck: &common-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+
+#------------------------------------------------------------------------------
+# Services
+#------------------------------------------------------------------------------
 services:
   clawdbot-gateway:
-    build:
-      context: ..
-      dockerfile: config/Dockerfile.secure
-      args:
-        USER_ID: ${USER_UID:-1000}
-        GROUP_ID: ${USER_GID:-1000}
-        # SECURITY: Pin version to prevent supply chain attacks
-        CLAWDBOT_VERSION: ${CLAWDBOT_VERSION:-2026.1.23-1}
+    build: *common-build
     image: clawdbot/gateway:secure
     container_name: clawdbot-gateway-secure
     restart: unless-stopped
@@ -30,32 +70,18 @@ services:
           cpus: "0.5"
           memory: 512M
 
-    # SECURITY: Read-only root filesystem
-    read_only: true
+    # Include shared security settings
+    <<: *common-security
+    # Gateway needs NET_BIND_SERVICE capability
+    cap_add:
+      - NET_BIND_SERVICE
+
     tmpfs:
       # SECURITY: Use mode=1770 (sticky bit, owner+group writable) instead of world-writable 1777
       - /tmp:mode=1770,size=512M,noexec,nosuid,nodev,uid=1000,gid=1000
       - /run:mode=0750,size=128M,noexec,nosuid,nodev,uid=1000,gid=1000
       - /home/node/.npm:mode=0750,size=256M,uid=1000,gid=1000
       - /home/node/clawd:mode=0750,size=256M,uid=1000,gid=1000
-
-    # SECURITY: Drop all capabilities
-    cap_drop:
-      - ALL
-    cap_add:
-      - NET_BIND_SERVICE
-
-    # SECURITY: No privileged mode
-    privileged: false
-
-    # SECURITY: Prevent privilege escalation
-    security_opt:
-      - no-new-privileges:true
-      # NOTE: Custom seccomp profile disabled for macOS Docker Desktop compatibility.
-      # macOS Docker runs containers in a Linux VM where custom seccomp profiles
-      # cause "operation not permitted" errors. The default Docker seccomp profile
-      # still provides syscall filtering. Enable on Linux hosts for stricter security:
-      # - seccomp=seccomp-profile.json
 
     # SECURITY: Run as non-root user (matching host UID for volume permissions)
     user: "${USER_UID:-501}:${USER_GID:-20}"
@@ -81,19 +107,10 @@ services:
 
     # SECURITY: Health check
     healthcheck:
-      test:
-        ["CMD", "sh", "-c", "curl -f http://localhost:18789/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:18789/health || exit 1"]
+      <<: *common-healthcheck
 
-    # Logging
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+    logging: *common-logging
 
     # Run gateway command
     # SECURITY: Bind to localhost only (not lan) to prevent network exposure
@@ -111,14 +128,7 @@ services:
       ]
 
   clawdbot-cli:
-    build:
-      context: ..
-      dockerfile: config/Dockerfile.secure
-      args:
-        USER_ID: ${USER_UID:-1000}
-        GROUP_ID: ${USER_GID:-1000}
-        # SECURITY: Pin version to prevent supply chain attacks
-        CLAWDBOT_VERSION: ${CLAWDBOT_VERSION:-2026.1.23-1}
+    build: *common-build
     image: clawdbot/cli:secure
     container_name: clawdbot-cli-secure
 
@@ -126,22 +136,13 @@ services:
     networks:
       - clawdbot-internal
 
-    # SECURITY: Read-only root filesystem
-    read_only: true
+    # Include shared security settings
+    <<: *common-security
+
     tmpfs:
       # SECURITY: Use restricted permissions instead of world-writable
       - /tmp:mode=1770,size=256M,noexec,nosuid,nodev,uid=1000,gid=1000
       - /home/node/.npm:mode=0750,size=128M,uid=1000,gid=1000
-
-    # SECURITY: Minimal capabilities
-    cap_drop:
-      - ALL
-
-    # SECURITY: No privileged mode
-    privileged: false
-    security_opt:
-      - no-new-privileges:true
-      # NOTE: Custom seccomp disabled for macOS compatibility (see gateway service comment)
 
     # SECURITY: Run as non-root
     user: "1000:1000"

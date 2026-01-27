@@ -1,25 +1,63 @@
 # Docker Compose configuration for macOS integration
-# Note: 'version' key is obsolete in modern Docker Compose
+# Uses YAML anchors to reduce duplication between services
 
+#------------------------------------------------------------------------------
+# Shared Configuration (YAML Anchors)
+#------------------------------------------------------------------------------
+x-common-build: &common-build
+  context: ..
+  dockerfile: config/Dockerfile.secure
+  args:
+    USER_ID: ${USER_UID:-1000}
+    GROUP_ID: ${USER_GID:-1000}
+    CLAWDBOT_VERSION: ${CLAWDBOT_VERSION:-2026.1.23-1}
+
+x-common-security: &common-security
+  read_only: true
+  cap_drop:
+    - ALL
+  privileged: false
+  security_opt:
+    - no-new-privileges:true
+    - seccomp=seccomp-profile.json
+
+x-common-logging: &common-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-common-healthcheck: &common-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+
+x-macos-volumes: &macos-volumes
+  # macOS Integration: Mount Homebrew and system tools (read-only)
+  - /opt/homebrew:/opt/homebrew:ro
+  - /usr/local/bin:/usr/local/bin:ro
+  - /usr/bin:/host/usr/bin:ro
+  - /bin:/host/bin:ro
+
+x-macos-path: &macos-path
+  PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/host/usr/bin:/host/bin:/usr/bin:/bin
+
+#------------------------------------------------------------------------------
+# Services
+#------------------------------------------------------------------------------
 services:
   clawdbot-gateway:
-    build:
-      context: ..
-      dockerfile: config/Dockerfile.secure
-      args:
-        USER_ID: ${USER_UID:-1000}
-        GROUP_ID: ${USER_GID:-1000}
+    build: *common-build
     image: clawdbot/gateway:secure-macos
     container_name: clawdbot-gateway-secure-macos
     restart: unless-stopped
 
-    # SECURITY: Network isolation
     networks:
       - clawdbot-internal
     ports:
-      - "127.0.0.1:18789:18789" # Clawdbot default port
+      - "127.0.0.1:18789:18789"
 
-    # SECURITY: Resource limits
     deploy:
       resources:
         limits:
@@ -30,108 +68,58 @@ services:
           cpus: "0.5"
           memory: 512M
 
-    # SECURITY: Read-only root filesystem
-    read_only: true
+    <<: *common-security
+    cap_add:
+      - NET_BIND_SERVICE
+
     tmpfs:
-      # SECURITY: Use mode=1770 (sticky bit, owner+group writable) instead of world-writable 1777
       - /tmp:mode=1770,size=512M,noexec,nosuid,nodev,uid=1000,gid=1000
       - /run:mode=0750,size=128M,noexec,nosuid,nodev,uid=1000,gid=1000
       - /home/node/.npm:mode=0750,size=256M,uid=1000,gid=1000
 
-    # SECURITY: Drop all capabilities
-    cap_drop:
-      - ALL
-    cap_add:
-      - NET_BIND_SERVICE
-
-    # SECURITY: No privileged mode
-    privileged: false
-
-    # SECURITY: Prevent privilege escalation
-    security_opt:
-      - no-new-privileges:true
-      - seccomp=seccomp-profile.json
-
-    # SECURITY: Run as non-root user (using node user from base image)
     user: "1000:1000"
 
-    # VOLUMES: Config + macOS access
     volumes:
       - clawdbot-config:/home/node/.clawdbot:rw
       - clawdbot-logs:/home/node/logs:rw
-      # macOS Integration: Mount Homebrew and system tools (read-only)
       - /opt/homebrew:/opt/homebrew:ro
       - /usr/local/bin:/usr/local/bin:ro
       - /usr/bin:/host/usr/bin:ro
       - /bin:/host/bin:ro
-      # macOS Integration: User home for Notes access (if needed)
       - ${HOME}/Library/Group Containers/group.com.apple.notes:/notes:ro
 
-    # Environment variables
     environment:
       - NODE_ENV=production
       - CLAWDBOT_PORT=18789
       - HOME=/home/node
       - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
-      # Add Homebrew to PATH
-      - PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/host/usr/bin:/host/bin:/usr/bin:/bin
+      - *macos-path
 
-    # SECURITY: Health check
     healthcheck:
-      test:
-        ["CMD", "sh", "-c", "curl -f http://localhost:18789/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:18789/health || exit 1"]
+      <<: *common-healthcheck
 
-    # Logging
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-    # Run gateway command
+    logging: *common-logging
     command: ["gateway", "--port", "18789"]
 
   clawdbot-cli:
-    build:
-      context: ..
-      dockerfile: config/Dockerfile.secure
-      args:
-        USER_ID: ${USER_UID:-1000}
-        GROUP_ID: ${USER_GID:-1000}
+    build: *common-build
     image: clawdbot/cli:secure-macos
     container_name: clawdbot-cli-secure-macos
 
-    # SECURITY: Network isolation
     networks:
       - clawdbot-internal
 
-    # SECURITY: Read-only root filesystem
-    read_only: true
+    <<: *common-security
+
     tmpfs:
-      # SECURITY: Use restricted permissions instead of world-writable
       - /tmp:mode=1770,size=256M,noexec,nosuid,nodev,uid=1000,gid=1000
       - /home/node/.npm:mode=0750,size=128M,uid=1000,gid=1000
 
-    # SECURITY: Minimal capabilities
-    cap_drop:
-      - ALL
-
-    # SECURITY: No privileged mode
-    privileged: false
-    security_opt:
-      - no-new-privileges:true
-
-    # SECURITY: Run as non-root
     user: "1000:1000"
 
-    # VOLUMES: Shared config + macOS access
     volumes:
       - clawdbot-config:/home/node/.clawdbot:rw
-      # macOS Integration
       - /opt/homebrew:/opt/homebrew:ro
       - /usr/local/bin:/usr/local/bin:ro
       - /usr/bin:/host/usr/bin:ro
@@ -140,12 +128,9 @@ services:
     environment:
       - HOME=/home/node
       - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
-      - PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/host/usr/bin:/host/bin:/usr/bin:/bin
+      - *macos-path
 
-    # CLI entrypoint
     entrypoint: ["/usr/bin/dumb-init", "--", "clawdbot"]
-
-    # Don't run by default (use for commands only)
     profiles:
       - tools
 
