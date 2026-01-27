@@ -280,10 +280,10 @@ setup_dockerhub() {
             fi
         fi
 
-        # Prompt for new PAT
+        # Prompt for new PAT (hidden input for security)
         echo ""
-        read -p "Paste new PAT (starts with dckr_pat_): " new_pat
-        echo ""
+        read -rsp "Paste new PAT (starts with dckr_pat_): " new_pat
+        echo ""  # newline after hidden input
 
         if [[ -z "$new_pat" ]]; then
             log_error "No PAT provided. Aborting."
@@ -360,8 +360,8 @@ setup_exa() {
         echo "  https://exa.ai"
         echo ""
 
-        read -p "Paste Exa API key: " api_key
-        echo ""
+        read -rsp "Paste Exa API key: " api_key
+        echo ""  # newline after hidden input
 
         if [[ -z "$api_key" ]]; then
             log_error "No API key provided. Aborting."
@@ -388,12 +388,17 @@ setup_exa() {
     # Check if already exists
     if grep -q "EXA_API_KEY" "$shell_profile" 2>/dev/null; then
         log_warn "EXA_API_KEY already in $shell_profile (updating)"
-        # Remove old entry
-        sed -i.bak '/export EXA_API_KEY/d' "$shell_profile"
+        # Remove old entry (macOS-compatible sed)
+        sed -i '' '/export EXA_API_KEY/d' "$shell_profile" 2>/dev/null || \
+            sed -i '/export EXA_API_KEY/d' "$shell_profile"
     fi
 
-    echo "export EXA_API_KEY=\"$api_key\"" >> "$shell_profile"
-    log_success "Added to $shell_profile"
+    # SECURITY: Use 1Password reference instead of plaintext API key
+    # This ensures the key is fetched at runtime, not stored in plaintext
+    echo '# Exa API key - fetched from 1Password at runtime' >> "$shell_profile"
+    echo 'export EXA_API_KEY="$(op read "op://Developer/exa.ai/API Key" 2>/dev/null || echo "")"' >> "$shell_profile"
+    log_success "Added 1Password reference to $shell_profile (key fetched at runtime)"
+    log_warn "Note: Requires 1Password CLI signin for EXA_API_KEY to work"
 
     # Update project .mcp.json
     log_info "Updating project .mcp.json..."

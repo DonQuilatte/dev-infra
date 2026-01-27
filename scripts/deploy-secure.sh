@@ -97,14 +97,28 @@ setup_env() {
     APPLE_NOTES_PATH="$HOME/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite"
     CODEX_PATH="$HOME/.codex"
 
+    # SECURITY: Generate a strong random gateway token if not already set
+    if [ -f .env ] && grep -q "^CLAWDBOT_GATEWAY_TOKEN=" .env; then
+        GATEWAY_TOKEN=$(grep "^CLAWDBOT_GATEWAY_TOKEN=" .env | cut -d= -f2)
+        print_info "Using existing gateway token from .env"
+    else
+        # Generate 32-byte random token (base64 encoded, URL-safe)
+        GATEWAY_TOKEN=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
+        print_success "Generated strong gateway token"
+    fi
+
+    # SECURITY: Use pinned version (check for updates at npm view clawdbot versions)
+    CLAWDBOT_VERSION="${CLAWDBOT_VERSION:-2026.1.23-1}"
+
     # Create .env file
     cat > .env << EOF
 USER_UID=${USER_UID}
 USER_GID=${USER_GID}
-CLAWDBOT_VERSION=latest
+CLAWDBOT_VERSION=${CLAWDBOT_VERSION}
 NODE_ENV=production
 CLAWDBOT_PORT=18789
 ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+CLAWDBOT_GATEWAY_TOKEN=${GATEWAY_TOKEN}
 APPLE_NOTES_PATH=${APPLE_NOTES_PATH}
 CODEX_PATH=${CODEX_PATH}
 EOF
@@ -166,17 +180,16 @@ setup_auth() {
             echo ""
             read -rsp "Paste setup-token: " SETUP_TOKEN
             echo ""
-            
-            # Save token for container use
-            echo "$SETUP_TOKEN" > /tmp/clawdbot-token.txt
-            chmod 600 /tmp/clawdbot-token.txt
-            
+
+            # SECURITY: Pass token via environment variable instead of temp file
+            # This avoids writing secrets to disk
             print_info "Running onboarding with setup-token..."
             docker compose --env-file .env -f config/docker-compose.secure.yml run --rm \
-                -v /tmp/clawdbot-token.txt:/tmp/token.txt:ro \
+                -e CLAWDBOT_SETUP_TOKEN="$SETUP_TOKEN" \
                 clawdbot-cli sh -c 'clawdbot onboard --non-interactive || clawdbot setup' || true
-            
-            rm -f /tmp/clawdbot-token.txt
+
+            # Clear the variable from memory
+            unset SETUP_TOKEN
         else
             print_error "Claude CLI not available for setup-token method"
             print_info "Please install Claude CLI or use API key (option 2)"
@@ -202,18 +215,24 @@ setup_auth() {
             echo ""
         fi
 
-        # Update .env file with API key
+        # SECURITY: Update .env file with API key using temp file swap (no .bak exposure)
         if grep -q "^ANTHROPIC_API_KEY=" .env 2>/dev/null; then
-            sed -i.bak "s/^ANTHROPIC_API_KEY=.*/ANTHROPIC_API_KEY=${API_KEY}/" .env
-            rm -f .env.bak
+            # Use awk to avoid sed backup file that could expose secrets
+            awk -v key="$API_KEY" '/^ANTHROPIC_API_KEY=/{$0="ANTHROPIC_API_KEY="key}1' .env > .env.tmp
+            chmod 600 .env.tmp
+            mv .env.tmp .env
         else
             echo "ANTHROPIC_API_KEY=${API_KEY}" >> .env
         fi
 
+        # SECURITY: Pass API key via --env-file to avoid exposure in process list
         print_info "Running onboarding with API key..."
         docker compose --env-file .env -f config/docker-compose.secure.yml run --rm \
-            -e ANTHROPIC_API_KEY="$API_KEY" \
+            --env-file .env \
             clawdbot-cli sh -c 'clawdbot onboard --non-interactive || clawdbot setup' || true
+
+        # Clear the variable from memory
+        unset API_KEY
     else
         print_error "Invalid choice"
         exit 1

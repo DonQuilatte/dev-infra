@@ -6,7 +6,21 @@ set -e
 
 COMPOSE_FILE="config/docker-compose.secure.yml"
 CONTAINER_NAME="clawdbot-gateway-secure"
-TOKEN="${CLAWDBOT_GATEWAY_TOKEN:-clawdbot-local-dev}"
+
+# SECURITY: Token must be set - no weak default
+if [ -z "${CLAWDBOT_GATEWAY_TOKEN:-}" ]; then
+    # Try to load from .env file
+    if [ -f .env ]; then
+        TOKEN=$(grep "^CLAWDBOT_GATEWAY_TOKEN=" .env 2>/dev/null | cut -d= -f2)
+    fi
+    if [ -z "$TOKEN" ]; then
+        echo "❌ CLAWDBOT_GATEWAY_TOKEN not set"
+        echo "   Set it in .env or export CLAWDBOT_GATEWAY_TOKEN=<token>"
+        exit 1
+    fi
+else
+    TOKEN="$CLAWDBOT_GATEWAY_TOKEN"
+fi
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Clawdbot Post-Restart Setup"
@@ -24,8 +38,8 @@ echo "✅ Container is running"
 # Set remote token to match auth token
 echo ""
 echo "🔐 Configuring gateway token..."
-docker exec "$CONTAINER_NAME" clawdbot config set gateway.remote.token "$TOKEN"
-echo "✅ Token configured: $TOKEN"
+docker exec "$CONTAINER_NAME" clawdbot config set gateway.remote.token "$TOKEN" >/dev/null 2>&1
+echo "✅ Token configured (hidden for security)"
 
 # Restart to apply config
 echo ""
@@ -65,7 +79,7 @@ echo "  Setup Complete"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "Gateway URL:  http://127.0.0.1:18789/"
-echo "Token:        $TOKEN"
+echo "Token:        (set in .env - not displayed for security)"
 echo ""
 echo "Useful commands:"
 echo "  docker logs -f $CONTAINER_NAME          # View logs"

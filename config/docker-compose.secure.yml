@@ -6,6 +6,8 @@ services:
       args:
         USER_ID: ${USER_UID:-1000}
         GROUP_ID: ${USER_GID:-1000}
+        # SECURITY: Pin version to prevent supply chain attacks
+        CLAWDBOT_VERSION: ${CLAWDBOT_VERSION:-2026.1.23-1}
     image: clawdbot/gateway:secure
     container_name: clawdbot-gateway-secure
     restart: unless-stopped
@@ -31,10 +33,11 @@ services:
     # SECURITY: Read-only root filesystem
     read_only: true
     tmpfs:
-      - /tmp:mode=1777,size=512M,noexec,nosuid,nodev
-      - /run:mode=755,size=128M,noexec,nosuid,nodev
-      - /home/node/.npm:mode=755,size=256M
-      - /home/node/clawd:mode=1777,size=256M
+      # SECURITY: Use mode=1770 (sticky bit, owner+group writable) instead of world-writable 1777
+      - /tmp:mode=1770,size=512M,noexec,nosuid,nodev,uid=1000,gid=1000
+      - /run:mode=0750,size=128M,noexec,nosuid,nodev,uid=1000,gid=1000
+      - /home/node/.npm:mode=0750,size=256M,uid=1000,gid=1000
+      - /home/node/clawd:mode=0750,size=256M,uid=1000,gid=1000
 
     # SECURITY: Drop all capabilities
     cap_drop:
@@ -69,7 +72,8 @@ services:
       - HOME=/home/node
       - CLAWDBOT_STATE_DIR=/home/node/.clawdbot
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - CLAWDBOT_GATEWAY_TOKEN=${CLAWDBOT_GATEWAY_TOKEN:-clawdbot-local-dev}
+      # SECURITY: Gateway token is required - no weak default
+      - CLAWDBOT_GATEWAY_TOKEN=${CLAWDBOT_GATEWAY_TOKEN:?CLAWDBOT_GATEWAY_TOKEN must be set in .env}
 
     # SECURITY: Health check
     healthcheck:
@@ -88,6 +92,7 @@ services:
         max-file: "3"
 
     # Run gateway command
+    # SECURITY: Bind to localhost only (not lan) to prevent network exposure
     command:
       [
         "clawdbot",
@@ -95,10 +100,10 @@ services:
         "--port",
         "18789",
         "--bind",
-        "lan",
+        "localhost",
         "--allow-unconfigured",
         "--token",
-        "${CLAWDBOT_GATEWAY_TOKEN:-clawdbot-local-dev}",
+        "${CLAWDBOT_GATEWAY_TOKEN}",
       ]
 
   clawdbot-cli:
@@ -108,6 +113,8 @@ services:
       args:
         USER_ID: ${USER_UID:-1000}
         GROUP_ID: ${USER_GID:-1000}
+        # SECURITY: Pin version to prevent supply chain attacks
+        CLAWDBOT_VERSION: ${CLAWDBOT_VERSION:-2026.1.23-1}
     image: clawdbot/cli:secure
     container_name: clawdbot-cli-secure
 
@@ -118,8 +125,9 @@ services:
     # SECURITY: Read-only root filesystem
     read_only: true
     tmpfs:
-      - /tmp:mode=1777,size=256M,noexec,nosuid,nodev
-      - /home/node/.npm:mode=755,size=128M
+      # SECURITY: Use restricted permissions instead of world-writable
+      - /tmp:mode=1770,size=256M,noexec,nosuid,nodev,uid=1000,gid=1000
+      - /home/node/.npm:mode=0750,size=128M,uid=1000,gid=1000
 
     # SECURITY: Minimal capabilities
     cap_drop:
