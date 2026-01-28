@@ -1,6 +1,12 @@
 #!/bin/bash
 # Unit tests for scripts/lib/common.sh
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="${PROJECT_ROOT:-$(dirname "$(dirname "$SCRIPT_DIR")")}"
+
+# Source test utilities
+source "$SCRIPT_DIR/../lib/test-utils.sh"
+
 # Source the common library
 source "$PROJECT_ROOT/scripts/lib/common.sh"
 

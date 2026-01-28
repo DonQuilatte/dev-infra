@@ -60,6 +60,17 @@ clawdbot/
 │   ├── DISTRIBUTED_TROUBLESHOOTING.md # Multi-Mac troubleshooting
 │   └── DISTRIBUTED_QUICK_REFERENCE.md # Distributed commands
 │
+├── tests/                       # Test suite
+│   ├── test-runner.sh           # Main test runner
+│   ├── lib/
+│   │   └── test-utils.sh        # Shared test utilities
+│   ├── unit/                    # Unit tests
+│   │   ├── test-common.sh       # Tests for lib/common.sh
+│   │   └── test-scripts.sh      # Tests for script files
+│   └── system/                  # System tests
+│       ├── test-connectivity.sh # Distributed connectivity tests
+│       └── test-firewall.sh     # Firewall configuration tests
+│
 └── .claude/                     # Claude Code configuration
     ├── settings.local.json      # Local settings
     └── skills/
