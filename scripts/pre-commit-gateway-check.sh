@@ -21,8 +21,8 @@ if [[ "$BIND" == "localhost" ]]; then
     exit 1
 fi
 
-# Check 2: tmpfs variables
-if grep -E 'tmpfs:' -A10 "$COMPOSE_FILE" | grep -q '\${.*uid'; then
+# Check 2: tmpfs variables (Docker Compose doesn't interpolate vars in tmpfs)
+if grep -E '^\s+- /tmp:|^\s+- /run:|^\s+- /home' "$COMPOSE_FILE" | grep -q '\${'; then
     echo "❌ ERROR: tmpfs uses variable interpolation"
     echo "   Docker Compose doesn't support variables in tmpfs options"
     exit 1
