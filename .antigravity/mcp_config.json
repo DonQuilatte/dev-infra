@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "gitkraken-clawdbot": {
+      "command": "bash",
+      "args": [
+        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-gitkraken"
+      ]
+    },
+    "docker-clawdbot": {
+      "command": "bash",
+      "args": [
+        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-docker"
+      ]
+    },
+    "filesystem-clawdbot": {
+      "command": "bash",
+      "args": [
+        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-filesystem"
+      ]
+    }
+  }
+}

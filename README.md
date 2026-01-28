@@ -3,6 +3,7 @@
 ## Overview
 
 This repository provides:
+
 1. **Enterprise-grade Docker security hardening** for [Clawdbot](https://clawd.bot)
 2. **Distributed multi-Mac setup** for running Clawdbot across multiple machines
 
@@ -132,13 +133,13 @@ clawdbot node start --host 192.168.1.230 --port 18789
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `scripts/deploy-secure.sh` | Deploy Docker with security hardening |
-| `scripts/verify-security.sh` | Verify Docker security configuration |
-| `scripts/verify-connection.sh` | Verify distributed system connectivity |
-| `scripts/fix-auto-restart.sh` | Configure auto-restart on remote Mac |
-| `scripts/setup-tailscale.sh` | Setup Tailscale for remote internet access |
+| Script                               | Description                                  |
+| ------------------------------------ | -------------------------------------------- |
+| `scripts/deploy-secure.sh`           | Deploy Docker with security hardening        |
+| `scripts/verify-security.sh`         | Verify Docker security configuration         |
+| `scripts/verify-connection.sh`       | Verify distributed system connectivity       |
+| `scripts/fix-auto-restart.sh`        | Configure auto-restart on remote Mac         |
+| `scripts/setup-tailscale.sh`         | Setup Tailscale for remote internet access   |
 | `scripts/install-orbstack-remote.sh` | Install OrbStack/Docker on remote (optional) |
 
 ---
@@ -147,46 +148,51 @@ clawdbot node start --host 192.168.1.230 --port 18789
 
 ### Distributed System Docs
 
-| Document | Description |
-|----------|-------------|
-| [System Status](docs/SYSTEM_STATUS.md) | Current configuration and versions |
-| [Auto-restart Fix](docs/AUTO_RESTART_FIX.md) | LaunchAgent setup for remote Mac |
-| [Remote Access Guide](docs/REMOTE_ACCESS_GUIDE.md) | LAN, Tailscale, and VPN access methods |
-| [Distributed Troubleshooting](docs/DISTRIBUTED_TROUBLESHOOTING.md) | Fixing distributed setup issues |
-| [Distributed Quick Reference](docs/DISTRIBUTED_QUICK_REFERENCE.md) | Daily commands cheat sheet |
+| Document                                                           | Description                            |
+| ------------------------------------------------------------------ | -------------------------------------- |
+| [System Status](docs/SYSTEM_STATUS.md)                             | Current configuration and versions     |
+| [Auto-restart Fix](docs/AUTO_RESTART_FIX.md)                       | LaunchAgent setup for remote Mac       |
+| [Remote Access Guide](docs/REMOTE_ACCESS_GUIDE.md)                 | LAN, Tailscale, and VPN access methods |
+| [Distributed Troubleshooting](docs/DISTRIBUTED_TROUBLESHOOTING.md) | Fixing distributed setup issues        |
+| [Distributed Quick Reference](docs/DISTRIBUTED_QUICK_REFERENCE.md) | Daily commands cheat sheet             |
 
 ### Docker Docs
 
-| Document | Description |
-|----------|-------------|
-| [Docker Guide](docs/DOCKER_GUIDE.md) | Complete Docker setup |
+| Document                                       | Description                |
+| ---------------------------------------------- | -------------------------- |
+| [Docker Guide](docs/DOCKER_GUIDE.md)           | Complete Docker setup      |
 | [Secure Deployment](docs/SECURE_DEPLOYMENT.md) | Security hardening details |
-| [Troubleshooting](docs/TROUBLESHOOTING.md) | Docker troubleshooting |
-| [Quick Reference](docs/QUICK_REFERENCE.md) | Docker commands |
+| [Troubleshooting](docs/TROUBLESHOOTING.md)     | Docker troubleshooting     |
+| [Quick Reference](docs/QUICK_REFERENCE.md)     | Docker commands            |
 
 ### Additional Docs
 
-| Document | Description |
-|----------|-------------|
-| [Documentation Index](docs/README.md) | All documentation |
-| [Security](docs/SECURITY.md) | Security best practices |
-| [macOS Integration](docs/MACOS_INTEGRATION.md) | macOS-specific features |
+| Document                                                        | Description                           |
+| --------------------------------------------------------------- | ------------------------------------- |
+| [Documentation Index](docs/README.md)                           | All documentation                     |
+| [Security](docs/SECURITY.md)                                    | Security best practices               |
+| [macOS Integration](docs/MACOS_INTEGRATION.md)                  | macOS-specific features               |
+| [Antigravity MCP Setup](docs/ANTIGRAVITY-MCP-SETUP.md)          | MCP configuration for Antigravity IDE |
+| [Antigravity Quick Reference](docs/ANTIGRAVITY-MCP-QUICKREF.md) | MCP quick reference                   |
 
 ---
 
 ## Architecture
 
 ### Native Mode
+
 ```
 Clawdbot (npm) → System Service → Gateway/Node
 ```
 
 ### Docker Mode
+
 ```
 Clawdbot (npm) → Docker Container → Security Hardening → Gateway
 ```
 
 ### Distributed Mode
+
 ```
 Main Mac                          Remote Mac(s)
 ┌──────────────────┐              ┌──────────────────┐
@@ -219,6 +225,7 @@ Main Mac                          Remote Mac(s)
 ## Quick Commands
 
 ### Gateway Control (Main Mac)
+
 ```bash
 clawdbot gateway start     # Start gateway
 clawdbot gateway stop      # Stop gateway
@@ -227,6 +234,7 @@ clawdbot gateway logs -f   # Follow logs
 ```
 
 ### Remote Node (via SSH)
+
 ```bash
 # Check remote status
 ssh tywhitaker@192.168.1.245 'clawdbot node status'
@@ -236,6 +244,7 @@ ssh tywhitaker@192.168.1.245 'clawdbot node restart'
 ```
 
 ### Verification
+
 ```bash
 ./scripts/verify-connection.sh       # Full check
 ./scripts/verify-connection.sh -q    # Quick check

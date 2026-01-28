@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -e
+
+# ============================================================
+# Antigravity MCP Configuration Activator
+# ============================================================
+# This script activates the clawdbot MCP configuration for
+# Antigravity IDE by symlinking the project config to the
+# global Antigravity config location.
+#
+# Usage: ./scripts/antigravity-activate
+# ============================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_NAME="$(basename "$PROJECT_ROOT")"
+PROJECT_CONFIG="$PROJECT_ROOT/.antigravity/mcp_config.json"
+ANTIGRAVITY_CONFIG="$HOME/.gemini/mcp_config.json"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚀 Activating Antigravity MCP Config"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Project: $PROJECT_NAME"
+echo "Config:  $PROJECT_CONFIG"
+echo ""
+
+# Validate project config exists
+if [ ! -f "$PROJECT_CONFIG" ]; then
+  echo "❌ Project config not found: $PROJECT_CONFIG"
+  echo ""
+  echo "Run setup first:"
+  echo "  cd $PROJECT_ROOT"
+  echo "  # Setup should create .antigravity/mcp_config.json"
+  exit 1
+fi
+
+# Create .gemini directory if it doesn't exist
+mkdir -p "$(dirname "$ANTIGRAVITY_CONFIG")"
+
+# Backup existing config if it exists and is not a symlink
+if [ -f "$ANTIGRAVITY_CONFIG" ] && [ ! -L "$ANTIGRAVITY_CONFIG" ]; then
+  BACKUP_FILE="$ANTIGRAVITY_CONFIG.backup.$(date +%Y%m%d-%H%M%S)"
+  cp "$ANTIGRAVITY_CONFIG" "$BACKUP_FILE"
+  echo "📦 Backed up existing config:"
+  echo "   $BACKUP_FILE"
+  echo ""
+fi
+
+# Remove existing symlink or file
+if [ -e "$ANTIGRAVITY_CONFIG" ] || [ -L "$ANTIGRAVITY_CONFIG" ]; then
+  rm "$ANTIGRAVITY_CONFIG"
+fi
+
+# Create symlink
+ln -sf "$PROJECT_CONFIG" "$ANTIGRAVITY_CONFIG"
+
+echo "✅ Activated Antigravity MCP configuration"
+echo ""
+echo "Active config: $ANTIGRAVITY_CONFIG"
+echo "Points to:     $PROJECT_CONFIG"
+echo ""
+echo "MCP Servers:"
+jq -r '.mcpServers | keys[]' "$PROJECT_CONFIG" | while read -r server; do
+  echo "  • $server"
+done
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "⚠️  IMPORTANT: Restart Antigravity to load new config"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""

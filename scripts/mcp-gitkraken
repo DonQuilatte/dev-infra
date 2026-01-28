@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+cd "/Users/jederlichman/Development/Projects/clawdbot"
+exec npx -y @gitkraken/mcp-server

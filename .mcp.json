@@ -1,11 +1,5 @@
 {
-  "mcpServers": {
-    "MCP_DOCKER": {
-      "command": "docker",
-      "args": ["mcp", "gateway", "run"],
-      "type": "stdio"
-    }
-  },
+  "mcpServers": {},
   "context7Libraries": {
     "clawdbot": {
       "id": "/llmstxt/clawd_bot_llms-full_txt",
