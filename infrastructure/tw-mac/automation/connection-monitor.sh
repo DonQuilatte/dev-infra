@@ -165,8 +165,9 @@ monitor_loop() {
         if [ "$METHOD" != "none" ]; then
             # Connected
             if [ $CONSECUTIVE_FAILURES -gt 0 ]; then
+                local DOWNTIME=$((CONSECUTIVE_FAILURES * CHECK_INTERVAL / 60))
                 log "INFO" "Connection restored via $METHOD after $CONSECUTIVE_FAILURES failures"
-                send_alert "Connection Restored" "TW Mac reconnected via $METHOD" "normal"
+                send_alert "TW Mac Online" "Reconnected via ${METHOD} after ~${DOWNTIME}min downtime. Ready for tasks." "normal"
             fi
 
             save_state "true" "0" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$METHOD"
@@ -181,18 +182,19 @@ monitor_loop() {
 
             # Alert thresholds
             if [ $CONSECUTIVE_FAILURES -eq $ALERT_AFTER_FAILURES ]; then
-                send_alert "Connection Lost" "TW Mac unreachable for $CONSECUTIVE_FAILURES checks. Attempting reconnection..." "normal"
+                send_alert "TW Mac Disconnected" "Lost connection after ${CONSECUTIVE_FAILURES} checks (~$((CONSECUTIVE_FAILURES * CHECK_INTERVAL / 60))min). Trying Tailscale → LAN → hostname fallbacks..." "normal"
             fi
 
             if [ $CONSECUTIVE_FAILURES -eq $((ALERT_AFTER_FAILURES * 2)) ]; then
-                send_alert "Connection Critical" "TW Mac unreachable for extended period. Manual intervention may be required." "critical"
+                local MINS=$((CONSECUTIVE_FAILURES * CHECK_INTERVAL / 60))
+                send_alert "TW Mac Offline ${MINS}min" "All reconnect methods failed. Check: 1) TW Mac powered on 2) Tailscale running 3) Network connectivity" "critical"
             fi
 
             # Attempt reconnection
             if attempt_reconnect; then
                 CONSECUTIVE_FAILURES=0
                 save_state "true" "0" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "reconnected"
-                send_alert "Reconnection Successful" "TW Mac connection restored" "normal"
+                send_alert "TW Mac Recovered" "Auto-reconnect succeeded. MCP server verified. Worker node ready." "normal"
             fi
         fi
 
@@ -223,7 +225,7 @@ startup_check() {
         return 0
     else
         log "WARN" "TW Mac not reachable at startup"
-        send_alert "Startup Warning" "TW Mac not reachable. Will retry in background." "normal"
+        send_alert "TW Mac Unavailable" "Worker node not found at boot. Retrying every ${CHECK_INTERVAL}s. IP: ${TW_TAILSCALE_IP}" "normal"
         return 1
     fi
 }

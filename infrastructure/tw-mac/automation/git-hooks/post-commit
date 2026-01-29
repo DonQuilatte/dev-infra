@@ -46,4 +46,6 @@ EOF
 SESSION="auto-test-$COMMIT_SHA"
 "$TW_CONTROL" run "tmux new-session -d -s $SESSION 'cd ~/Development/Projects/clawdbot && git pull && npm test 2>&1 | tee /tmp/test-$COMMIT_SHA.log; echo \"Exit: \$?\" >> /tmp/test-$COMMIT_SHA.log'" 2>/dev/null
 
-echo "Post-commit: Tests dispatched to TW Mac (session: $SESSION)"
+# Count changed files for notification
+FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l | tr -d ' ')
+echo "Post-commit: Tests dispatched to TW Mac | ${FILE_COUNT} files | session: $SESSION"
