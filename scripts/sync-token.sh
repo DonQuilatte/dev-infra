@@ -22,11 +22,12 @@ echo "🔄 Synchronizing token: ${TOKEN:0:8}..."
 LOCAL_CONFIG="$HOME/.clawdbot/clawdbot.json"
 if [ -f "$LOCAL_CONFIG" ]; then
     echo "📝 Updating local config: $LOCAL_CONFIG"
-    python3 -c "
-import json
-path = '$LOCAL_CONFIG'
+    TOKEN="$TOKEN" LOCAL_CONFIG="$LOCAL_CONFIG" python3 -c "
+import json, os
+token = os.environ['TOKEN']
+path = os.environ['LOCAL_CONFIG']
 with open(path) as f: config = json.load(f)
-config.setdefault('gateway', {})['token'] = '$TOKEN'
+config.setdefault('gateway', {})['token'] = token
 with open(path, 'w') as f: json.dump(config, f, indent=2)
 "
     echo "✅ Local config updated"
@@ -34,12 +35,13 @@ fi
 
 # 2. Update TW Mac remote node
 echo "📡 Updating TW Mac remote node..."
-~/bin/tw run "python3 -c \"
+TOKEN="$TOKEN" ~/bin/tw run "TOKEN=\"\$TOKEN\" python3 -c \"
 import json, os
+token = os.environ['TOKEN']
 path = os.path.expanduser('~/.clawdbot/clawdbot.json')
 with open(path) as f: config = json.load(f)
 if 'gateway' in config and 'remote' in config['gateway']:
-    config['gateway']['remote']['token'] = '$TOKEN'
+    config['gateway']['remote']['token'] = token
 with open(path, 'w') as f: json.dump(config, f, indent=2)
 \""
 
@@ -55,13 +57,14 @@ fi
 PAIRED_CONFIG="$HOME/.clawdbot/devices/paired.json"
 if [ -f "$PAIRED_CONFIG" ]; then
     echo "📝 Updating gateway pairing table for TW..."
-    python3 -c "
-import json
-path = '$PAIRED_CONFIG'
+    TOKEN="$TOKEN" PAIRED_CONFIG="$PAIRED_CONFIG" python3 -c "
+import json, os
+token = os.environ['TOKEN']
+path = os.environ['PAIRED_CONFIG']
 with open(path) as f: d = json.load(f)
 for k, v in d.items():
     if v.get('displayName') == 'TW':
-        v['tokens']['node']['token'] = '$TOKEN'
+        v['tokens']['node']['token'] = token
 with open(path, 'w') as f: json.dump(d, f, indent=2)
 "
     echo "✅ Gateway pairing updated"

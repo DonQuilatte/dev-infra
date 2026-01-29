@@ -53,7 +53,6 @@ if [ -f ".antigravity/config.json" ]; then
 else
   echo "❌ .antigravity/config.json missing"
   ((FAIL_COUNT++))
-  ((FAIL_COUNT++))
 fi
 
 echo ""
@@ -71,7 +70,6 @@ if [ -f ".envrc" ]; then
   fi
 else
   echo "❌ .envrc missing"
-  ((FAIL_COUNT++))
   ((FAIL_COUNT++))
 fi
 

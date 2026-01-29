@@ -5,7 +5,7 @@
 set -e
 
 ANTIGRAVITY_CLI="/Applications/Antigravity.app/Contents/Resources/app/bin/antigravity"
-PROJECT_DIR="~/Development/Projects/dev-infrastructure"
+PROJECT_DIR="$HOME/Development/Projects/dev-infrastructure"
 
 # Colors
 GREEN='\033[0;32m'

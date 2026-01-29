@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
-cd "~/Development/Projects/dev-infrastructure"
+cd "$HOME/Development/Projects/dev-infrastructure"
 exec npx -y @docker/mcp-server
