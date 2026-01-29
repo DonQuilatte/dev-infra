@@ -53,7 +53,7 @@ fi
 # Test: Docker is available on remote Mac (primary deployment method)
 print_test "Docker is available on remote Mac"
 DOCKER_VERSION=$(ssh -o ConnectTimeout=5 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
-    'docker version --format "{{.Server.Version}}" 2>/dev/null' 2>/dev/null || echo "")
+    'docker version --format "{{.Server.Version}}"' 2>&1 | grep -E '^[0-9]+\.' || echo "")
 if [[ -n "$DOCKER_VERSION" ]]; then
     print_pass "Docker available: v$DOCKER_VERSION"
 else
