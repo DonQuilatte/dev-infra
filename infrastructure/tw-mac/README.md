@@ -10,49 +10,55 @@
 │                    (jederlichman@Jeds-MacBook-Pro)              │
 ├─────────────────────────────────────────────────────────────────┤
 │  Antigravity IDE + Claude Code                                  │
-│  ├── Desktop Commander MCP (local)                              │
-│  ├── tw-control.sh (orchestration)                              │
-│  └── Health Monitor (LaunchAgent)                               │
-│                                                                  │
-│  Access Methods:                                                 │
-│  ├── SMB Mount: ~/tw-mac/                                       │
+│  ├── Clawdbot Gateway (192.168.1.230:18789)                     │
+│  ├── Node Watchdog (LaunchAgent: com.clawdbot.watchdog)         │
+│  └── tw-control.sh (orchestration)                              │
+│                                                                 │
+│  Access Methods:                                                │
 │  ├── SSH: ssh tw                                                │
-│  └── tw command: tw [status|shell|run|tmux|...]                │
+│  └── Clawdbot: clawdbot nodes run --node TW                     │
 └─────────────────────────────────────────────────────────────────┘
                               │
-                              │ Persistent SSH (ControlMaster)
-                              │ Auto-reconnect (Health Monitor)
+                              │ 1. Persistent SSH (ControlMaster)
+                              │ 2. Clawdbot Network (WebSocket)
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                         WORKER MAC (TW)                          │
-│                    (100.81.110.81 / 192.168.1.245)               │
+│                         WORKER MAC (TW)                         │
+│                    (192.168.1.245)                              │
 ├─────────────────────────────────────────────────────────────────┤
 │  Antigravity IDE + Claude Code                                  │
-│  ├── Desktop Commander MCP Server (tmux session)                │
-│  ├── direnv + 1Password CLI                                     │
+│  ├── Clawdbot Node Service (LaunchAgent)                        │
+│  ├── Direnv + 1Password CLI                                     │
 │  └── clawdbot repo                                              │
-│                                                                  │
-│  Services:                                                       │
-│  ├── Tailscale VPN (Primary)                                     │
-│  ├── Desktop Commander: tmux session "mcp"                      │
-│  ├── File Sharing: SMB enabled                                  │
+│                                                                 │
+│  Services:                                                      │
+│  ├── com.clawdbot.node (Agentic Worker)                         │
+│  ├── Desktop Commander (Legacy MCP via tmux)                    │
 │  └── SSH: OpenSSH server                                        │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ## Quick Reference
 
-### tw Command (run from Controller Mac)
+### Clawdbot Node (Agentic)
+
+```bash
+# Check status
+clawdbot nodes status
+
+# Execute headless command
+clawdbot nodes run --node TW -- echo "Hello World"
+
+# Force restart remote service (via Watchdog logic)
+scripts/tw-node-watchdog.sh
+```
+
+### Legacy tw Command
 
 ```bash
 tw status      # Show TW Mac connection status
 tw connect     # Establish persistent SSH connection
-tw disconnect  # Close persistent SSH connection
-tw start-mcp   # Start Desktop Commander MCP server
-tw stop-mcp    # Stop Desktop Commander MCP server
 tw shell       # Open interactive shell on TW Mac
-tw tmux        # Attach to tmux session on TW Mac
-tw run <cmd>   # Run command on TW Mac
 ```
 
 ### File Access
@@ -60,48 +66,39 @@ tw run <cmd>   # Run command on TW Mac
 ```bash
 # Direct file access via SMB mount
 ls ~/tw-mac/Development/Projects/
-
-# Copy files
-cp localfile.txt ~/tw-mac/Development/Projects/clawdbot/
-
-# Edit files (appears on TW Mac instantly)
-vim ~/tw-mac/Development/Projects/clawdbot/src/main.py
 ```
 
 ### SSH Access
 
 ```bash
-# Interactive shell
 ssh tw
-
-# Run remote command
-ssh tw 'cd ~/Development/Projects/clawdbot && git status'
-
-# Port forwarding (e.g., for web dev)
-ssh -L 8080:localhost:8080 tw
 ```
 
 ## Services
 
-### Desktop Commander MCP
+### Clawdbot Agent Node (NEW)
+
+- **Role:** Autonomous execution, file access, agent tasks.
+- **Service:** `com.clawdbot.node` (on TW Mac).
+- **Monitoring:** `com.clawdbot.watchdog.tw` (on Controller Mac).
+- **Recovery:** Watchdog checks every 5 mins and restarts via SSH if disconnected.
+
+### Desktop Commander MCP (Legacy)
 
 - Runs in tmux session `mcp` on TW Mac
 - Provides file/terminal access for AI agents
 - Auto-started by health monitor
 
-### Health Monitor
+### Health Monitor (Legacy SSH)
 
 - LaunchAgent: `com.clawdbot.tw-health-monitor`
 - Checks every 60 seconds
 - Auto-reconnects SSH if dropped
-- Auto-restarts MCP if stopped
-- Logs: `~/.claude/tw-mac/health.log`
 
 ### SSH Multiplexing
 
 - ControlMaster enabled for faster connections
 - ControlPersist 600 (10 minutes)
-- ServerAliveInterval 60 (keepalive)
 
 ## Manual Setup Required
 
