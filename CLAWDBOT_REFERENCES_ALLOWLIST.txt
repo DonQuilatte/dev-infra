@@ -1,0 +1,6 @@
+# ClawdBot References Allowlist
+# Files that may legitimately reference the old name for historical/documentation purposes
+
+MIGRATION.md
+CLAUDE.md
+CLAWDBOT_REFERENCES_ALLOWLIST.txt
