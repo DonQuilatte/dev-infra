@@ -1,43 +1,32 @@
 {
-  "$schema": "https://antigravity.dev/schemas/workspace-config.json",
-  "name": "clawdbot",
-  "description": "Docker deployment & distributed worker management for Clawdbot",
-
   "onOpen": {
-    "setupScript": "scripts/project-setup.sh",
+    "setupScript": "scripts/post-restart-setup.sh",
     "allowDirenv": true,
-    "timeout": 30,
-    "notifications": {
-      "onReady": "Clawdbot environment ready",
-      "onError": "Setup failed - check logs"
+    "notification": {
+      "enabled": true,
+      "message": "ClawdBot MCP environment loaded"
     }
   },
-
-  "security": {
-    "note": "Secrets loaded via 1Password references in .env and .envrc",
-    "envFiles": [".env"],
-    "secretPatterns": {
-      "warn": ["sk-ant-", "sk-", "AKIA", "ghp_", "gho_"],
-      "allow": ["op://"]
+  "mcp": {
+    "autoLoad": true,
+    "servers": {
+      "github": {
+        "command": "bash",
+        "args": ["${workspaceFolder}/scripts/mcp-gitkraken"]
+      },
+      "filesystem": {
+        "command": "bash",
+        "args": ["${workspaceFolder}/scripts/mcp-filesystem"]
+      },
+      "context7": {
+        "command": "bash",
+        "args": ["${workspaceFolder}/scripts/mcp-context7"]
+      }
     }
   },
-
-  "mcpServers": {
-    "extends": ".antigravity/mcp_config.json"
-  },
-
-  "tasks": {
-    "deploy": {
-      "command": "./scripts/deploy-secure.sh",
-      "description": "Deploy with Docker security hardening"
-    },
-    "verify": {
-      "command": "./scripts/verify-security.sh",
-      "description": "Run security verification checks"
-    },
-    "tw-status": {
-      "command": "~/bin/tw status",
-      "description": "Check TW Mac distributed worker status"
+  "execution": {
+    "remote": {
+      "enabled": false
     }
   }
 }

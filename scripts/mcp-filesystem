@@ -3,4 +3,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
+
+# Ensure Homebrew is in PATH
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 exec npx -y @modelcontextprotocol/server-filesystem "$PROJECT_ROOT"
