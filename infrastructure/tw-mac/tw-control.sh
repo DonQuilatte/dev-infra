@@ -24,6 +24,11 @@ else
 fi
 
 # Configuration from environment (with defaults)
+# SECURITY NOTE: Default IPs are internal network addresses only accessible via:
+#   - Tailscale VPN (100.x.x.x) - WireGuard encrypted, requires authentication
+#   - Local LAN (192.168.x.x) - Only reachable from same network segment
+# Override via environment variables for different deployments:
+#   export TW_TAILSCALE_IP=100.x.x.x TW_LAN_IP=192.168.x.x
 TW_TAILSCALE_IP="${TW_TAILSCALE_IP:-100.81.110.81}"
 TW_LAN_IP="${TW_LAN_IP:-192.168.1.245}"
 TW_HOST="${TW_HOST:-tw}"  # Uses SSH config which points to Tailscale
