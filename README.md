@@ -19,7 +19,7 @@ This repository provides:
 │  Main Mac (192.168.1.230)          Remote Mac (192.168.1.245)   │
 │  ┌─────────────────────────┐       ┌─────────────────────────┐  │
 │  │ Clawdbot Gateway        │◄──────│ Clawdbot Node           │  │
-│  │ Version: 2026.1.23-1    │  WS   │ Version: 2026.1.24-3    │  │
+│  │ Version: 2026.1.24-3    │  WS   │ Version: 2026.1.24-3    │  │
 │  │ Port: 18789             │       │ Status: Connected       │  │
 │  │ Status: Running         │       │                         │  │
 │  └─────────────────────────┘       └─────────────────────────┘  │
@@ -262,5 +262,5 @@ curl http://localhost:18789/health   # Gateway health
 
 ---
 
-**Status:** ✅ Distributed system operational | Gateway 2026.1.23-1 | Node 2026.1.24-3
-**Last Updated:** 2026-01-27
+**Status:** ✅ Distributed system operational | Gateway 2026.1.24-3 | Node 2026.1.24-3
+**Last Updated:** 2026-01-29
