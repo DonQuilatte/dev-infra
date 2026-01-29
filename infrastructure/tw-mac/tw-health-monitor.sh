@@ -10,18 +10,17 @@ TW_HOST="tw"
 TW_TAILSCALE_IP="100.81.110.81"
 TW_LAN_IP="192.168.1.245"
 SSH_KEY="$HOME/.ssh/id_ed25519_clawdbot"
-SSH_OPTS="-o BatchMode=yes -o IdentitiesOnly=yes -i $SSH_KEY -o ConnectTimeout=10"
+SSH_OPTS="-o BatchMode=yes -o IdentitiesOnly=yes -i $SSH_KEY -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=3"
+SSH_TIMEOUT=30  # Timeout for SSH commands to prevent hanging
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
 }
 
-# Prevent multiple instances
-if [ -f "$LOCK_FILE" ]; then
-    pid=$(cat "$LOCK_FILE")
-    if kill -0 "$pid" 2>/dev/null; then
-        exit 0
-    fi
+# Prevent multiple instances using flock (atomic, no race condition)
+exec 200>"$LOCK_FILE"
+if ! flock -n 200; then
+    exit 0  # Another instance is running
 fi
 echo $$ > "$LOCK_FILE"
 trap "rm -f $LOCK_FILE" EXIT
@@ -39,8 +38,8 @@ check_and_reconnect() {
         return 1
     fi
 
-    # Check SSH connection
-    if ! SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'exit 0' 2>/dev/null; then
+    # Check SSH connection (with timeout to prevent hanging)
+    if ! timeout $SSH_TIMEOUT SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'exit 0' 2>/dev/null; then
         log "WARN: SSH connection failed, attempting reconnect..."
 
         # Kill any stale control sockets
@@ -48,7 +47,7 @@ check_and_reconnect() {
         rm -f "$HOME/.ssh/sockets/tywhitaker@$TW_LAN_IP-22" 2>/dev/null
 
         # Re-establish master connection
-        SSH_AUTH_SOCK="" ssh $SSH_OPTS -fNM $TW_HOST 2>/dev/null
+        timeout $SSH_TIMEOUT SSH_AUTH_SOCK="" ssh $SSH_OPTS -fNM $TW_HOST 2>/dev/null
         if [ $? -eq 0 ]; then
             log "INFO: SSH connection re-established via Tailscale"
         else
@@ -57,11 +56,11 @@ check_and_reconnect() {
         fi
     fi
 
-    # Check MCP server
-    mcp_running=$(SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'tmux has-session -t mcp 2>/dev/null && echo "yes" || echo "no"')
+    # Check MCP server (with timeout)
+    mcp_running=$(timeout $SSH_TIMEOUT SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'tmux has-session -t mcp 2>/dev/null && echo "yes" || echo "no"' 2>/dev/null || echo "no")
     if [ "$mcp_running" != "yes" ]; then
         log "WARN: MCP server not running, starting..."
-        SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST '
+        timeout $SSH_TIMEOUT SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST '
             tmux new-session -d -s mcp "cd ~/Development/DesktopCommanderMCP && NODE_ENV=production MCP_DXT=true node dist/index.js"
         ' 2>/dev/null
         if [ $? -eq 0 ]; then
@@ -81,7 +80,7 @@ check_config_sync() {
 
     # Check skills count
     local LOCAL_SKILLS=$(ls "$HOME/.claude/commands" 2>/dev/null | wc -l | tr -d ' ')
-    local REMOTE_SKILLS=$(SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'ls ~/.claude/commands 2>/dev/null | wc -l | tr -d " "' || echo "0")
+    local REMOTE_SKILLS=$(timeout $SSH_TIMEOUT SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'ls ~/.claude/commands 2>/dev/null | wc -l | tr -d " "' 2>/dev/null || echo "0")
 
     if [ "$LOCAL_SKILLS" != "$REMOTE_SKILLS" ]; then
         log "WARN: Skills out of sync (local: $LOCAL_SKILLS, remote: $REMOTE_SKILLS) - run tw-sync-config"
@@ -96,7 +95,8 @@ check_pending_handoffs() {
     local STALE_COUNT=0
     local TWO_HOURS_AGO=$(date -v-2H +%Y%m%d-%H%M%S 2>/dev/null || date -d '2 hours ago' +%Y%m%d-%H%M%S 2>/dev/null)
 
-    for handoff in "$HOME/tw-mac/handoffs"/handoff-*.md 2>/dev/null; do
+    shopt -s nullglob
+    for handoff in "$HOME/tw-mac/handoffs"/handoff-*.md; do
         if [ -f "$handoff" ]; then
             local ID=$(basename "$handoff" | sed 's/handoff-//' | sed 's/.md//')
             if [ ! -f "$HOME/tw-mac/handoffs/response-$ID.md" ]; then
@@ -107,6 +107,7 @@ check_pending_handoffs() {
             fi
         fi
     done
+    shopt -u nullglob
 
     if [ $STALE_COUNT -gt 0 ]; then
         log "WARN: $STALE_COUNT stale handoff(s) without response (>2 hours old)"
@@ -117,7 +118,7 @@ check_pending_handoffs() {
 
 check_orphan_sessions() {
     # Check for tmux sessions that might be orphaned
-    local SESSIONS=$(SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'tmux list-sessions -F "#{session_name}:#{session_activity}" 2>/dev/null' || echo "")
+    local SESSIONS=$(timeout $SSH_TIMEOUT SSH_AUTH_SOCK="" ssh $SSH_OPTS $TW_HOST 'tmux list-sessions -F "#{session_name}:#{session_activity}" 2>/dev/null' 2>/dev/null || echo "")
     local NOW=$(date +%s)
 
     for session in $SESSIONS; do

@@ -103,10 +103,20 @@ get_gateway_token() {
         return 1
     fi
 
-    token_ref=$(grep "^CLAWDBOT_GATEWAY_TOKEN=" "$repo_root/.env" | cut -d= -f2)
+    # Parse token value, handling quoted values and special characters
+    local raw_line
+    raw_line=$(grep -E "^CLAWDBOT_GATEWAY_TOKEN=" "$repo_root/.env" 2>/dev/null)
+
+    if [ -z "$raw_line" ]; then
+        echo "❌ ERROR: CLAWDBOT_GATEWAY_TOKEN not set in .env" >&2
+        return 1
+    fi
+
+    # Extract value after first '=', then strip surrounding quotes (single or double)
+    token_ref=$(echo "$raw_line" | sed 's/^[^=]*=//' | sed 's/^["'"'"']//' | sed 's/["'"'"']$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
 
     if [ -z "$token_ref" ]; then
-        echo "❌ ERROR: CLAWDBOT_GATEWAY_TOKEN not set in .env" >&2
+        echo "❌ ERROR: CLAWDBOT_GATEWAY_TOKEN is empty in .env" >&2
         return 1
     fi
 
