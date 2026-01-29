@@ -1,0 +1,143 @@
+#!/bin/bash
+# agy-project - Single command to engage a project on TW Mac (AntiGravity)
+# Usage: agy-project <repo-url-or-name> [initial-prompt]
+
+set -e
+
+TW_CONTROL="$HOME/bin/tw"
+# Use \$HOME so it expands on the remote machine, not locally
+PROJECTS_DIR="\$HOME/Development/Projects"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+usage() {
+    echo "Usage: agy-project <repo-url-or-name> [initial-prompt]"
+    echo ""
+    echo "Examples:"
+    echo "  agy-project git@github.com:you/myapp.git              # Clone new repo"
+    echo "  agy-project git@github.com:you/myapp.git \"Review code\" # Clone + task"
+    echo "  agy-project myapp                                      # Open existing"
+    echo "  agy-project myapp \"Implement feature X\"               # Task existing"
+    echo ""
+    echo "Commands after session starts:"
+    echo "  ~/bin/tw run 'tmux capture-pane -t <session> -p | tail -50'  # View output"
+    echo "  ~/bin/tw tmux                                                 # Attach"
+    echo "  ~/bin/tw run 'tmux kill-session -t <session>'                # Kill"
+    exit 1
+}
+
+[ -z "$1" ] && usage
+
+INPUT="$1"
+PROMPT="${2:-}"
+
+# Determine if input is URL or project name
+if [[ "$INPUT" =~ ^(git@|https://) ]]; then
+    IS_URL=true
+    PROJECT_NAME=$(basename "$INPUT" .git)
+else
+    IS_URL=false
+    PROJECT_NAME="$INPUT"
+fi
+
+# Sanitize project name to prevent command injection
+if [[ ! "$PROJECT_NAME" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    echo -e "${RED}Error: Invalid project name '$PROJECT_NAME'${NC}"
+    echo "Project names may only contain letters, numbers, dots, underscores, and hyphens."
+    exit 1
+fi
+
+SESSION_NAME="$PROJECT_NAME"
+
+echo -e "${BLUE}=== AntiGravity Project Setup ===${NC}"
+echo -e "Project: ${GREEN}$PROJECT_NAME${NC}"
+echo -e "Session: ${GREEN}$SESSION_NAME${NC}"
+echo ""
+
+# Check TW Mac connectivity
+echo -e "${YELLOW}Checking TW Mac connection...${NC}"
+if ! "$TW_CONTROL" run 'echo ok' >/dev/null 2>&1; then
+    echo -e "${RED}Error: TW Mac not reachable${NC}"
+    echo "Run: ~/bin/tw status"
+    exit 1
+fi
+echo -e "${GREEN}✓ TW Mac connected${NC}"
+
+# Clone or verify project exists
+if [ "$IS_URL" = true ]; then
+    echo -e "${YELLOW}Checking if project exists...${NC}"
+    if "$TW_CONTROL" run "[ -d \"$PROJECTS_DIR/$PROJECT_NAME\" ]" 2>/dev/null; then
+        echo -e "${GREEN}✓ Project already exists, pulling latest...${NC}"
+        "$TW_CONTROL" run "cd \"$PROJECTS_DIR/$PROJECT_NAME\" && git pull" 2>/dev/null || echo -e "${YELLOW}Warning: git pull failed${NC}"
+    else
+        echo -e "${YELLOW}Cloning repository...${NC}"
+        "$TW_CONTROL" run "cd \"$PROJECTS_DIR\" && git clone '$INPUT'"
+        echo -e "${GREEN}✓ Repository cloned${NC}"
+    fi
+else
+    echo -e "${YELLOW}Verifying project exists...${NC}"
+    if ! "$TW_CONTROL" run "[ -d \"$PROJECTS_DIR/$PROJECT_NAME\" ]" 2>/dev/null; then
+        echo -e "${RED}Error: Project '$PROJECT_NAME' not found in $PROJECTS_DIR${NC}"
+        echo "Available projects:"
+        "$TW_CONTROL" run "ls -1 \"$PROJECTS_DIR\"" 2>/dev/null | sed 's/^/  /'
+        exit 1
+    fi
+    echo -e "${GREEN}✓ Project found${NC}"
+fi
+
+# Run project-setup.sh if exists
+echo -e "${YELLOW}Checking for project setup script...${NC}"
+if "$TW_CONTROL" run "[ -x \"$PROJECTS_DIR/$PROJECT_NAME/scripts/project-setup.sh\" ]" 2>/dev/null; then
+    echo -e "${YELLOW}Running project-setup.sh...${NC}"
+    "$TW_CONTROL" run "cd \"$PROJECTS_DIR/$PROJECT_NAME\" && ./scripts/project-setup.sh" 2>/dev/null || echo -e "${YELLOW}Warning: project-setup.sh failed${NC}"
+    echo -e "${GREEN}✓ Setup complete${NC}"
+else
+    echo -e "${BLUE}No setup script found (optional)${NC}"
+fi
+
+# Setup direnv if .envrc exists
+if "$TW_CONTROL" run "[ -f \"$PROJECTS_DIR/$PROJECT_NAME/.envrc\" ]" 2>/dev/null; then
+    echo -e "${YELLOW}Configuring direnv...${NC}"
+    "$TW_CONTROL" run "cd \"$PROJECTS_DIR/$PROJECT_NAME\" && direnv allow" 2>/dev/null || echo -e "${YELLOW}Warning: direnv allow failed${NC}"
+fi
+
+# Check if session already exists
+echo -e "${YELLOW}Setting up tmux session...${NC}"
+if "$TW_CONTROL" run "tmux has-session -t '$SESSION_NAME'" 2>/dev/null; then
+    echo -e "${BLUE}Session '$SESSION_NAME' already exists${NC}"
+else
+    "$TW_CONTROL" run "tmux new-session -d -s '$SESSION_NAME' -c \"$PROJECTS_DIR/$PROJECT_NAME\" claude"
+    echo -e "${GREEN}✓ Session created${NC}"
+    echo -e "${YELLOW}Waiting for Claude to initialize...${NC}"
+    # Poll for session readiness instead of arbitrary sleep
+    for i in {1..10}; do
+        if "$TW_CONTROL" run "tmux list-panes -t '$SESSION_NAME'" 2>/dev/null; then
+            break
+        fi
+        sleep 1
+    done
+fi
+
+# Send prompt if provided
+if [ -n "$PROMPT" ]; then
+    echo -e "${YELLOW}Sending prompt...${NC}"
+    # Escape special characters in prompt for safe transmission
+    ESCAPED_PROMPT=$(printf '%s' "$PROMPT" | sed "s/'/'\\\\''/g")
+    "$TW_CONTROL" run "tmux send-keys -t '$SESSION_NAME' -l '$ESCAPED_PROMPT'"
+    "$TW_CONTROL" run "tmux send-keys -t '$SESSION_NAME' Enter"
+    echo -e "${GREEN}✓ Prompt sent${NC}"
+fi
+
+echo ""
+echo -e "${GREEN}=== Session Ready ===${NC}"
+echo -e "Project: ${BLUE}$PROJECT_NAME${NC}"
+echo -e "Session: ${BLUE}$SESSION_NAME${NC}"
+echo ""
+echo -e "${YELLOW}Quick commands:${NC}"
+echo "  View output:  ~/bin/tw run 'tmux capture-pane -t \"$SESSION_NAME\" -p | tail -50'"
+echo "  Attach:       ~/bin/tw tmux  # then Ctrl-b, s to select"
+echo "  Send task:    ~/bin/tw run 'tmux send-keys -t \"$SESSION_NAME\" -l \"your prompt\" && tmux send-keys -t \"$SESSION_NAME\" Enter'"
+echo "  Kill:         ~/bin/tw run 'tmux kill-session -t \"$SESSION_NAME\"'"

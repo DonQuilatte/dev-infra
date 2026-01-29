@@ -1,0 +1,118 @@
+#!/bin/bash
+# agy-local - Single command to engage a project locally (or proxy to TW Mac)
+# Usage: agy-local <repo-url-or-name> [initial-prompt] [--tw]
+
+set -e
+
+PROJECTS_DIR="$HOME/Development/Projects"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+usage() {
+    echo "Usage: agy-local <repo-url-or-name> [initial-prompt] [--tw]"
+    echo ""
+    echo "Examples:"
+    echo "  agy-local myapp                          # Open existing locally"
+    echo "  agy-local git@github.com:you/myapp.git   # Clone + open locally"
+    echo "  agy-local myapp \"Review code\"           # Open + send task"
+    echo "  agy-local myapp --tw                     # Proxy to TW Mac instead"
+    echo ""
+    exit 1
+}
+
+[ -z "$1" ] && usage
+
+INPUT="$1"
+shift
+
+# Parse remaining args
+PROMPT=""
+USE_TW=false
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --tw|-t)
+            USE_TW=true
+            ;;
+        *)
+            if [ -n "$PROMPT" ]; then
+                echo -e "${YELLOW}Warning: Multiple prompts provided, using last one${NC}"
+            fi
+            PROMPT="$1"
+            ;;
+    esac
+    shift
+done
+
+# Proxy to TW Mac if requested
+if [ "$USE_TW" = true ]; then
+    exec ~/bin/agy-project "$INPUT" "$PROMPT"
+fi
+
+# Determine if input is URL or project name
+if [[ "$INPUT" =~ ^(git@|https://) ]]; then
+    IS_URL=true
+    PROJECT_NAME=$(basename "$INPUT" .git)
+else
+    IS_URL=false
+    PROJECT_NAME="$INPUT"
+fi
+
+PROJECT_PATH="$PROJECTS_DIR/$PROJECT_NAME"
+
+echo -e "${BLUE}=== Local Project Setup ===${NC}"
+echo -e "Project: ${GREEN}$PROJECT_NAME${NC}"
+echo -e "Path: ${GREEN}$PROJECT_PATH${NC}"
+echo ""
+
+# Clone or verify project exists
+if [ "$IS_URL" = true ]; then
+    if [ -d "$PROJECT_PATH" ]; then
+        echo -e "${GREEN}✓ Project already exists, pulling latest...${NC}"
+        cd "$PROJECT_PATH" && git pull || echo -e "${YELLOW}Warning: git pull failed${NC}"
+    else
+        echo -e "${YELLOW}Cloning repository...${NC}"
+        cd "$PROJECTS_DIR" && git clone "$INPUT"
+        echo -e "${GREEN}✓ Repository cloned${NC}"
+    fi
+else
+    if [ ! -d "$PROJECT_PATH" ]; then
+        echo -e "${RED}Error: Project '$PROJECT_NAME' not found in $PROJECTS_DIR${NC}"
+        echo "Available projects:"
+        ls -1 "$PROJECTS_DIR" 2>/dev/null | sed 's/^/  /'
+        exit 1
+    fi
+    echo -e "${GREEN}✓ Project found${NC}"
+fi
+
+# Run project-setup.sh if exists
+if [ -x "$PROJECT_PATH/scripts/project-setup.sh" ]; then
+    echo -e "${YELLOW}Running project-setup.sh...${NC}"
+    cd "$PROJECT_PATH" && ./scripts/project-setup.sh || echo -e "${YELLOW}Warning: project-setup.sh failed${NC}"
+    echo -e "${GREEN}✓ Setup complete${NC}"
+fi
+
+# Setup direnv if .envrc exists
+if [ -f "$PROJECT_PATH/.envrc" ]; then
+    echo -e "${YELLOW}Configuring direnv...${NC}"
+    cd "$PROJECT_PATH" && direnv allow 2>/dev/null || echo -e "${YELLOW}Warning: direnv allow failed${NC}"
+fi
+
+# Change to project directory
+cd "$PROJECT_PATH"
+
+echo ""
+echo -e "${GREEN}=== Starting Claude ===${NC}"
+echo -e "Directory: ${BLUE}$(pwd)${NC}"
+echo ""
+
+# Start Claude with optional prompt
+if [ -n "$PROMPT" ]; then
+    echo -e "${YELLOW}Starting with prompt: ${NC}$PROMPT"
+    echo ""
+    exec claude -p "$PROMPT"
+else
+    exec claude
+fi

@@ -1,0 +1,10 @@
+#!/bin/bash
+# agy - Quick launcher for AntiGravity project sessions
+# Defaults to local, use -r/--remote for TW Mac
+
+if [[ "$1" == "-r" || "$1" == "--remote" ]]; then
+    shift
+    exec ~/bin/agy-project "$@"
+else
+    exec ~/bin/agy-local "$@"
+fi
