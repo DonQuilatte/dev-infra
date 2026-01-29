@@ -120,7 +120,7 @@ GIT_OUTPUT=$("$TW_CONTROL" run "
     git config user.email 'test@test.com' &&
     git config user.name 'Test User' &&
     git add . &&
-    git commit -q -m 'Initial commit' &&
+    git -c commit.gpgsign=false commit -q -m 'Initial commit' &&
     echo 'git_ok'
 " 2>&1)
 if echo "$GIT_OUTPUT" | grep -q "git_ok"; then
