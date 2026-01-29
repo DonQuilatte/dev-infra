@@ -13,8 +13,10 @@ URGENCY="$3"  # normal, critical
 # NOTIFICATION METHODS - Uncomment to enable
 # ═══════════════════════════════════════════
 
-# --- macOS Notification Center (default) ---
-osascript -e "display notification \"$MESSAGE\" with title \"Clawdbot\" subtitle \"$TITLE\"" 2>/dev/null
+# --- macOS Notification Center ---
+# NOTE: Primary notification sent by connection-monitor.sh
+# Uncomment below ONLY if you want to customize/override the default
+# osascript -e "display notification \"$MESSAGE\" with title \"Clawdbot\" subtitle \"$TITLE\"" 2>/dev/null
 
 # --- Sound alert for critical ---
 if [ "$URGENCY" = "critical" ]; then
