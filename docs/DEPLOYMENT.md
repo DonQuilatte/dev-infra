@@ -34,7 +34,7 @@ Before starting deployment, ensure you have:
 
 ```bash
 # Navigate to project directory
-cd /Users/jederlichman/Development/Projects/clawdbot/
+cd ~/Development/Projects/dev-infrastructure/
 
 # Verify all files are present
 ls -la

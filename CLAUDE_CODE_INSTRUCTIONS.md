@@ -57,14 +57,14 @@ Desktop Commander:start_process
 # Use start_process
 Desktop Commander:start_process
 {
-  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
+  "command": "cd ~/Development/Projects/dev-infrastructure && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
   "timeout_ms": 10000
 }
 
 # Verify it was created
 Desktop Commander:read_file
 {
-  "path": "/Users/jederlichman/Development/Projects/ClawdBot/DEPENDENCY_INVENTORY.txt"
+  "path": "~/Development/Projects/dev-infrastructure/DEPENDENCY_INVENTORY.txt"
 }
 ```
 
@@ -84,14 +84,14 @@ Desktop Commander:start_process
 # Create branch
 Desktop Commander:start_process
 {
-  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
+  "command": "cd ~/Development/Projects/dev-infrastructure && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
   "timeout_ms": 10000
 }
 
 # Verify
 Desktop Commander:start_process
 {
-  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git log --oneline -1",
+  "command": "cd ~/Development/Projects/dev-infrastructure && git log --oneline -1",
   "timeout_ms": 3000
 }
 ```
@@ -102,7 +102,7 @@ Desktop Commander:start_process
 # Read file
 Desktop Commander:read_file
 {
-  "path": "/Users/jederlichman/Development/Projects/ClawdBot/.envrc",
+  "path": "~/Development/Projects/dev-infrastructure/.envrc",
   "length": 50
 }
 
@@ -260,7 +260,7 @@ verify2: "test step2 output"
 ```bash
 Desktop Commander:start_process
 {
-  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
+  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
   "timeout_ms": 30000
 }
 ```

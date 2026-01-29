@@ -28,7 +28,7 @@
 **Execute:**
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # Find absolute paths
 grep -r "/Users/jederlichman" . --exclude-dir=node_modules --exclude-dir=.git > DEPENDENCY_INVENTORY.txt
@@ -73,7 +73,7 @@ MUST UPDATE:
 ```bash
 cd /Users/jederlichman/Development/Projects
 cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M)
-cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 
 echo "Backups created at:"
 ls -ld *backup*
@@ -134,12 +134,12 @@ git commit -m "Phase 2.2: Created base directory structure"
 ```bash
 # DRY RUN
 echo "WILL COPY:"
-ls -la /Users/jederlichman/Development/mcp-deployment/
+ls -la ~/Development/Projects/dev-infrastructure/mcp/
 
 # Execute
-cp -rv /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-cp -rv /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-cp -v /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
+cp -rv ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+cp -rv ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+cp -v ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
 
 # Checkpoint
 git add -A
@@ -153,7 +153,7 @@ find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
   -exec sed -i.bak 's|~/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
 
 find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
-  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
+  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
 
 # Remove backup files
 find . -name "*.bak" -delete
@@ -262,11 +262,11 @@ cat > MIGRATION.md << 'EOF'
 - New: `dev-infrastructure`
 
 **Location:**
-- Old: `/Users/jederlichman/Development/Projects/ClawdBot`
+- Old: `~/Development/Projects/dev-infrastructure`
 - New: `/Users/jederlichman/Development/Projects/dev-infrastructure`
 
 **MCP Deployment:**
-- Old: `/Users/jederlichman/Development/mcp-deployment` (separate repo)
+- Old: `~/Development/Projects/dev-infrastructure/mcp` (separate repo)
 - New: `/Users/jederlichman/Development/Projects/dev-infrastructure/mcp/`
 
 ## Update Your Projects

@@ -32,7 +32,7 @@ Execute the mechanical migration of ClawdBot → dev-infrastructure. This is a *
 
 ## Your Checklist: PHASE_A_CHECKLIST.md
 
-**Location:** `/Users/jederlichman/Development/Projects/ClawdBot/PHASE_A_CHECKLIST.md`
+**Location:** `~/Development/Projects/dev-infrastructure/PHASE_A_CHECKLIST.md`
 
 This is your step-by-step execution guide. Follow it exactly.
 
@@ -74,7 +74,7 @@ Total: ~2 hours
 ### Phase 0: Dependency Inventory
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # Find all absolute paths
 grep -r "/Users/jederlichman" . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt
@@ -94,7 +94,7 @@ cat DEPENDENCY_INVENTORY.txt
 ```bash
 cd /Users/jederlichman/Development/Projects
 cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M)
-cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 ```
 
 ### Test Commands
@@ -156,10 +156,10 @@ find mcp/ -type f | wc -l  # Should be ~10-20 files
 
 ```bash
 # No absolute paths should remain
-grep -r "/Users/jederlichman/Development/mcp-deployment" . --exclude-dir={node_modules,.git}
+grep -r "~/Development/Projects/dev-infrastructure/mcp" . --exclude-dir={node_modules,.git}
 # Should return: empty or only comments/docs
 
-grep -r "/Users/jederlichman/Development/Projects/ClawdBot" . --exclude-dir={node_modules,.git}
+grep -r "~/Development/Projects/dev-infrastructure" . --exclude-dir={node_modules,.git}
 # Should return: empty or only comments/docs
 ```
 
@@ -218,11 +218,11 @@ rm -rf dev-infrastructure  # Remove broken state
 mv ClawdBot-backup-YYYYMMDD-HHMM ClawdBot
 
 # Restore mcp-deployment
-mv mcp-deployment-backup-YYYYMMDD-HHMM /Users/jederlichman/Development/mcp-deployment
+mv mcp-deployment-backup-YYYYMMDD-HHMM ~/Development/Projects/dev-infrastructure/mcp
 
 # Verify
 cd ClawdBot && git status
-cd /Users/jederlichman/Development/mcp-deployment && ls -la
+cd ~/Development/Projects/dev-infrastructure/mcp && ls -la
 ```
 
 **Then:** Document what went wrong, wait for human review.
@@ -238,10 +238,10 @@ cd /Users/jederlichman/Development/mcp-deployment && ls -la
 **Fix:** 
 ```bash
 # Check what actually exists
-ls -la /Users/jederlichman/Development/mcp-deployment/
+ls -la ~/Development/Projects/dev-infrastructure/mcp/
 
 # Only copy what exists, use 2>/dev/null to ignore missing
-cp /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/ 2>/dev/null || true
+cp ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/ 2>/dev/null || true
 ```
 
 ### Issue: Path update script finds too many references
@@ -253,7 +253,7 @@ cp /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/ 2>/dev/null |
 **Action:** Review a sample before running full update:
 ```bash
 # Preview what will change
-grep -r "/Users/jederlichman/Development/mcp-deployment" . --exclude-dir={node_modules,.git} | head -10
+grep -r "~/Development/Projects/dev-infrastructure/mcp" . --exclude-dir={node_modules,.git} | head -10
 ```
 
 ### Issue: Clean checkout test fails - "command not found"
@@ -370,7 +370,7 @@ grep -r "/Users/jederlichman" dev-infrastructure-test/ --exclude-dir={node_modul
 
 **Ready to begin?**
 
-1. Open `/Users/jederlichman/Development/Projects/ClawdBot/PHASE_A_CHECKLIST.md`
+1. Open `~/Development/Projects/dev-infrastructure/PHASE_A_CHECKLIST.md`
 2. Start with Phase 0: Pre-Flight
 3. Check off each item as you complete it
 4. Report status after Phase 6

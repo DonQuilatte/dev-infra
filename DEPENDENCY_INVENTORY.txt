@@ -1,9 +1,9 @@
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/ClawdBot/DEPENDENCY_INVENTORY.txt"
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "~/Development/Projects/dev-infrastructure/DEPENDENCY_INVENTORY.txt"
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects && cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M) && ls -ld *backup*",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git log --oneline -1",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/ClawdBot/.envrc",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && git log --oneline -1",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "~/Development/Projects/dev-infrastructure/.envrc",
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/dev-infrastructure/README.md",
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "ls -la /Users/jederlichman/Development/Projects/dev-infrastructure/README.md",
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && mkdir -p mcp/{scripts,templates,docs}",
@@ -13,66 +13,66 @@
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && git log --oneline -1",
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/iphone-tco-planner && bash scripts/validate-mcp.sh",
 ./CLAUDE_CODE_INSTRUCTIONS.md:bash_tool: "echo 'test' > /Users/jederlichman/file.txt"
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/dev-infrastructure/README.md",
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development && git clone /Users/jederlichman/Development/Projects/dev-infrastructure dev-infrastructure-test && cd dev-infrastructure-test && git checkout phase-a-mechanical-migration && ls -la mcp/scripts/project-setup.sh",
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/iphone-tco-planner && bash scripts/validate-mcp.sh",
 ./CLAUDE_CODE_INSTRUCTIONS.md:- New repo: /Users/jederlichman/Development/Projects/dev-infrastructure
-./RESTRUCTURE_PLAN.md:/Users/jederlichman/Development/Projects/ClawdBot/
-./RESTRUCTURE_PLAN.md:/Users/jederlichman/Development/mcp-deployment/
+./RESTRUCTURE_PLAN.md:~/Development/Projects/dev-infrastructure/
+./RESTRUCTURE_PLAN.md:~/Development/Projects/dev-infrastructure/mcp/
 ./RESTRUCTURE_PLAN.md:**Location:** `/Users/jederlichman/Development/Projects/dev-infrastructure`
 ./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d)
-./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d)
+./RESTRUCTURE_PLAN.md:cd ~/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./RESTRUCTURE_PLAN.md:cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./RESTRUCTURE_PLAN.md:cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/
 ./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects/iphone-tco-planner
 ./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_PLAN.md:# /Users/jederlichman/Development/Projects/dev-infrastructure
-./.envrc:export PROJECT_ROOT="/Users/jederlichman/Development/Projects/clawdbot"
-./RESTRUCTURE_EXECUTION_V2.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./.envrc:export PROJECT_ROOT="~/Development/Projects/dev-infrastructure"
+./RESTRUCTURE_EXECUTION_V2.md:cd ~/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_EXECUTION_V2.md:grep -r "/Users/jederlichman" . --exclude-dir=node_modules --exclude-dir=.git > DEPENDENCY_INVENTORY.txt
 ./RESTRUCTURE_EXECUTION_V2.md:cd /Users/jederlichman/Development/Projects
-./RESTRUCTURE_EXECUTION_V2.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+./RESTRUCTURE_EXECUTION_V2.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 ./RESTRUCTURE_EXECUTION_V2.md:cd /Users/jederlichman/Development/Projects
 ./RESTRUCTURE_EXECUTION_V2.md:cd /Users/jederlichman/Development/Projects
-./RESTRUCTURE_EXECUTION_V2.md:ls -la /Users/jederlichman/Development/mcp-deployment/
-./RESTRUCTURE_EXECUTION_V2.md:cp -rv /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./RESTRUCTURE_EXECUTION_V2.md:cp -rv /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./RESTRUCTURE_EXECUTION_V2.md:cp -v /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
-./RESTRUCTURE_EXECUTION_V2.md:  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
-./RESTRUCTURE_EXECUTION_V2.md:- Old: `/Users/jederlichman/Development/Projects/ClawdBot`
+./RESTRUCTURE_EXECUTION_V2.md:ls -la ~/Development/Projects/dev-infrastructure/mcp/
+./RESTRUCTURE_EXECUTION_V2.md:cp -rv ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./RESTRUCTURE_EXECUTION_V2.md:cp -rv ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./RESTRUCTURE_EXECUTION_V2.md:cp -v ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
+./RESTRUCTURE_EXECUTION_V2.md:  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
+./RESTRUCTURE_EXECUTION_V2.md:- Old: `~/Development/Projects/dev-infrastructure`
 ./RESTRUCTURE_EXECUTION_V2.md:- New: `/Users/jederlichman/Development/Projects/dev-infrastructure`
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/ClawdBot/DEPENDENCY_INVENTORY.txt"
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "~/Development/Projects/dev-infrastructure/DEPENDENCY_INVENTORY.txt"
 ./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects && cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M) && ls -ld *backup*",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git log --oneline -1",
-./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/ClawdBot/.envrc",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && git log --oneline -1",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "~/Development/Projects/dev-infrastructure/.envrc",
 ./CLAUDE_CODE_INSTRUCTIONS.md:- Backups: ClawdBot-backup-[timestamp], mcp-deployment-backup-[timestamp]
-./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
-./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/ClawdBot/DEPENDENCY_INVENTORY.txt"
+./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && grep -r '/Users/jederlichman' . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt",
+./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "~/Development/Projects/dev-infrastructure/DEPENDENCY_INVENTORY.txt"
 ./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects && cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M) && ls -ld *backup*",
-./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
-./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/ClawdBot && git log --oneline -1",
-./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "/Users/jederlichman/Development/Projects/ClawdBot/.envrc",
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:/Users/jederlichman/Development/Projects/ClawdBot/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects/ClawdBot
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cd /Users/jederlichman/Development/Projects/ClawdBot
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:- Old: `/Users/jederlichman/Development/Projects/ClawdBot`
+./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && git checkout -b phase-a-mechanical-migration && git add -A && git commit -m 'Pre-migration checkpoint'",
+./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd ~/Development/Projects/dev-infrastructure && git log --oneline -1",
+./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "path": "~/Development/Projects/dev-infrastructure/.envrc",
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:~/Development/Projects/dev-infrastructure/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cd ~/Development/Projects/dev-infrastructure
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cd ~/Development/Projects/dev-infrastructure
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:- Old: `~/Development/Projects/dev-infrastructure`
 ./RESTRUCTURE_PLAN.md:Rename and restructure the ClawdBot repository to reflect its actual purpose: a comprehensive distributed development infrastructure system with MCP integration, multi-machine coordination, and Antigravity IDE patterns.
-./RESTRUCTURE_PLAN.md:/Users/jederlichman/Development/Projects/ClawdBot/
+./RESTRUCTURE_PLAN.md:~/Development/Projects/dev-infrastructure/
 ./RESTRUCTURE_PLAN.md:- ClawdBot (this repo) ✅ MCP adopted
 ./RESTRUCTURE_PLAN.md:1. **Confusing naming** - "ClawdBot" implies it's about clawdbot tool
 ./RESTRUCTURE_PLAN.md:│   └── custom-mcp-server/             # With custom MCP (from ClawdBot)
 ./RESTRUCTURE_PLAN.md:# Backup current ClawdBot repo
 ./RESTRUCTURE_PLAN.md:cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d)
-./RESTRUCTURE_PLAN.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./RESTRUCTURE_PLAN.md:cd ~/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_PLAN.md:mv ClawdBot dev-infrastructure
 ./RESTRUCTURE_PLAN.md:# Custom MCP example (current ClawdBot setup)
 ./RESTRUCTURE_PLAN.md:git commit -m "Restructure: ClawdBot → dev-infrastructure
@@ -90,7 +90,7 @@
 ./MCP_INTEGRATION.md:ClawdBot now demonstrates the MCP deployment pattern:
 ./MCP_INTEGRATION.md:Use ClawdBot as reference for deploying to other projects.
 ./RESTRUCTURE_EXECUTION_V2.md:- [ ] No references to "ClawdBot" except in git history and MIGRATION.md
-./RESTRUCTURE_EXECUTION_V2.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./RESTRUCTURE_EXECUTION_V2.md:cd ~/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_EXECUTION_V2.md:# Find ClawdBot references
 ./RESTRUCTURE_EXECUTION_V2.md:grep -r "ClawdBot" . --exclude-dir=node_modules --exclude-dir=.git >> DEPENDENCY_INVENTORY.txt
 ./RESTRUCTURE_EXECUTION_V2.md:ls ~/Library/LaunchAgents/*ClawdBot* 2>/dev/null >> DEPENDENCY_INVENTORY.txt || true
@@ -104,7 +104,7 @@
 ./RESTRUCTURE_EXECUTION_V2.md:This repo was renamed from ClawdBot to dev-infrastructure on [DATE].
 ./RESTRUCTURE_EXECUTION_V2.md:# Migration Guide: ClawdBot → dev-infrastructure
 ./RESTRUCTURE_EXECUTION_V2.md:- Old: `ClawdBot`
-./RESTRUCTURE_EXECUTION_V2.md:- Old: `/Users/jederlichman/Development/Projects/ClawdBot`
+./RESTRUCTURE_EXECUTION_V2.md:- Old: `~/Development/Projects/dev-infrastructure`
 ./RESTRUCTURE_EXECUTION_V2.md:grep -r "ClawdBot" your-project/
 ./RESTRUCTURE_EXECUTION_V2.md:Backups created: `ClawdBot-backup-[TIMESTAMP]`
 ./RESTRUCTURE_EXECUTION_V2.md:# Restore ClawdBot backup
@@ -114,7 +114,7 @@
 ./RESTRUCTURE_EXECUTION_V2.md:- Renamed ClawdBot → dev-infrastructure
 ./RESTRUCTURE_EXECUTION_V2.md:- [ ] No "ClawdBot" refs except history/MIGRATION.md
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] No "ClawdBot" except history
-./RESTRUCTURE_CHECKLIST_V2.md:  cd /Users/jederlichman/Development/Projects/ClawdBot
+./RESTRUCTURE_CHECKLIST_V2.md:  cd ~/Development/Projects/dev-infrastructure
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] Find ClawdBot references
 ./RESTRUCTURE_CHECKLIST_V2.md:  grep -r "ClawdBot" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] Backup ClawdBot
@@ -125,7 +125,7 @@
 ./RESTRUCTURE_CHECKLIST_V2.md:  git commit -m "Phase 2.1: Renamed ClawdBot → dev-infrastructure"
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] No "ClawdBot" except history
 ./PHASE_A_MECHANICAL_MIGRATION.md:- [ ] All references to "ClawdBot" updated or allowlisted
-./PHASE_A_MECHANICAL_MIGRATION.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./PHASE_A_MECHANICAL_MIGRATION.md:cd ~/Development/Projects/dev-infrastructure
 ./PHASE_A_MECHANICAL_MIGRATION.md:# Find all "ClawdBot" references
 ./PHASE_A_MECHANICAL_MIGRATION.md:grep -r "ClawdBot" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
 ./PHASE_A_MECHANICAL_MIGRATION.md:cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M)
@@ -133,11 +133,11 @@
 ./PHASE_A_MECHANICAL_MIGRATION.md:mv ClawdBot dev-infrastructure
 ./PHASE_A_MECHANICAL_MIGRATION.md:git commit -m "Phase 1: Rename ClawdBot → dev-infrastructure (folder only)"
 ./PHASE_A_MECHANICAL_MIGRATION.md:# Update ClawdBot references in paths
-./PHASE_A_MECHANICAL_MIGRATION.md:  -exec sed -i.bak 's|/Users/jederlichman/Development/Projects/ClawdBot|~/Development/Projects/dev-infrastructure|g' {} \;
+./PHASE_A_MECHANICAL_MIGRATION.md:  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure|~/Development/Projects/dev-infrastructure|g' {} \;
 ./PHASE_A_MECHANICAL_MIGRATION.md:grep -r "ClawdBot" docs/ --exclude-dir=archive 2>/dev/null | head -10
 ./PHASE_A_MECHANICAL_MIGRATION.md:**Previously:** ClawdBot Docker wrapper  
 ./PHASE_A_MECHANICAL_MIGRATION.md:**Repository renamed:** ClawdBot → dev-infrastructure
-./PHASE_A_MECHANICAL_MIGRATION.md:/Users/jederlichman/Development/Projects/ClawdBot
+./PHASE_A_MECHANICAL_MIGRATION.md:~/Development/Projects/dev-infrastructure
 ./PHASE_A_MECHANICAL_MIGRATION.md:grep -r "ClawdBot" .
 ./PHASE_A_MECHANICAL_MIGRATION.md:- `ClawdBot-backup-YYYYMMDD-HHMM/`
 ./PHASE_A_MECHANICAL_MIGRATION.md:ls -ld ClawdBot-backup*
@@ -153,19 +153,19 @@
 ./PHASE_A_MECHANICAL_MIGRATION.md:cd ClawdBot
 ./VALIDATION_INSTRUCTIONS.md:Validate that the ClawdBot project has successfully adopted the standardized MCP deployment stack and that all MCP servers are functioning correctly in Antigravity IDE.
 ./VALIDATION_INSTRUCTIONS.md:We've just integrated the mcp-deployment package with ClawdBot. The project should now have:
-./VALIDATION_INSTRUCTIONS.md:cd /Users/jederlichman/Development/Projects/ClawdBot
-./VALIDATION_INSTRUCTIONS.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./VALIDATION_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure
+./VALIDATION_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure
 ./VALIDATION_INSTRUCTIONS.md:Compare ClawdBot config with iphone-tco-planner (known working):
-./VALIDATION_INSTRUCTIONS.md:     /Users/jederlichman/Development/Projects/ClawdBot/scripts/mcp-gitkraken
-./VALIDATION_INSTRUCTIONS.md:     /Users/jederlichman/Development/Projects/ClawdBot/.antigravity/config.json
+./VALIDATION_INSTRUCTIONS.md:     ~/Development/Projects/dev-infrastructure/scripts/mcp-gitkraken
+./VALIDATION_INSTRUCTIONS.md:     ~/Development/Projects/dev-infrastructure/.antigravity/config.json
 ./VALIDATION_INSTRUCTIONS.md:# - ClawdBot has context7 server (unique to this project)
 ./VALIDATION_INSTRUCTIONS.md:# - ClawdBot may have different setupScript
-./VALIDATION_INSTRUCTIONS.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./VALIDATION_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure
 ./VALIDATION_INSTRUCTIONS.md:# Expected: ClawdBot
-./VALIDATION_INSTRUCTIONS.md:cd /Users/jederlichman/Development/Projects/ClawdBot
-./VALIDATION_INSTRUCTIONS.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./VALIDATION_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure
+./VALIDATION_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure
 ./VALIDATION_INSTRUCTIONS.md:# Re-run: bash ~/Development/mcp-deployment/scripts/project-setup.sh ClawdBot
-./VALIDATION_INSTRUCTIONS.md:cd /Users/jederlichman/Development/Projects/ClawdBot/scripts
+./VALIDATION_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure/scripts
 ./VALIDATION_INSTRUCTIONS.md:## ClawdBot MCP Validation Report
 ./VALIDATION_INSTRUCTIONS.md:[Summary of ClawdBot MCP integration status]
 ./VALIDATION_INSTRUCTIONS.md:1. Document ClawdBot as reference implementation
@@ -179,11 +179,11 @@
 ./RESTRUCTURE_CHECKLIST.md:cd ClawdBot
 ./AGENT_HANDOFF.md:# Agent Handoff: ClawdBot MCP Validation
 ./AGENT_HANDOFF.md:We integrated the standardized MCP deployment stack into the ClawdBot project. The automated validation shows **8/8 tests passed**.
-./AGENT_HANDOFF.md:cd /Users/jederlichman/Development/Projects/ClawdBot
-./AGENT_HANDOFF.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./AGENT_HANDOFF.md:cd ~/Development/Projects/dev-infrastructure
+./AGENT_HANDOFF.md:cd ~/Development/Projects/dev-infrastructure
 ./AGENT_HANDOFF.md:3. Open ClawdBot
 ./AGENT_HANDOFF.md:## ClawdBot MCP Validation - Agent Report
-./AGENT_HANDOFF.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./AGENT_HANDOFF.md:cd ~/Development/Projects/dev-infrastructure
 ./AGENT_HANDOFF.md:echo $PROJECT_NAME            # Should show: ClawdBot
 ./AGENT_HANDOFF.md:- ClawdBot is our second project adopting the MCP stack
 ./AGENT_HANDOFF.md:- ClawdBot adds a unique MCP server (context7) - tests if custom servers work
@@ -193,7 +193,7 @@
 ./scripts/agent-tasks/dispatch-all.sh:# Agent Task Dispatcher for ClawdBot
 ./scripts/agent-tasks/dispatch-all.sh:3. Add handoff template for ClawdBot tasks
 ./scripts/validate-mcp.sh:echo "║  ClawdBot MCP Stack Validation                             ║"
-./PHASE_A_CHECKLIST.md:  cd /Users/jederlichman/Development/Projects/ClawdBot
+./PHASE_A_CHECKLIST.md:  cd ~/Development/Projects/dev-infrastructure
 ./PHASE_A_CHECKLIST.md:  grep -r "ClawdBot" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
 ./PHASE_A_CHECKLIST.md:- [ ] **Backup ClawdBot**
 ./PHASE_A_CHECKLIST.md:  cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M)
@@ -201,7 +201,7 @@
 ./PHASE_A_CHECKLIST.md:  cd ClawdBot
 ./PHASE_A_CHECKLIST.md:  mv ClawdBot dev-infrastructure
 ./PHASE_A_CHECKLIST.md:  git commit -m "Phase 1: Rename ClawdBot → dev-infrastructure (folder)"
-./PHASE_A_CHECKLIST.md:  -exec sed -i.bak 's|/Users/jederlichman/Development/Projects/ClawdBot|~/Development/Projects/dev-infrastructure|g' {} \;
+./PHASE_A_CHECKLIST.md:  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure|~/Development/Projects/dev-infrastructure|g' {} \;
 ./PHASE_A_CHECKLIST.md:  grep -r "ClawdBot" docs/ 2>/dev/null | head -5
 ./PHASE_A_CHECKLIST.md:  ls -ld ~/Development/Projects/ClawdBot-backup*
 ./PHASE_A_CHECKLIST.md:  ls ~/Development/Projects/ClawdBot-backup*/scripts/ | head
@@ -210,19 +210,19 @@
 ./.antigravity/config.json:      "message": "ClawdBot MCP environment loaded"
 ./AGENT_INSTRUCTIONS.md:Execute the mechanical migration of ClawdBot → dev-infrastructure. This is a **rename and consolidate operation ONLY**. No pattern extraction, no documentation overhaul - just clean mechanical changes.
 ./AGENT_INSTRUCTIONS.md:1. Renaming repository: ClawdBot → dev-infrastructure
-./AGENT_INSTRUCTIONS.md:**Location:** `/Users/jederlichman/Development/Projects/ClawdBot/PHASE_A_CHECKLIST.md`
+./AGENT_INSTRUCTIONS.md:**Location:** `~/Development/Projects/dev-infrastructure/PHASE_A_CHECKLIST.md`
 ./AGENT_INSTRUCTIONS.md:Phase 1: Rename Repository     [10 min] - mv ClawdBot → dev-infrastructure  
-./AGENT_INSTRUCTIONS.md:cd /Users/jederlichman/Development/Projects/ClawdBot
+./AGENT_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure
 ./AGENT_INSTRUCTIONS.md:# Find all ClawdBot references
 ./AGENT_INSTRUCTIONS.md:grep -r "ClawdBot" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
 ./AGENT_INSTRUCTIONS.md:cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M)
-./AGENT_INSTRUCTIONS.md:grep -r "/Users/jederlichman/Development/Projects/ClawdBot" . --exclude-dir={node_modules,.git}
+./AGENT_INSTRUCTIONS.md:grep -r "~/Development/Projects/dev-infrastructure" . --exclude-dir={node_modules,.git}
 ./AGENT_INSTRUCTIONS.md:# Restore ClawdBot
 ./AGENT_INSTRUCTIONS.md:mv ClawdBot-backup-YYYYMMDD-HHMM ClawdBot
 ./AGENT_INSTRUCTIONS.md:cd ClawdBot && git status
-./AGENT_INSTRUCTIONS.md:1. Open `/Users/jederlichman/Development/Projects/ClawdBot/PHASE_A_CHECKLIST.md`
+./AGENT_INSTRUCTIONS.md:1. Open `~/Development/Projects/dev-infrastructure/PHASE_A_CHECKLIST.md`
 ./AGENT_HANDOFF_CARD.md:**Target:** ClawdBot → dev-infrastructure  
-./AGENT_HANDOFF_CARD.md:/Users/jederlichman/Development/Projects/ClawdBot
+./AGENT_HANDOFF_CARD.md:~/Development/Projects/dev-infrastructure
 ./AGENT_HANDOFF_CARD.md:~/Development/Projects/ClawdBot
 ./AGENT_HANDOFF_CARD.md:./ClawdBot
 ./AGENT_HANDOFF_CARD.md:- `ClawdBot` → `dev-infrastructure`
@@ -234,7 +234,7 @@
 ./ZERO_COMMAND_GUIDE.md:cd ~/Development/Projects/clawdbot
 ./ZERO_COMMAND_GUIDE.md:echo 'source ~/Development/Projects/clawdbot/scripts/agy-shell-integration.sh' >> ~/.zshrc
 ./ZERO_COMMAND_GUIDE.md:cd ~/Development/Projects/clawdbot
-./DEPENDENCY_INVENTORY.txt:./.envrc:export PROJECT_ROOT="/Users/jederlichman/Development/Projects/clawdbot"
+./DEPENDENCY_INVENTORY.txt:./.envrc:export PROJECT_ROOT="~/Development/Projects/dev-infrastructure"
 ./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:1. **Confusing naming** - "ClawdBot" implies it's about clawdbot tool
 ./DEPENDENCY_INVENTORY.txt:./AGENT_HANDOFF.md:- context7 server is ClawdBot-specific (access to clawdbot documentation)
 ./RESTRUCTURE_PLAN.md:  - Originally: clawdbot Docker wrapper
@@ -244,7 +244,7 @@
 ./RESTRUCTURE_PLAN.md:2. **What about existing clawdbot Docker configs?**
 ./RESTRUCTURE_PLAN.md:   - Or move to separate clawdbot-docker repo if still needed
 ./.envrc:export PROJECT_NAME="clawdbot"
-./.envrc:export PROJECT_ROOT="/Users/jederlichman/Development/Projects/clawdbot"
+./.envrc:export PROJECT_ROOT="~/Development/Projects/dev-infrastructure"
 ./.envrc:echo "✅ Loaded clawdbot environment"
 ./PATHS_COMPLETE.md:$ cd ~/Development/Projects/clawdbot
 ./PATHS_COMPLETE.md:📍 Project detected: clawdbot
@@ -409,7 +409,7 @@
 ./tests/system/test-connectivity.sh:    'test -f ~/Library/LaunchAgents/com.clawdbot.node.plist && echo "yes"' 2>/dev/null || echo "no")
 ./.claude/settings.local.json:      "Bash(docker exec clawdbot-gateway-secure cat /app/.clawdbot/gateway-token.txt)",
 ./.claude/settings.local.json:      "Bash(clawdbot gateway:*)",
-./.claude/handoffs/20260129-160806_manual.md:cd /Users/jederlichman/Development/Projects/clawdbot
+./.claude/handoffs/20260129-160806_manual.md:cd ~/Development/Projects/dev-infrastructure
 ./.claude/handoffs/20260129-160806_manual.md:launchctl load ~/Library/LaunchAgents/com.clawdbot.connection-monitor.plist
 ./PHASE_A_MECHANICAL_MIGRATION.md:cat scripts/agy-shell-integration.sh 2>/dev/null | grep -i clawdbot
 ./docs/FILE_STRUCTURE.md:clawdbot/
@@ -505,12 +505,12 @@
 ./docs/ANTIGRAVITY-MCP-SETUP.md:| `filesystem-clawdbot` | File system operations        | `@modelcontextprotocol/server-filesystem` |
 ./docs/ANTIGRAVITY-MCP-SETUP.md:- `PROJECT_NAME` - "clawdbot"
 ./docs/ANTIGRAVITY-MCP-SETUP.md:# Should show clawdbot MCP servers
-./docs/ANTIGRAVITY-MCP-SETUP.md:# "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-gitkraken"
+./docs/ANTIGRAVITY-MCP-SETUP.md:# "~/Development/Projects/dev-infrastructure/scripts/mcp-gitkraken"
 ./docs/ANTIGRAVITY-MCP-SETUP.md:cd ~/Development/Projects/clawdbot
-./docs/ANTIGRAVITY-MCP-SETUP.md:# Should output: /Users/jederlichman/Development/Projects/clawdbot
-./docs/ANTIGRAVITY-MCP-SETUP.md:   cd "/Users/jederlichman/Development/Projects/clawdbot"
+./docs/ANTIGRAVITY-MCP-SETUP.md:# Should output: ~/Development/Projects/dev-infrastructure
+./docs/ANTIGRAVITY-MCP-SETUP.md:   cd "~/Development/Projects/dev-infrastructure"
 ./docs/ANTIGRAVITY-MCP-SETUP.md:       "newserver-clawdbot": {
-./docs/ANTIGRAVITY-MCP-SETUP.md:           "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-newserver"
+./docs/ANTIGRAVITY-MCP-SETUP.md:           "~/Development/Projects/dev-infrastructure/scripts/mcp-newserver"
 ./docs/ANTIGRAVITY-MCP-SETUP.md:clawdbot/
 ./docs/ANTIGRAVITY-MCP-SETUP.md:   cd ~/Development/Projects/clawdbot
 ./docs/ANTIGRAVITY-MCP-SETUP.md:**Project**: clawdbot
@@ -951,7 +951,7 @@
 ./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:- [ ] Update `~/.clawdbot/clawdbot.json` on TW node
 ./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:cat > ~/Library/LaunchAgents/com.clawdbot.gateway.plist << 'EOF'
 ./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:    <string>com.clawdbot.gateway</string>
-./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:            cd /Users/jederlichman/Development/Projects/clawdbot
+./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:            cd ~/Development/Projects/dev-infrastructure
 ./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:            exec clawdbot gateway start --bind lan
 ./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:    <string>/tmp/clawdbot-gateway.log</string>
 ./docs/archive/TOKEN_IMPLEMENTATION_PLAN.md:    <string>/tmp/clawdbot-gateway.err.log</string>
@@ -1063,17 +1063,17 @@
 ./docs/GATEWAY-DOCKER-FIXES.md:docker ps | grep clawdbot
 ./docs/GATEWAY-DOCKER-FIXES.md:docker logs clawdbot-gateway-secure | grep "webchat connected"
 ./docs/GATEWAY-DOCKER-FIXES.md:docker exec clawdbot-gateway-secure clawdbot devices list
-./docs/SETUP_COMPLETE.md:cd /Users/jederlichman/Development/Projects/clawdbot
+./docs/SETUP_COMPLETE.md:cd ~/Development/Projects/dev-infrastructure
 ./docs/SETUP_COMPLETE.md:docker compose run --rm clawdbot-cli models auth paste-token --provider anthropic
 ./docs/SETUP_COMPLETE.md:docker compose up -d clawdbot-gateway
 ./docs/SETUP_COMPLETE.md:docker compose run --rm clawdbot-cli doctor
-./docs/SETUP_COMPLETE.md:cd /Users/jederlichman/Development/Projects/clawdbot
+./docs/SETUP_COMPLETE.md:cd ~/Development/Projects/dev-infrastructure
 ./docs/SETUP_COMPLETE.md:- **GitHub**: https://github.com/clawdbot/clawdbot/issues
 ./docs/SETUP_COMPLETE.md:- **Discord**: https://discord.gg/clawdbot
 ./docs/SETUP_COMPLETE.md:docker compose logs clawdbot-gateway
 ./docs/SETUP_COMPLETE.md:docker compose run --rm clawdbot-cli doctor
-./docs/SETUP_COMPLETE.md:cd /Users/jederlichman/Development/Projects/clawdbot
-./docs/SETUP_COMPLETE.md:**Location**: `/Users/jederlichman/Development/Projects/clawdbot/`
+./docs/SETUP_COMPLETE.md:cd ~/Development/Projects/dev-infrastructure
+./docs/SETUP_COMPLETE.md:**Location**: `~/Development/Projects/dev-infrastructure/`
 ./docs/README.md:> ⚠️ **Important**: This is a **companion guide** to the [official Clawdbot repository](https://github.com/clawdbot/clawdbot). It provides comprehensive documentation, security hardening, and best practices to enhance the official setup. See [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) for how to use this with the official repo.
 ./docs/README.md:git clone https://github.com/clawdbot/clawdbot.git ~/Development/Projects/clawdbot-official
 ./docs/README.md:cd ~/Development/Projects/clawdbot-official
@@ -1082,7 +1082,7 @@
 ./docs/README.md:docker compose run --rm clawdbot-cli config set gateway.sandbox.mode strict
 ./docs/README.md:docker compose up -d clawdbot-gateway
 ./docs/README.md:docker compose run --rm clawdbot-cli doctor
-./docs/README.md:cp /Users/jederlichman/Development/Projects/clawdbot/install-aliases.sh ./
+./docs/README.md:cp ~/Development/Projects/dev-infrastructure/install-aliases.sh ./
 ./docs/README.md:- Run diagnostics: `docker compose run --rm clawdbot-cli doctor`
 ./docs/README.md:- View logs: `docker compose logs -f clawdbot-gateway`
 ./docs/README.md:- GitHub Issues: https://github.com/clawdbot/clawdbot/issues
@@ -1094,7 +1094,7 @@
 ./docs/SECURITY-TESTS.md:1. Open `/Users/jederlichman/scripts/test-clawdbot-system.sh`
 ./docs/SECURITY-TESTS.md:- **Test Script:** `/Users/jederlichman/scripts/test-clawdbot-system.sh`
 ./docs/SECURITY-TESTS.md:- **Test Results:** `/tmp/clawdbot-test-results.log`
-./docs/DEPLOYMENT.md:cd /Users/jederlichman/Development/Projects/clawdbot/
+./docs/DEPLOYMENT.md:cd ~/Development/Projects/dev-infrastructure/
 ./docs/DEPLOYMENT.md:- Data directory created at `~/Development/clawdbot-workspace/data`
 ./docs/DEPLOYMENT.md:docker compose run --rm clawdbot-cli config set gateway.sandbox.enabled true
 ./docs/DEPLOYMENT.md:docker compose run --rm clawdbot-cli config set gateway.sandbox.mode strict
@@ -1341,7 +1341,7 @@
 ./docs/QUICK_REFERENCE.md:- Backup config before major changes: `docker compose run --rm clawdbot-cli config export > backup.json`
 ./docs/INTEGRATION_GUIDE.md:git clone https://github.com/clawdbot/clawdbot.git clawdbot-official
 ./docs/INTEGRATION_GUIDE.md:cd clawdbot-official
-./docs/INTEGRATION_GUIDE.md:# Reference: /Users/jederlichman/Development/Projects/clawdbot/
+./docs/INTEGRATION_GUIDE.md:# Reference: ~/Development/Projects/dev-infrastructure/
 ./docs/INTEGRATION_GUIDE.md:# In the official clawdbot-official directory:
 ./docs/INTEGRATION_GUIDE.md:# Still in clawdbot-official directory:
 ./docs/INTEGRATION_GUIDE.md:docker compose run --rm clawdbot-cli models auth paste-token --provider anthropic
@@ -1358,7 +1358,7 @@
 ./docs/INTEGRATION_GUIDE.md:docker compose run --rm clawdbot-cli models auth set-default --provider google-antigravity
 ./docs/INTEGRATION_GUIDE.md:docker compose up -d clawdbot-gateway
 ./docs/INTEGRATION_GUIDE.md:docker compose run --rm clawdbot-cli doctor
-./docs/INTEGRATION_GUIDE.md:cp /Users/jederlichman/Development/Projects/clawdbot/install-aliases.sh ~/Development/Projects/clawdbot-official/
+./docs/INTEGRATION_GUIDE.md:cp ~/Development/Projects/dev-infrastructure/install-aliases.sh ~/Development/Projects/clawdbot-official/
 ./docs/INTEGRATION_GUIDE.md:cd ~/Development/Projects/clawdbot-official
 ./docs/INTEGRATION_GUIDE.md:├── clawdbot/                          # This guide (documentation)
 ./docs/INTEGRATION_GUIDE.md:└── clawdbot-official/                 # Official Clawdbot code
@@ -1380,7 +1380,7 @@
 ./docs/INTEGRATION_GUIDE.md:docker compose run --rm clawdbot-cli config set gateway.bind localhost
 ./docs/INTEGRATION_GUIDE.md:docker compose up -d clawdbot-gateway
 ./docs/INTEGRATION_GUIDE.md:docker compose run --rm clawdbot-cli doctor
-./docs/INTEGRATION_GUIDE.md:- **This Guide**: All documentation in `/Users/jederlichman/Development/Projects/clawdbot/`
+./docs/INTEGRATION_GUIDE.md:- **This Guide**: All documentation in `~/Development/Projects/dev-infrastructure/`
 ./docs/INTEGRATION_GUIDE.md:- **Official Clawdbot**: https://github.com/clawdbot/clawdbot
 ./docs/INTEGRATION_GUIDE.md:- **Issues**: https://github.com/clawdbot/clawdbot/issues
 ./docs/INTEGRATION_GUIDE.md:- **Discord**: https://discord.gg/clawdbot
@@ -1606,7 +1606,7 @@
 ./scripts/test-shell-integration.sh:echo "Test 1: Navigate to clawdbot project"
 ./scripts/test-shell-integration.sh:cd ~/Development/Projects/clawdbot
 ./scripts/test-shell-integration.sh:echo "  cd ~/Development/Projects/clawdbot"
-./scripts/mcp-docker:cd "/Users/jederlichman/Development/Projects/clawdbot"
+./scripts/mcp-docker:cd "~/Development/Projects/dev-infrastructure"
 ./scripts/gateway-startup-check.sh:# Gateway startup validation - run before starting clawdbot gateway
 ./scripts/gateway-startup-check.sh:for dir in "${HOME}/.clawdbot" "/tmp"; do
 ./scripts/enable-tw-full-control.sh:CONFIG_FILE="$HOME/.clawdbot/exec-approvals.json"
@@ -1618,7 +1618,7 @@
 ./scripts/run-all-tests.sh:        "$SCRIPT_DIR/test-clawdbot-system.sh" | tee -a "$REPORT_FILE"
 ./scripts/run-all-tests.sh:        "$SCRIPT_DIR/test-clawdbot-system.sh" | tee -a "$REPORT_FILE"
 ./scripts/run-all-tests.sh:                    "$SCRIPT_DIR/test-clawdbot-system.sh" | tee -a "$REPORT_FILE"
-./scripts/agent-tasks/dispatch-all.sh:PROJECT_DIR="/Users/jederlichman/Development/Projects/clawdbot"
+./scripts/agent-tasks/dispatch-all.sh:PROJECT_DIR="~/Development/Projects/dev-infrastructure"
 ./scripts/tw-node-watchdog.sh:LOG_FILE="$HOME/.clawdbot/logs/tw-watchdog.log"
 ./scripts/tw-node-watchdog.sh:    STATUS_LINE=$(clawdbot nodes status 2>/dev/null | grep "$NODE_NAME")
 ./scripts/tw-node-watchdog.sh:    if ssh "$NODE_HOST" "launchctl kickstart -k gui/501/com.clawdbot.node" 2>/dev/null; then
@@ -1788,7 +1788,7 @@
 ./clawdbot.code-workspace:      "path": "/Users/jederlichman/tw-mac/Development/Projects/clawdbot",
 ./.git/config:	url = git@github.com:DonQuilatte/clawdbot-docker.git
 Binary file ./.git/index matches
-./PATH_3_PLAN.md:        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-desktop-commander"
+./PATH_3_PLAN.md:        "~/Development/Projects/dev-infrastructure/scripts/mcp-desktop-commander"
 ./PATH_3_PLAN.md:cp ~/Development/Projects/clawdbot/templates/.antigravity/config.json .antigravity/
 ./PATH_3_PLAN.md:cp ~/Development/Projects/clawdbot/templates/scripts/project-setup.sh scripts/
 ./PATH_3_PLAN.md:cp ~/Development/Projects/clawdbot/templates/scripts/mcp-* scripts/
@@ -1907,41 +1907,41 @@ Binary file ./.git/index matches
 ./infrastructure/tw-mac/com.clawdbot.node.plist:    <string>/Users/tywhitaker/.clawdbot/logs/node.log</string>
 ./infrastructure/tw-mac/com.clawdbot.node.plist:    <string>/Users/tywhitaker/.clawdbot/logs/node.err.log</string>
 ./.antigravity/mcp_config.json:    "gitkraken-clawdbot": {
-./.antigravity/mcp_config.json:        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-gitkraken"
+./.antigravity/mcp_config.json:        "~/Development/Projects/dev-infrastructure/scripts/mcp-gitkraken"
 ./.antigravity/mcp_config.json:    "docker-clawdbot": {
-./.antigravity/mcp_config.json:        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-docker"
+./.antigravity/mcp_config.json:        "~/Development/Projects/dev-infrastructure/scripts/mcp-docker"
 ./.antigravity/mcp_config.json:    "filesystem-clawdbot": {
-./.antigravity/mcp_config.json:        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-filesystem"
+./.antigravity/mcp_config.json:        "~/Development/Projects/dev-infrastructure/scripts/mcp-filesystem"
 ./CLAUDE.md:cd ~/Development/Projects/clawdbot
-./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
+./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
 ./CLAUDE_CODE_INSTRUCTIONS.md:- [x] Repository renamed and mcp-deployment consolidated
 ./CLAUDE_CODE_INSTRUCTIONS.md:- Backups: ClawdBot-backup-[timestamp], mcp-deployment-backup-[timestamp]
-./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:/Users/jederlichman/Development/mcp-deployment/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d)
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:ls -la /Users/jederlichman/Development/mcp-deployment/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -rv /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -rv /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -v /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
-./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
+./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:  "command": "cd /Users/jederlichman/Development/Projects/dev-infrastructure && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \\; && find . -name '*.bak' -delete",
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:~/Development/Projects/dev-infrastructure/mcp/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d)
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:ls -la ~/Development/Projects/dev-infrastructure/mcp/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -rv ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -rv ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:cp -v ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
+./DEPENDENCY_INVENTORY.txt:./RESTRUCTURE_EXECUTION_V2.md:  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
 ./DEPENDENCY_INVENTORY.txt:./CLAUDE_CODE_INSTRUCTIONS.md:- Backups: ClawdBot-backup-[timestamp], mcp-deployment-backup-[timestamp]
 ./DEPENDENCY_INVENTORY.txt:./VALIDATION_INSTRUCTIONS.md:We've just integrated the mcp-deployment package with ClawdBot. The project should now have:
 ./DEPENDENCY_INVENTORY.txt:./VALIDATION_INSTRUCTIONS.md:# Re-run: bash ~/Development/mcp-deployment/scripts/project-setup.sh ClawdBot
-./RESTRUCTURE_PLAN.md:/Users/jederlichman/Development/mcp-deployment/
+./RESTRUCTURE_PLAN.md:~/Development/Projects/dev-infrastructure/mcp/
 ./RESTRUCTURE_PLAN.md:├── mcp/                                # MCP deployment system (merged from mcp-deployment)
 ./RESTRUCTURE_PLAN.md:# Backup mcp-deployment
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d)
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d)
 ./RESTRUCTURE_PLAN.md:**Step 2.3: Merge mcp-deployment**
 ./RESTRUCTURE_PLAN.md:# Copy mcp-deployment content into mcp/
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./RESTRUCTURE_PLAN.md:cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
-./RESTRUCTURE_PLAN.md:cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./RESTRUCTURE_PLAN.md:cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
+./RESTRUCTURE_PLAN.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/
 ./RESTRUCTURE_PLAN.md:# Old: ~/Development/mcp-deployment/scripts/project-setup.sh
 ./RESTRUCTURE_PLAN.md:# Update any references to mcp-deployment
 ./RESTRUCTURE_PLAN.md:- Merged mcp-deployment into mcp/ subdirectory  
@@ -1952,18 +1952,18 @@ Binary file ./.git/index matches
 ./RESTRUCTURE_EXECUTION_V2.md:- [ ] mcp-deployment fully merged, original location can be deleted
 ./RESTRUCTURE_EXECUTION_V2.md:# Find mcp-deployment references
 ./RESTRUCTURE_EXECUTION_V2.md:grep -r "mcp-deployment" . --exclude-dir=node_modules --exclude-dir=.git >> DEPENDENCY_INVENTORY.txt
-./RESTRUCTURE_EXECUTION_V2.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+./RESTRUCTURE_EXECUTION_V2.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 ./RESTRUCTURE_EXECUTION_V2.md:**2.4: Merge mcp-deployment (with dry run)**
-./RESTRUCTURE_EXECUTION_V2.md:ls -la /Users/jederlichman/Development/mcp-deployment/
-./RESTRUCTURE_EXECUTION_V2.md:cp -rv /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./RESTRUCTURE_EXECUTION_V2.md:cp -rv /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./RESTRUCTURE_EXECUTION_V2.md:cp -v /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
+./RESTRUCTURE_EXECUTION_V2.md:ls -la ~/Development/Projects/dev-infrastructure/mcp/
+./RESTRUCTURE_EXECUTION_V2.md:cp -rv ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./RESTRUCTURE_EXECUTION_V2.md:cp -rv ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./RESTRUCTURE_EXECUTION_V2.md:cp -v ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
 ./RESTRUCTURE_EXECUTION_V2.md:git commit -m "Phase 2.3: Merged mcp-deployment into mcp/"
 ./RESTRUCTURE_EXECUTION_V2.md:# Replace mcp-deployment references
 ./RESTRUCTURE_EXECUTION_V2.md:  -exec sed -i.bak 's|~/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
-./RESTRUCTURE_EXECUTION_V2.md:  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
+./RESTRUCTURE_EXECUTION_V2.md:  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
 ./RESTRUCTURE_EXECUTION_V2.md:- [ ] mcp-deployment merged
-./RESTRUCTURE_EXECUTION_V2.md:- Old: `/Users/jederlichman/Development/mcp-deployment` (separate repo)
+./RESTRUCTURE_EXECUTION_V2.md:- Old: `~/Development/Projects/dev-infrastructure/mcp` (separate repo)
 ./RESTRUCTURE_EXECUTION_V2.md:grep -r "mcp-deployment" your-project/
 ./RESTRUCTURE_EXECUTION_V2.md:alias deploy-mcp='bash ~/Development/mcp-deployment/scripts/project-setup.sh'
 ./RESTRUCTURE_EXECUTION_V2.md:## Step 2: Restore mcp-deployment
@@ -1979,36 +1979,36 @@ Binary file ./.git/index matches
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] Find mcp-deployment references
 ./RESTRUCTURE_CHECKLIST_V2.md:  grep -r "mcp-deployment" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] Backup mcp-deployment
-./RESTRUCTURE_CHECKLIST_V2.md:  cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+./RESTRUCTURE_CHECKLIST_V2.md:  cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] DRY RUN - List mcp-deployment contents
-./RESTRUCTURE_CHECKLIST_V2.md:  ls -la /Users/jederlichman/Development/mcp-deployment/
+./RESTRUCTURE_CHECKLIST_V2.md:  ls -la ~/Development/Projects/dev-infrastructure/mcp/
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] Merge mcp-deployment
-./RESTRUCTURE_CHECKLIST_V2.md:  cp -rv /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./RESTRUCTURE_CHECKLIST_V2.md:  cp -rv /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./RESTRUCTURE_CHECKLIST_V2.md:  cp -v /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
+./RESTRUCTURE_CHECKLIST_V2.md:  cp -rv ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./RESTRUCTURE_CHECKLIST_V2.md:  cp -rv ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./RESTRUCTURE_CHECKLIST_V2.md:  cp -v ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
 ./RESTRUCTURE_CHECKLIST_V2.md:  git commit -m "Phase 2.3: Merged mcp-deployment"
 ./RESTRUCTURE_CHECKLIST_V2.md:    -exec sed -i.bak 's|~/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
-./RESTRUCTURE_CHECKLIST_V2.md:    -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
+./RESTRUCTURE_CHECKLIST_V2.md:    -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
 ./RESTRUCTURE_CHECKLIST_V2.md:  ln -s ~/Development/Projects/dev-infrastructure/mcp ~/Development/mcp-deployment-redirect
 ./RESTRUCTURE_CHECKLIST_V2.md:- [ ] mcp-deployment merged
 ./PHASE_A_MECHANICAL_MIGRATION.md:- [ ] Repo renamed and consolidates mcp-deployment
 ./PHASE_A_MECHANICAL_MIGRATION.md:# Find all mcp-deployment references
 ./PHASE_A_MECHANICAL_MIGRATION.md:grep -r "mcp-deployment" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
-./PHASE_A_MECHANICAL_MIGRATION.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+./PHASE_A_MECHANICAL_MIGRATION.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 ./PHASE_A_MECHANICAL_MIGRATION.md:## Phase 2: Consolidate mcp-deployment (20 minutes)
 ./PHASE_A_MECHANICAL_MIGRATION.md:### Step 2.2: Copy (Not Move) mcp-deployment Content
-./PHASE_A_MECHANICAL_MIGRATION.md:cp /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./PHASE_A_MECHANICAL_MIGRATION.md:cp /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/ 2>/dev/null || true
-./PHASE_A_MECHANICAL_MIGRATION.md:cp /Users/jederlichman/Development/mcp-deployment/README.md mcp/
-./PHASE_A_MECHANICAL_MIGRATION.md:cp /Users/jederlichman/Development/mcp-deployment/CHANGELOG.md mcp/
-./PHASE_A_MECHANICAL_MIGRATION.md:cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/ 2>/dev/null || true
+./PHASE_A_MECHANICAL_MIGRATION.md:cp ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./PHASE_A_MECHANICAL_MIGRATION.md:cp ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/ 2>/dev/null || true
+./PHASE_A_MECHANICAL_MIGRATION.md:cp ~/Development/Projects/dev-infrastructure/mcp/README.md mcp/
+./PHASE_A_MECHANICAL_MIGRATION.md:cp ~/Development/Projects/dev-infrastructure/mcp/CHANGELOG.md mcp/
+./PHASE_A_MECHANICAL_MIGRATION.md:cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/ 2>/dev/null || true
 ./PHASE_A_MECHANICAL_MIGRATION.md:git commit -m "Phase 2: Consolidate mcp-deployment into mcp/"
 ./PHASE_A_MECHANICAL_MIGRATION.md:**✅ Phase 2 Complete** - mcp-deployment merged
 ./PHASE_A_MECHANICAL_MIGRATION.md:# Update mcp-deployment paths
-./PHASE_A_MECHANICAL_MIGRATION.md:  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
+./PHASE_A_MECHANICAL_MIGRATION.md:  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
 ./PHASE_A_MECHANICAL_MIGRATION.md:- `mcp/` - MCP deployment system (formerly separate mcp-deployment repo)
 ./PHASE_A_MECHANICAL_MIGRATION.md:**Consolidated:** mcp-deployment merged into `mcp/` subdirectory
-./PHASE_A_MECHANICAL_MIGRATION.md:/Users/jederlichman/Development/mcp-deployment
+./PHASE_A_MECHANICAL_MIGRATION.md:~/Development/Projects/dev-infrastructure/mcp
 ./PHASE_A_MECHANICAL_MIGRATION.md:# Old: alias deploy-mcp='bash ~/Development/mcp-deployment/scripts/project-setup.sh'
 ./PHASE_A_MECHANICAL_MIGRATION.md:grep -r "mcp-deployment" .
 ./PHASE_A_MECHANICAL_MIGRATION.md:- `mcp-deployment-backup-YYYYMMDD-HHMM/`
@@ -2020,17 +2020,17 @@ Binary file ./.git/index matches
 ./PHASE_A_MECHANICAL_MIGRATION.md:✅ mcp-deployment consolidated into mcp/
 ./PHASE_A_MECHANICAL_MIGRATION.md:✅ mcp-deployment consolidated into mcp/
 ./PHASE_A_MECHANICAL_MIGRATION.md:- [x] Repo renamed and consolidates mcp-deployment
-./PHASE_A_MECHANICAL_MIGRATION.md:mv mcp-deployment-backup-YYYYMMDD-HHMM /Users/jederlichman/Development/mcp-deployment
+./PHASE_A_MECHANICAL_MIGRATION.md:mv mcp-deployment-backup-YYYYMMDD-HHMM ~/Development/Projects/dev-infrastructure/mcp
 ./VALIDATION_INSTRUCTIONS.md:We've just integrated the mcp-deployment package with ClawdBot. The project should now have:
 ./VALIDATION_INSTRUCTIONS.md:# Re-run: bash ~/Development/mcp-deployment/scripts/project-setup.sh ClawdBot
 ./RESTRUCTURE_CHECKLIST.md:- [ ] Verify no uncommitted changes in mcp-deployment
 ./RESTRUCTURE_CHECKLIST.md:- [ ] **Backup mcp-deployment**
-./RESTRUCTURE_CHECKLIST.md:  cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d)
+./RESTRUCTURE_CHECKLIST.md:  cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d)
 ./RESTRUCTURE_CHECKLIST.md:- [ ] **2.3 Merge mcp-deployment**
-./RESTRUCTURE_CHECKLIST.md:  cp -r /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./RESTRUCTURE_CHECKLIST.md:  cp -r /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-./RESTRUCTURE_CHECKLIST.md:  cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
-./RESTRUCTURE_CHECKLIST.md:  cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/
+./RESTRUCTURE_CHECKLIST.md:  cp -r ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./RESTRUCTURE_CHECKLIST.md:  cp -r ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+./RESTRUCTURE_CHECKLIST.md:  cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
+./RESTRUCTURE_CHECKLIST.md:  cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/
 ./RESTRUCTURE_CHECKLIST.md:  - Search for "mcp-deployment" in all scripts
 ./RESTRUCTURE_CHECKLIST.md:- Merged mcp-deployment into mcp/ subdirectory
 ./RESTRUCTURE_CHECKLIST.md:  ln -s ~/Development/Projects/dev-infrastructure/mcp ~/Development/mcp-deployment-redirect
@@ -2040,39 +2040,39 @@ Binary file ./.git/index matches
 ./PHASE_A_CHECKLIST.md:- [ ] Repo renamed and consolidates mcp-deployment
 ./PHASE_A_CHECKLIST.md:  grep -r "mcp-deployment" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
 ./PHASE_A_CHECKLIST.md:- [ ] **Backup mcp-deployment**
-./PHASE_A_CHECKLIST.md:  cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+./PHASE_A_CHECKLIST.md:  cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 ./PHASE_A_CHECKLIST.md:  ls -ld mcp-deployment-backup*
 ./PHASE_A_CHECKLIST.md:## PHASE 2: Consolidate mcp-deployment ⏱️ 20 min
 ./PHASE_A_CHECKLIST.md:- [ ] **Copy mcp-deployment (not move)**
-./PHASE_A_CHECKLIST.md:  cp /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-./PHASE_A_CHECKLIST.md:  cp /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/ 2>/dev/null || true
-./PHASE_A_CHECKLIST.md:  cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
-./PHASE_A_CHECKLIST.md:  cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/ 2>/dev/null || true
+./PHASE_A_CHECKLIST.md:  cp ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+./PHASE_A_CHECKLIST.md:  cp ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/ 2>/dev/null || true
+./PHASE_A_CHECKLIST.md:  cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
+./PHASE_A_CHECKLIST.md:  cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/ 2>/dev/null || true
 ./PHASE_A_CHECKLIST.md:  git commit -m "Phase 2: Consolidate mcp-deployment into mcp/"
 ./PHASE_A_CHECKLIST.md:**✅ Checkpoint:** mcp-deployment merged
-./PHASE_A_CHECKLIST.md:  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
+./PHASE_A_CHECKLIST.md:  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
 ./PHASE_A_CHECKLIST.md:  ls -ld ~/Development/mcp-deployment-backup*
 ./PHASE_A_CHECKLIST.md:  ln -s Projects/dev-infrastructure/mcp mcp-deployment-redirect
 ./PHASE_A_CHECKLIST.md:  ls -la mcp-deployment-redirect
 ./PHASE_A_CHECKLIST.md:✅ mcp-deployment consolidated  
 ./PHASE_A_CHECKLIST.md:- [ ] Repo renamed and consolidates mcp-deployment
-./PHASE_A_CHECKLIST.md:mv mcp-deployment-backup-YYYYMMDD-HHMM /Users/jederlichman/Development/mcp-deployment
+./PHASE_A_CHECKLIST.md:mv mcp-deployment-backup-YYYYMMDD-HHMM ~/Development/Projects/dev-infrastructure/mcp
 ./AGENT_INSTRUCTIONS.md:2. Consolidating mcp-deployment into mcp/ subdirectory
 ./AGENT_INSTRUCTIONS.md:Phase 2: Consolidate           [20 min] - Merge mcp-deployment into mcp/
 ./AGENT_INSTRUCTIONS.md:- [ ] Repository renamed and consolidates mcp-deployment
 ./AGENT_INSTRUCTIONS.md:# Find all mcp-deployment references  
 ./AGENT_INSTRUCTIONS.md:grep -r "mcp-deployment" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
-./AGENT_INSTRUCTIONS.md:cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+./AGENT_INSTRUCTIONS.md:cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 ./AGENT_INSTRUCTIONS.md:# Verify mcp-deployment copied successfully
-./AGENT_INSTRUCTIONS.md:grep -r "/Users/jederlichman/Development/mcp-deployment" . --exclude-dir={node_modules,.git}
+./AGENT_INSTRUCTIONS.md:grep -r "~/Development/Projects/dev-infrastructure/mcp" . --exclude-dir={node_modules,.git}
 ./AGENT_INSTRUCTIONS.md:# Restore mcp-deployment
-./AGENT_INSTRUCTIONS.md:mv mcp-deployment-backup-YYYYMMDD-HHMM /Users/jederlichman/Development/mcp-deployment
-./AGENT_INSTRUCTIONS.md:cd /Users/jederlichman/Development/mcp-deployment && ls -la
+./AGENT_INSTRUCTIONS.md:mv mcp-deployment-backup-YYYYMMDD-HHMM ~/Development/Projects/dev-infrastructure/mcp
+./AGENT_INSTRUCTIONS.md:cd ~/Development/Projects/dev-infrastructure/mcp && ls -la
 ./AGENT_INSTRUCTIONS.md:**Cause:** mcp-deployment doesn't have all expected directories
-./AGENT_INSTRUCTIONS.md:ls -la /Users/jederlichman/Development/mcp-deployment/
-./AGENT_INSTRUCTIONS.md:cp /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/ 2>/dev/null || true
-./AGENT_INSTRUCTIONS.md:grep -r "/Users/jederlichman/Development/mcp-deployment" . --exclude-dir={node_modules,.git} | head -10
+./AGENT_INSTRUCTIONS.md:ls -la ~/Development/Projects/dev-infrastructure/mcp/
+./AGENT_INSTRUCTIONS.md:cp ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/ 2>/dev/null || true
+./AGENT_INSTRUCTIONS.md:grep -r "~/Development/Projects/dev-infrastructure/mcp" . --exclude-dir={node_modules,.git} | head -10
 ./AGENT_INSTRUCTIONS.md:- [x] Repository renamed and consolidates mcp-deployment
-./AGENT_HANDOFF_CARD.md:- `/Users/jederlichman/Development/mcp-deployment` → `dev-infrastructure/mcp/`
+./AGENT_HANDOFF_CARD.md:- `~/Development/Projects/dev-infrastructure/mcp` → `dev-infrastructure/mcp/`
 ./AGENT_HANDOFF_CARD.md:□ Phase 2: Consolidate        [20 min] - Merge mcp-deployment
 ./AGENT_HANDOFF_CARD.md:- [ ] Repository renamed and mcp-deployment merged

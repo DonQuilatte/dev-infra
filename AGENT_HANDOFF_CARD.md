@@ -43,7 +43,7 @@ Desktop Commander:read_file("/path/to/file")
 
 ```bash
 # CORRECT
-/Users/jederlichman/Development/Projects/ClawdBot
+~/Development/Projects/dev-infrastructure
 
 # WRONG
 ~/Development/Projects/ClawdBot
@@ -58,7 +58,7 @@ You're renaming a repository and consolidating two repos. Mechanical changes onl
 
 **What changes:**
 - `ClawdBot` → `dev-infrastructure`
-- `/Users/jederlichman/Development/mcp-deployment` → `dev-infrastructure/mcp/`
+- `~/Development/Projects/dev-infrastructure/mcp` → `dev-infrastructure/mcp/`
 - All path references updated
 
 **What stays safe:**

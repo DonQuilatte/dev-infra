@@ -41,7 +41,7 @@ Now use the documentation from this repository to configure Clawdbot properly:
 
 ```bash
 # Keep this guide open in another terminal/editor
-# Reference: /Users/jederlichman/Development/Projects/clawdbot/
+# Reference: ~/Development/Projects/dev-infrastructure/
 
 # Follow DEPLOYMENT.md for step-by-step instructions
 # Follow SECURITY.md for hardening
@@ -127,7 +127,7 @@ Copy the alias installer from this guide:
 
 ```bash
 # Copy alias installer to official repo
-cp /Users/jederlichman/Development/Projects/clawdbot/install-aliases.sh ~/Development/Projects/clawdbot-official/
+cp ~/Development/Projects/dev-infrastructure/install-aliases.sh ~/Development/Projects/clawdbot-official/
 
 # Run it
 cd ~/Development/Projects/clawdbot-official
@@ -257,7 +257,7 @@ docker compose run --rm clawdbot-cli doctor
 
 ## 📞 Support
 
-- **This Guide**: All documentation in `/Users/jederlichman/Development/Projects/clawdbot/`
+- **This Guide**: All documentation in `~/Development/Projects/dev-infrastructure/`
 - **Official Clawdbot**: https://github.com/clawdbot/clawdbot
 - **Issues**: https://github.com/clawdbot/clawdbot/issues
 - **Discord**: https://discord.gg/clawdbot

@@ -38,7 +38,7 @@ Your Clawdbot Docker setup is **100% complete** and ready for deployment!
 ### Option 1: Quick Deploy (Experienced Users)
 
 ```bash
-cd /Users/jederlichman/Development/Projects/clawdbot
+cd ~/Development/Projects/dev-infrastructure
 
 # Run setup
 ./docker-setup.sh
@@ -56,7 +56,7 @@ docker compose run --rm clawdbot-cli doctor
 ### Option 2: Guided Deploy (Recommended)
 
 ```bash
-cd /Users/jederlichman/Development/Projects/clawdbot
+cd ~/Development/Projects/dev-infrastructure
 
 # Step 1: Pre-flight check
 ./preflight-check.sh
@@ -322,7 +322,7 @@ Everything is ready for deployment:
 
 ```bash
 # Navigate to project
-cd /Users/jederlichman/Development/Projects/clawdbot
+cd ~/Development/Projects/dev-infrastructure
 
 # Run pre-flight check
 ./preflight-check.sh
@@ -338,6 +338,6 @@ cd /Users/jederlichman/Development/Projects/clawdbot
 **Created**: 2026-01-25  
 **Version**: 1.0.0  
 **Status**: ✅ **READY FOR DEPLOYMENT**  
-**Location**: `/Users/jederlichman/Development/Projects/clawdbot/`
+**Location**: `~/Development/Projects/dev-infrastructure/`
 
 **🎊 Happy Deploying! 🚀**

@@ -34,7 +34,7 @@ Project MCPs (.antigravity/config.json)
 Run these checks:
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # 1. Verify Antigravity config exists and has MCP servers
 cat .antigravity/config.json | grep -A 20 '"mcp"'
@@ -59,7 +59,7 @@ ls -la scripts/mcp-* | grep "rwx"
 Test each wrapper launches successfully:
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # Test filesystem server
 bash scripts/mcp-filesystem &
@@ -97,11 +97,11 @@ Compare ClawdBot config with iphone-tco-planner (known working):
 ```bash
 # Compare wrapper structure
 diff /Users/jederlichman/Development/Projects/iphone-tco-planner/scripts/mcp-gitkraken \
-     /Users/jederlichman/Development/Projects/ClawdBot/scripts/mcp-gitkraken
+     ~/Development/Projects/dev-infrastructure/scripts/mcp-gitkraken
 
 # Compare Antigravity configs
 diff /Users/jederlichman/Development/Projects/iphone-tco-planner/.antigravity/config.json \
-     /Users/jederlichman/Development/Projects/ClawdBot/.antigravity/config.json
+     ~/Development/Projects/dev-infrastructure/.antigravity/config.json
 
 # Expected differences:
 # - ClawdBot has context7 server (unique to this project)
@@ -116,7 +116,7 @@ diff /Users/jederlichman/Development/Projects/iphone-tco-planner/.antigravity/co
 Verify direnv environment loading:
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # Check if PROJECT_NAME is set
 echo $PROJECT_NAME
@@ -137,7 +137,7 @@ echo $DOCKER_HOST
 If validation script exists, run it:
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # Check if validation script exists
 if [ -f "scripts/validate-mcp.sh" ]; then
@@ -161,7 +161,7 @@ fi
 **Fix:**
 ```bash
 # If PATH missing, update wrappers:
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 # Re-run: bash ~/Development/mcp-deployment/scripts/project-setup.sh ClawdBot
 ```
 
@@ -174,7 +174,7 @@ cd /Users/jederlichman/Development/Projects/ClawdBot
 **Fix:**
 ```bash
 # Add PATH to wrappers
-cd /Users/jederlichman/Development/Projects/ClawdBot/scripts
+cd ~/Development/Projects/dev-infrastructure/scripts
 
 # Update mcp-gitkraken
 sed -i.bak '6 i\

@@ -66,7 +66,7 @@ docker compose run --rm clawdbot-cli doctor
 curl http://localhost:3000/health
 
 # 7. Install helpful aliases (optional)
-cp /Users/jederlichman/Development/Projects/clawdbot/install-aliases.sh ./
+cp ~/Development/Projects/dev-infrastructure/install-aliases.sh ./
 ./install-aliases.sh
 ```
 

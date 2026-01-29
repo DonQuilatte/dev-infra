@@ -142,7 +142,7 @@ cat ~/.gemini/mcp_config.json
 ```bash
 cat .antigravity/mcp_config.json | grep "args"
 # Should show full paths like:
-# "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-gitkraken"
+# "~/Development/Projects/dev-infrastructure/scripts/mcp-gitkraken"
 ```
 
 ### **Test 3: Environment Inheritance**
@@ -150,7 +150,7 @@ cat .antigravity/mcp_config.json | grep "args"
 ```bash
 cd ~/Development/Projects/clawdbot
 echo $PROJECT_ROOT
-# Should output: /Users/jederlichman/Development/Projects/clawdbot
+# Should output: ~/Development/Projects/dev-infrastructure
 
 echo $DOCKER_HOST
 # Should output Docker socket path (e.g., unix:///Users/jederlichman/.orbstack/run/docker.sock)
@@ -182,7 +182,7 @@ ls -lh scripts/mcp-*
    cat > scripts/mcp-newserver << 'EOF'
    #!/usr/bin/env bash
    set -e
-   cd "/Users/jederlichman/Development/Projects/clawdbot"
+   cd "~/Development/Projects/dev-infrastructure"
    exec npx -y @some/mcp-server
    EOF
    chmod +x scripts/mcp-newserver
@@ -196,7 +196,7 @@ ls -lh scripts/mcp-*
        "newserver-clawdbot": {
          "command": "bash",
          "args": [
-           "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-newserver"
+           "~/Development/Projects/dev-infrastructure/scripts/mcp-newserver"
          ]
        }
      }

@@ -40,7 +40,7 @@ Project MCPs (.antigravity/config.json)
 Run the validation script to confirm current state:
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 bash scripts/validate-mcp.sh
 ```
 
@@ -53,7 +53,7 @@ bash scripts/validate-mcp.sh
 If any servers show as failed in Antigravity, test them manually:
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # Test the failed server (example: github)
 bash scripts/mcp-gitkraken
@@ -139,7 +139,7 @@ Result: [8/8 passed / X failed]
 
 ```bash
 # Validate automated tests
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 bash scripts/validate-mcp.sh
 
 # Test individual servers

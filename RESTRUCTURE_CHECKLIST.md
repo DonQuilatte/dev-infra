@@ -25,7 +25,7 @@
 
 - [ ] **Backup mcp-deployment**
   ```bash
-  cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d)
+  cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d)
   ```
 
 - [ ] **Create migration branch**
@@ -60,10 +60,10 @@
 
 - [ ] **2.3 Merge mcp-deployment**
   ```bash
-  cp -r /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-  cp -r /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-  cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
-  cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/
+  cp -r ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+  cp -r ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+  cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
+  cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/
   ```
 
 - [ ] **2.4 Extract Antigravity patterns**

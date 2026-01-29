@@ -32,7 +32,7 @@
 **Create dependency map BEFORE touching anything:**
 
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 
 # Find all absolute paths
 grep -r "/Users/jederlichman" . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt
@@ -70,7 +70,7 @@ SAFE TO KEEP:
 ```bash
 cd /Users/jederlichman/Development/Projects
 cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d-%H%M)
-cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
 
 # Verify backups
 ls -ld *backup*
@@ -136,17 +136,17 @@ mkdir -p mcp/{scripts,templates,docs}
 
 ```bash
 # Scripts
-cp /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
+cp ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
 
 # Documentation  
-cp /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/ 2>/dev/null || true
+cp ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/ 2>/dev/null || true
 
 # Root files
-cp /Users/jederlichman/Development/mcp-deployment/README.md mcp/
-cp /Users/jederlichman/Development/mcp-deployment/CHANGELOG.md mcp/
+cp ~/Development/Projects/dev-infrastructure/mcp/README.md mcp/
+cp ~/Development/Projects/dev-infrastructure/mcp/CHANGELOG.md mcp/
 
 # Templates
-cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/ 2>/dev/null || true
+cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/ 2>/dev/null || true
 ```
 
 ### Step 2.3: Verify Copy
@@ -183,11 +183,11 @@ cat > scripts/update-paths.sh << 'EOF'
 
 # Update mcp-deployment paths
 find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
-  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
+  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
 
 # Update ClawdBot references in paths
 find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
-  -exec sed -i.bak 's|/Users/jederlichman/Development/Projects/ClawdBot|~/Development/Projects/dev-infrastructure|g' {} \;
+  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure|~/Development/Projects/dev-infrastructure|g' {} \;
 
 # Clean up .bak files
 find . -name "*.bak" -delete
@@ -320,8 +320,8 @@ cat > MIGRATION.md << 'EOF'
 
 ### Old Paths:
 ```
-/Users/jederlichman/Development/Projects/ClawdBot
-/Users/jederlichman/Development/mcp-deployment
+~/Development/Projects/dev-infrastructure
+~/Development/Projects/dev-infrastructure/mcp
 ```
 
 ### New Paths:
@@ -582,7 +582,7 @@ rm -rf dev-infrastructure
 
 # 2. Restore from backup
 mv ClawdBot-backup-YYYYMMDD-HHMM ClawdBot
-mv mcp-deployment-backup-YYYYMMDD-HHMM /Users/jederlichman/Development/mcp-deployment
+mv mcp-deployment-backup-YYYYMMDD-HHMM ~/Development/Projects/dev-infrastructure/mcp
 
 # 3. Verify restoration
 cd ClawdBot

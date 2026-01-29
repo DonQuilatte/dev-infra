@@ -10,12 +10,12 @@ Rename and restructure the ClawdBot repository to reflect its actual purpose: a 
 
 **Two Separate Repos:**
 ```
-/Users/jederlichman/Development/Projects/ClawdBot/
+~/Development/Projects/dev-infrastructure/
   - Originally: clawdbot Docker wrapper
   - Actually: Multi-Mac infrastructure, Antigravity patterns, MCP reference
   - Misnamed and confusing purpose
 
-/Users/jederlichman/Development/mcp-deployment/
+~/Development/Projects/dev-infrastructure/mcp/
   - MCP environment deployment package
   - Should be integrated with main infrastructure
 ```
@@ -143,12 +143,12 @@ cd /Users/jederlichman/Development/Projects
 cp -r ClawdBot ClawdBot-backup-$(date +%Y%m%d)
 
 # Backup mcp-deployment
-cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d)
+cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d)
 ```
 
 **Step 1.2: Create Migration Branch**
 ```bash
-cd /Users/jederlichman/Development/Projects/ClawdBot
+cd ~/Development/Projects/dev-infrastructure
 git checkout -b restructure-to-dev-infrastructure
 git add -A
 git commit -m "Checkpoint before restructure"
@@ -183,12 +183,12 @@ mv infrastructure/tw-mac-temp infrastructure/tw-mac
 **Step 2.3: Merge mcp-deployment**
 ```bash
 # Copy mcp-deployment content into mcp/
-cp -r /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-cp -r /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
+cp -r ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+cp -r ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
 
 # Copy templates
-cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/
+cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/
 ```
 
 **Step 2.4: Extract Antigravity Patterns**

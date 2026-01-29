@@ -3,19 +3,19 @@
     "gitkraken-clawdbot": {
       "command": "bash",
       "args": [
-        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-gitkraken"
+        "~/Development/Projects/dev-infrastructure/scripts/mcp-gitkraken"
       ]
     },
     "docker-clawdbot": {
       "command": "bash",
       "args": [
-        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-docker"
+        "~/Development/Projects/dev-infrastructure/scripts/mcp-docker"
       ]
     },
     "filesystem-clawdbot": {
       "command": "bash",
       "args": [
-        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-filesystem"
+        "~/Development/Projects/dev-infrastructure/scripts/mcp-filesystem"
       ]
     }
   }

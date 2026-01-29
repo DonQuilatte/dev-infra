@@ -23,7 +23,7 @@
 
 - [ ] Find absolute paths
   ```bash
-  cd /Users/jederlichman/Development/Projects/ClawdBot
+  cd ~/Development/Projects/dev-infrastructure
   grep -r "/Users/jederlichman" . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt
   ```
 
@@ -71,7 +71,7 @@
 
 - [ ] Backup mcp-deployment
   ```bash
-  cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+  cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
   ```
 
 - [ ] Create git branch
@@ -117,14 +117,14 @@
 
 - [ ] DRY RUN - List mcp-deployment contents
   ```bash
-  ls -la /Users/jederlichman/Development/mcp-deployment/
+  ls -la ~/Development/Projects/dev-infrastructure/mcp/
   ```
 
 - [ ] Merge mcp-deployment
   ```bash
-  cp -rv /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-  cp -rv /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/
-  cp -v /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
+  cp -rv ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+  cp -rv ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/
+  cp -v ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md,DEPLOYMENT_FIXES.md} mcp/
   git add -A
   git commit -m "Phase 2.3: Merged mcp-deployment"
   ```
@@ -134,7 +134,7 @@
   find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
     -exec sed -i.bak 's|~/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
   find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
-    -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
+    -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|/Users/jederlichman/Development/Projects/dev-infrastructure/mcp|g' {} \;
   find . -name "*.bak" -delete
   git add -A
   git commit -m "Phase 2.4: Updated path references"

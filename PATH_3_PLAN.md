@@ -216,7 +216,7 @@ Antigravity reads `.mcp-servers.json` on project open:
     "desktop-commander": {
       "command": "bash",
       "args": [
-        "/Users/jederlichman/Development/Projects/clawdbot/scripts/mcp-desktop-commander"
+        "~/Development/Projects/dev-infrastructure/scripts/mcp-desktop-commander"
       ]
     }
   }

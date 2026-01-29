@@ -21,7 +21,7 @@
 
 - [ ] **Create dependency inventory**
   ```bash
-  cd /Users/jederlichman/Development/Projects/ClawdBot
+  cd ~/Development/Projects/dev-infrastructure
   grep -r "/Users/jederlichman" . --exclude-dir={node_modules,.git} > DEPENDENCY_INVENTORY.txt
   grep -r "ClawdBot" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
   grep -r "mcp-deployment" . --exclude-dir={node_modules,.git} >> DEPENDENCY_INVENTORY.txt
@@ -41,7 +41,7 @@
 
 - [ ] **Backup mcp-deployment**
   ```bash
-  cp -r /Users/jederlichman/Development/mcp-deployment mcp-deployment-backup-$(date +%Y%m%d-%H%M)
+  cp -r ~/Development/Projects/dev-infrastructure/mcp mcp-deployment-backup-$(date +%Y%m%d-%H%M)
   ls -ld mcp-deployment-backup*
   ```
 
@@ -87,10 +87,10 @@
 
 - [ ] **Copy mcp-deployment (not move)**
   ```bash
-  cp /Users/jederlichman/Development/mcp-deployment/scripts/* mcp/scripts/
-  cp /Users/jederlichman/Development/mcp-deployment/docs/* mcp/docs/ 2>/dev/null || true
-  cp /Users/jederlichman/Development/mcp-deployment/{README.md,CHANGELOG.md} mcp/
-  cp -r /Users/jederlichman/Development/mcp-deployment/templates/* mcp/templates/ 2>/dev/null || true
+  cp ~/Development/Projects/dev-infrastructure/mcp/scripts/* mcp/scripts/
+  cp ~/Development/Projects/dev-infrastructure/mcp/docs/* mcp/docs/ 2>/dev/null || true
+  cp ~/Development/Projects/dev-infrastructure/mcp/{README.md,CHANGELOG.md} mcp/
+  cp -r ~/Development/Projects/dev-infrastructure/mcp/templates/* mcp/templates/ 2>/dev/null || true
   ```
 
 - [ ] **Verify copy**
@@ -117,9 +117,9 @@
   cat > scripts/update-paths.sh << 'SCRIPT'
 #!/usr/bin/env bash
 find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
-  -exec sed -i.bak 's|/Users/jederlichman/Development/mcp-deployment|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
+  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure/mcp|~/Development/Projects/dev-infrastructure/mcp|g' {} \;
 find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" \
-  -exec sed -i.bak 's|/Users/jederlichman/Development/Projects/ClawdBot|~/Development/Projects/dev-infrastructure|g' {} \;
+  -exec sed -i.bak 's|~/Development/Projects/dev-infrastructure|~/Development/Projects/dev-infrastructure|g' {} \;
 find . -name "*.bak" -delete
 echo "✅ Paths updated"
 SCRIPT
@@ -331,7 +331,7 @@ If acceptance criteria fail:
 cd /Users/jederlichman/Development/Projects
 rm -rf dev-infrastructure
 mv ClawdBot-backup-YYYYMMDD-HHMM ClawdBot
-mv mcp-deployment-backup-YYYYMMDD-HHMM /Users/jederlichman/Development/mcp-deployment
+mv mcp-deployment-backup-YYYYMMDD-HHMM ~/Development/Projects/dev-infrastructure/mcp
 ```
 
 Then investigate, fix plan, retry.

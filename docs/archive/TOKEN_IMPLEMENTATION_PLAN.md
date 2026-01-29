@@ -94,7 +94,7 @@ cat > ~/Library/LaunchAgents/com.clawdbot.gateway.plist << 'EOF'
         <string>-c</string>
         <string>
             # Source .env to get token
-            cd /Users/jederlichman/Development/Projects/clawdbot
+            cd ~/Development/Projects/dev-infrastructure
             set -a; source .env; set +a
             exec clawdbot gateway start --bind lan
         </string>
