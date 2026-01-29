@@ -11,7 +11,10 @@
     "lint": "shellcheck scripts/**/*.sh tests/**/*.sh",
     "preflight": "./config/preflight-check.sh",
     "deploy": "./scripts/deploy-secure.sh",
-    "verify": "./scripts/verify-security.sh"
+    "verify": "./scripts/verify-security.sh",
+    "agents:wave1": "./scripts/agent-tasks/dispatch-all.sh wave1",
+    "agents:wave2": "./scripts/agent-tasks/dispatch-all.sh wave2",
+    "agents:wave3": "./scripts/agent-tasks/dispatch-all.sh wave3"
   },
   "devDependencies": {
     "jest": "^29.7.0",
