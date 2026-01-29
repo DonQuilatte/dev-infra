@@ -8,8 +8,17 @@ TW_CONTROL="$HOME/bin/tw"
 
 mkdir -p "$(dirname "$LOG_FILE")"
 
+# Only output to terminal if running interactively
+QUIET=${QUIET:-false}
+if [[ ! -t 1 ]] || [[ "$1" == "-q" ]] || [[ "$1" == "--quiet" ]]; then
+    QUIET=true
+    shift 2>/dev/null
+fi
+
 log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+    local MSG="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+    echo "$MSG" >> "$LOG_FILE"
+    [[ "$QUIET" == "false" ]] && echo "$MSG"
 }
 
 notify() {
