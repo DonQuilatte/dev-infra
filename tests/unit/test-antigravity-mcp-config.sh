@@ -2,7 +2,8 @@
 # Unit Tests: Antigravity MCP Configuration
 # Tests the MCP configuration files and structure
 
-set -euo pipefail
+set -uo pipefail
+# Note: Not using -e because arithmetic expressions can return false
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"

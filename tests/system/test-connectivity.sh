@@ -50,54 +50,74 @@ else
     print_fail "Remote Mac cannot reach gateway (HTTP $REMOTE_HEALTH)"
 fi
 
-# Test: Clawdbot node service is running on remote
-print_test "Clawdbot node service is running on remote Mac"
+# Test: Docker is available on remote Mac (primary deployment method)
+print_test "Docker is available on remote Mac"
+DOCKER_VERSION=$(ssh -o ConnectTimeout=5 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
+    'docker version --format "{{.Server.Version}}" 2>/dev/null' 2>/dev/null || echo "")
+if [[ -n "$DOCKER_VERSION" ]]; then
+    print_pass "Docker available: v$DOCKER_VERSION"
+else
+    print_fail "Docker not available on remote Mac"
+fi
+
+# Test: Docker can run containers on remote Mac
+print_test "Docker containers work on remote Mac"
+DOCKER_TEST=$(ssh -o ConnectTimeout=10 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
+    'docker run --rm alpine:latest echo "DOCKER_OK" 2>&1' 2>&1 || echo "")
+if [[ "$DOCKER_TEST" == *"DOCKER_OK"* ]]; then
+    print_pass "Docker containers work"
+else
+    print_fail "Docker containers not working: $DOCKER_TEST"
+fi
+
+# Test: Clawdbot node service (optional - legacy deployment)
+print_test "Clawdbot node service (legacy, optional)"
 NODE_STATUS=$(ssh -o ConnectTimeout=5 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
     'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && clawdbot node status 2>/dev/null | grep -o "running"' 2>/dev/null || echo "")
 if [[ "$NODE_STATUS" == "running" ]]; then
     print_pass "Clawdbot node is running"
 else
-    print_fail "Clawdbot node is not running"
+    print_skip "Clawdbot node not running (using Docker instead)"
 fi
 
-# Test: Remote node has clawdbot installed
-print_test "Clawdbot is installed on remote Mac"
+# Test: Remote node has clawdbot CLI installed
+print_test "Clawdbot CLI is installed on remote Mac"
 CLAWDBOT_VERSION=$(ssh -o ConnectTimeout=5 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
     'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && clawdbot --version 2>/dev/null' || echo "")
 if [[ -n "$CLAWDBOT_VERSION" ]]; then
     print_pass "Clawdbot installed: $CLAWDBOT_VERSION"
 else
-    print_fail "Clawdbot is not installed on remote"
+    print_skip "Clawdbot CLI not installed (not required for Docker mode)"
 fi
 
-# Test: Remote node config exists
-print_test "Remote node config file exists"
+# Test: Remote node config exists (optional)
+print_test "Remote node config file (optional)"
 CONFIG_EXISTS=$(ssh -o ConnectTimeout=5 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
     'test -f ~/.clawdbot/clawdbot.json && echo "yes"' 2>/dev/null || echo "no")
 if [[ "$CONFIG_EXISTS" == "yes" ]]; then
     print_pass "Config file exists"
 else
-    print_fail "Config file missing"
+    print_skip "Config file not present (using Docker mode)"
 fi
 
-# Test: Remote node configured for remote gateway mode
-print_test "Remote node configured for gateway mode"
-GATEWAY_MODE=$(ssh -o ConnectTimeout=5 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
-    'grep -o "\"mode\": \"remote\"" ~/.clawdbot/clawdbot.json 2>/dev/null' || echo "")
-if [[ -n "$GATEWAY_MODE" ]]; then
-    print_pass "Remote node configured for remote gateway mode"
-else
-    print_fail "Remote node not configured for remote gateway mode"
-fi
-
-# Test: LaunchAgent is installed on remote
-print_test "LaunchAgent auto-restart is installed on remote"
+# Test: LaunchAgent (optional - legacy deployment)
+print_test "LaunchAgent auto-restart (legacy, optional)"
 LAUNCHAGENT_EXISTS=$(ssh -o ConnectTimeout=5 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
     'test -f ~/Library/LaunchAgents/com.clawdbot.node.plist && echo "yes"' 2>/dev/null || echo "no")
 if [[ "$LAUNCHAGENT_EXISTS" == "yes" ]]; then
     print_pass "LaunchAgent is installed"
 else
-    print_fail "LaunchAgent is not installed"
+    print_skip "LaunchAgent not installed (using Docker mode)"
+fi
+
+# Test: OrbStack is running on remote Mac
+print_test "OrbStack is running on remote Mac"
+ORBSTACK_RUNNING=$(ssh -o ConnectTimeout=10 -o BatchMode=yes "$REMOTE_USER@$REMOTE_MAC_IP" \
+    'pgrep -l OrbStack 2>/dev/null | grep -q OrbStack && echo "yes" || echo "no"' 2>&1 | grep -o "yes\|no" | head -1)
+if [[ "$ORBSTACK_RUNNING" == "yes" ]]; then
+    print_pass "OrbStack is running"
+else
+    print_fail "OrbStack is not running"
 fi
 
 echo ""

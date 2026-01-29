@@ -1,7 +1,8 @@
 # TW Node Headless Server Readiness Evaluation
 
-**Date:** 2026-01-29 13:45 UTC  
-**Evaluator:** Antigravity AI  
+**Date:** 2026-01-29 13:45 UTC
+**Updated:** 2026-01-29 15:30 UTC
+**Evaluator:** Antigravity AI
 **Status:** ✅ **READY**
 
 ---
@@ -26,6 +27,7 @@ The TW Mac (192.168.1.245) is **CONNECTED** and ready for headless operation.
 1.  **Gateway Binding**: Configured gateway to listen on all interfaces (`0.0.0.0`).
 2.  **Node Connection**: Resolved `ECONNREFUSED` errors; node is now reliably connected.
 3.  **Security Policy**: Applied "Full Control" policy to reduce approval friction.
+4.  **Token Sync** (2026-01-29 15:28 UTC): Fixed authentication token mismatch between gateway and TW node. The TW Mac config had a stale token that didn't match the gateway's `gateway.auth.token`. Synced token to `c224f9cb...` and restarted node service.
 
 ---
 
@@ -53,8 +55,12 @@ To verify the system is working:
 
 ```bash
 clawdbot nodes status
-# Expected: "TW ... connected"
+# Expected output:
+# Known: 2 · Paired: 2 · Connected: 2
+# TW | 192.168.1.245 | paired · connected
 ```
+
+**Last verified:** 2026-01-29 15:28 UTC - Both nodes paired and connected.
 
 You can now close the lid on the TW Mac.
 
