@@ -32,7 +32,9 @@ if [ "$JS_FILES" -gt 0 ]; then
 fi
 
 if [ "$SH_FILES" -gt 0 ]; then
-    "$TW_CONTROL" run "cd ~/Development/Projects/clawdbot && shellcheck $STAGED_FILES 2>&1" &
+    # Convert newlines to spaces for shellcheck argument list
+    SH_FILE_LIST=$(echo "$STAGED_FILES" | grep -E '\.sh$' | tr '\n' ' ')
+    "$TW_CONTROL" run "cd ~/Development/Projects/clawdbot && shellcheck $SH_FILE_LIST 2>&1" &
 fi
 
 # Wait for lint to complete if started
