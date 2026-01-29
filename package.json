@@ -17,8 +17,7 @@
     "agents:wave3": "./scripts/agent-tasks/dispatch-all.sh wave3"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "yaml": "^2.3.4"
+    "jest": "^29.7.0"
   },
   "jest": {
     "testEnvironment": "node",
