@@ -162,7 +162,7 @@ echo ""
 echo "Test Group 3: MCP Wrapper Scripts"
 assert_file_exists "$PROJECT_ROOT/scripts/mcp-gitkraken" "GitKraken wrapper exists"
 assert_file_executable "$PROJECT_ROOT/scripts/mcp-gitkraken" "GitKraken wrapper is executable"
-assert_contains "$PROJECT_ROOT/scripts/mcp-gitkraken" "@gitkraken/mcp-server" "GitKraken wrapper has correct command"
+assert_contains "$PROJECT_ROOT/scripts/mcp-gitkraken" "gk mcp" "GitKraken wrapper has correct command"
 
 assert_file_exists "$PROJECT_ROOT/scripts/mcp-docker" "Docker wrapper exists"
 assert_file_executable "$PROJECT_ROOT/scripts/mcp-docker" "Docker wrapper is executable"
