@@ -1,19 +1,16 @@
 
 ## Backlog Items
 
+*No open items*
+
+---
+
+## Resolved
+
 ### Fix punycode deprecation warning
 
 **Priority:** Low
 
-**Description:**
-Node.js `DeprecationWarning: The 'punycode' module is deprecated. Please use a userland alternative instead.`
+**Resolution:** Closed - Cannot reproduce. Warning not present in project dependencies or test runs. Likely originated from external tooling (global npm packages, agy CLI, etc.).
 
-**Context:**
-- Warning from a dependency using deprecated built-in `punycode` module
-- Common culprits: `whatwg-url`, `tr46`, `uri-js`, email/URL validation libs
-
-**Steps to Fix:**
-1. Run with `--trace-deprecation` flag to identify source
-2. Update offending dependency or use userland `punycode` package
-
-**Status:** Open
+**Investigated:** 2026-01-30
