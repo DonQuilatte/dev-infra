@@ -30,6 +30,31 @@
       "id": "/docker/compose",
       "description": "Docker Compose reference",
       "topics": ["services", "volumes", "networks", "deploy"]
+    },
+    "claude-code": {
+      "id": "/anthropics/claude-code",
+      "description": "Claude Code CLI documentation - official Anthropic coding assistant",
+      "topics": ["cli", "commands", "mcp", "hooks", "settings", "agents", "skills"]
+    },
+    "gemini": {
+      "id": "/google/generative-ai-docs",
+      "description": "Google Gemini API and SDK documentation",
+      "topics": ["api", "sdk", "prompts", "models", "function-calling", "embeddings"]
+    },
+    "openai-codex": {
+      "id": "/openai/openai-cookbook",
+      "description": "OpenAI Codex and API cookbook - code generation examples",
+      "topics": ["codex", "code-generation", "api", "prompts", "fine-tuning"]
+    },
+    "1password-cli": {
+      "id": "/1password/developer-docs",
+      "description": "1Password CLI and developer documentation",
+      "topics": ["cli", "service-accounts", "secrets", "vaults", "automation", "ci-cd"]
+    },
+    "antigravity-ide": {
+      "id": "/google/project-idx",
+      "description": "Google Project IDX (Antigravity) cloud IDE documentation",
+      "topics": ["nix", "devcontainers", "ai-assistance", "preview", "templates"]
     }
   },
   "context7Defaults": {
