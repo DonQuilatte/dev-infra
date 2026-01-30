@@ -1,0 +1,16 @@
+# Downstream Dependencies
+# Projects that use dev-infra's Path 3 tooling
+# Auto-populated by agy-init, manually editable
+
+projects:
+  dev-infra:
+    path: /Users/jederlichman/Development/Projects/dev-infra
+    initialized: "2026-01-30"
+    version: "3.0"
+    sync_mode: source
+
+  iphone-tco-planner:
+    path: /Users/jederlichman/Development/Projects/iphone-tco-planner
+    initialized: "2026-01-30"
+    version: "3.0"
+    sync_mode: copy

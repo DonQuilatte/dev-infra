@@ -1,0 +1,298 @@
+#!/bin/bash
+# agy-sync - Sync dev-infra updates to downstream projects
+#
+# Usage:
+#   agy-sync                    # Check all downstream projects
+#   agy-sync --update           # Update all projects
+#   agy-sync --update <project> # Update specific project
+#   agy-sync --list             # List registered projects
+#   agy-sync --register <path>  # Register new project
+#   agy-sync --use-symlinks     # Convert project to use symlinks
+
+set -u
+
+DEV_INFRA="$HOME/Development/Projects/dev-infra"
+CONFIG_FILE="$DEV_INFRA/config/downstream-deps.yml"
+VERSION_FILE="$DEV_INFRA/.antigravity/.dev-infra-version"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Get current dev-infra version (git commit short hash)
+get_dev_infra_version() {
+    git -C "$DEV_INFRA" rev-parse --short HEAD 2>/dev/null || echo "unknown"
+}
+
+# Get project's synced version
+get_project_version() {
+    local project_path="$1"
+    local version_file="$project_path/.antigravity/.dev-infra-version"
+    if [ -f "$version_file" ]; then
+        cat "$version_file"
+    else
+        echo "none"
+    fi
+}
+
+# Get list of project names from YAML
+get_project_names() {
+    # Match lines that are project names (indented with 2 spaces, end with colon)
+    awk '/^projects:/{found=1; next} found && /^  [a-zA-Z]/ && /:$/{gsub(/:/, ""); print $1}' "$CONFIG_FILE"
+}
+
+# Get project property from YAML
+get_project_prop() {
+    local name="$1"
+    local prop="$2"
+    awk -v name="$name" -v prop="$prop" '
+        $0 ~ "^  " name ":$" {found=1; next}
+        found && /^  [a-zA-Z]/ && /:$/ {found=0}
+        found && $0 ~ "^    " prop ":" {gsub(/.*: /, ""); gsub(/"/, ""); print; exit}
+    ' "$CONFIG_FILE"
+}
+
+# List all registered projects
+list_projects() {
+    echo -e "${BLUE}Registered Downstream Projects${NC}"
+    echo "─────────────────────────────────────────────"
+
+    for name in $(get_project_names); do
+        local path=$(get_project_prop "$name" "path")
+
+        if [ -d "$path" ]; then
+            local version=$(get_project_version "$path")
+            echo -e "  ${GREEN}●${NC} $name"
+            echo -e "    Path: $path"
+            echo -e "    Version: $version"
+        else
+            echo -e "  ${RED}●${NC} $name (not found)"
+        fi
+    done
+}
+
+# Check status of all projects
+check_status() {
+    local current_version=$(get_dev_infra_version)
+    echo -e "${BLUE}dev-infra Sync Status${NC}"
+    echo -e "Current version: ${GREEN}$current_version${NC}"
+    echo "─────────────────────────────────────────────"
+
+    local outdated=0
+
+    for name in $(get_project_names); do
+        local path=$(get_project_prop "$name" "path")
+        local mode=$(get_project_prop "$name" "sync_mode")
+
+        if [ "$mode" = "source" ]; then
+            echo -e "  ${BLUE}◆${NC} $name (source)"
+            continue
+        fi
+
+        if [ ! -d "$path" ]; then
+            echo -e "  ${RED}✗${NC} $name - path not found"
+            continue
+        fi
+
+        local project_version=$(get_project_version "$path")
+
+        if [ "$project_version" = "$current_version" ]; then
+            echo -e "  ${GREEN}✓${NC} $name - up to date ($project_version)"
+        elif [ "$project_version" = "none" ]; then
+            echo -e "  ${YELLOW}○${NC} $name - not tracked"
+            ((outdated++)) || true
+        else
+            echo -e "  ${YELLOW}↻${NC} $name - outdated ($project_version → $current_version)"
+            ((outdated++)) || true
+        fi
+    done
+
+    echo ""
+    if [ "$outdated" -gt 0 ]; then
+        echo -e "${YELLOW}$outdated project(s) need updating${NC}"
+        echo "Run: agy-sync --update"
+    else
+        echo -e "${GREEN}All projects up to date${NC}"
+    fi
+}
+
+# Update a single project
+update_project() {
+    local project_path="$1"
+    local project_name=$(basename "$project_path")
+    local current_version=$(get_dev_infra_version)
+
+    echo -e "${BLUE}Updating${NC} $project_name"
+
+    # Ensure directories exist
+    mkdir -p "$project_path/.antigravity"
+    mkdir -p "$project_path/scripts"
+    mkdir -p "$project_path/.vscode"
+
+    # Update agy-auto-setup (copy or symlink based on preference)
+    if [ -L "$project_path/scripts/agy-auto-setup" ]; then
+        echo "  scripts/agy-auto-setup → symlink (auto-updated)"
+    else
+        cp "$DEV_INFRA/scripts/agy-auto-setup" "$project_path/scripts/agy-auto-setup"
+        chmod +x "$project_path/scripts/agy-auto-setup"
+        echo "  scripts/agy-auto-setup → copied"
+    fi
+
+    # Update schema (always copy - small file, rarely changes)
+    cp "$DEV_INFRA/.antigravity/config.schema.json" "$project_path/.antigravity/"
+    echo "  .antigravity/config.schema.json → copied"
+
+    # Update tasks.json only if it doesn't have customizations
+    # (Check if it has more than the default AGY task)
+    if [ -f "$project_path/.vscode/tasks.json" ]; then
+        local task_count=$(jq '.tasks | length' "$project_path/.vscode/tasks.json" 2>/dev/null || echo "0")
+        if [ "$task_count" -le 1 ]; then
+            # Only default task, safe to update
+            cat > "$project_path/.vscode/tasks.json" << 'EOF'
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "AGY Auto-Setup",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/agy-auto-setup",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "close": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}
+EOF
+            echo "  .vscode/tasks.json → updated"
+        else
+            echo "  .vscode/tasks.json → skipped (has customizations)"
+        fi
+    fi
+
+    # Write version file
+    echo "$current_version" > "$project_path/.antigravity/.dev-infra-version"
+    echo "  .dev-infra-version → $current_version"
+
+    echo -e "  ${GREEN}✓${NC} Updated to $current_version"
+}
+
+# Update all projects
+update_all() {
+    local current_version=$(get_dev_infra_version)
+    echo -e "${BLUE}Updating all downstream projects to $current_version${NC}"
+    echo "─────────────────────────────────────────────"
+
+    for name in $(get_project_names); do
+        local path=$(get_project_prop "$name" "path")
+        local mode=$(get_project_prop "$name" "sync_mode")
+
+        if [ "$mode" = "source" ]; then
+            continue
+        fi
+
+        if [ -d "$path" ]; then
+            update_project "$path"
+            echo ""
+        fi
+    done
+
+    echo -e "${GREEN}✅ All projects updated${NC}"
+}
+
+# Convert project to use symlinks
+use_symlinks() {
+    local project_path="$1"
+    local project_name=$(basename "$project_path")
+
+    echo -e "${BLUE}Converting $project_name to use symlinks${NC}"
+
+    # Replace agy-auto-setup with symlink
+    rm -f "$project_path/scripts/agy-auto-setup"
+    ln -sf "$DEV_INFRA/scripts/agy-auto-setup" "$project_path/scripts/agy-auto-setup"
+    echo "  scripts/agy-auto-setup → symlinked"
+
+    # Replace schema with symlink
+    rm -f "$project_path/.antigravity/config.schema.json"
+    ln -sf "$DEV_INFRA/.antigravity/config.schema.json" "$project_path/.antigravity/config.schema.json"
+    echo "  .antigravity/config.schema.json → symlinked"
+
+    echo -e "${GREEN}✓${NC} Now using symlinks (auto-updated)"
+}
+
+# Register a new project
+register_project() {
+    local project_path="$1"
+    project_path="$(cd "$project_path" && pwd)"
+    local project_name=$(basename "$project_path")
+
+    # Check if already registered
+    if grep -q "^  $project_name:" "$CONFIG_FILE" 2>/dev/null; then
+        echo -e "${YELLOW}Project already registered${NC}"
+        return
+    fi
+
+    # Add to config
+    echo "" >> "$CONFIG_FILE"
+    echo "  $project_name:" >> "$CONFIG_FILE"
+    echo "    path: $project_path" >> "$CONFIG_FILE"
+    echo "    initialized: \"$(date +%Y-%m-%d)\"" >> "$CONFIG_FILE"
+    echo "    version: \"3.0\"" >> "$CONFIG_FILE"
+    echo "    sync_mode: copy" >> "$CONFIG_FILE"
+
+    echo -e "${GREEN}✓${NC} Registered $project_name"
+}
+
+# Main
+case "${1:-}" in
+    --list|-l)
+        list_projects
+        ;;
+    --update|-u)
+        if [ -n "${2:-}" ]; then
+            update_project "$2"
+        else
+            update_all
+        fi
+        ;;
+    --use-symlinks)
+        if [ -z "${2:-}" ]; then
+            echo "Usage: agy-sync --use-symlinks <project-path>"
+            exit 1
+        fi
+        use_symlinks "$2"
+        ;;
+    --register|-r)
+        if [ -z "${2:-}" ]; then
+            echo "Usage: agy-sync --register <project-path>"
+            exit 1
+        fi
+        register_project "$2"
+        ;;
+    --help|-h)
+        echo "agy-sync - Sync dev-infra updates to downstream projects"
+        echo ""
+        echo "Usage:"
+        echo "  agy-sync                    Check all downstream projects"
+        echo "  agy-sync --update           Update all projects"
+        echo "  agy-sync --update <path>    Update specific project"
+        echo "  agy-sync --list             List registered projects"
+        echo "  agy-sync --register <path>  Register new project"
+        echo "  agy-sync --use-symlinks <path>  Convert to symlinks"
+        ;;
+    *)
+        check_status
+        ;;
+esac

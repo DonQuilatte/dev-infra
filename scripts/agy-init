@@ -215,6 +215,15 @@ echo "✅ Loaded $PROJECT_NAME environment"
 EOF
 fi
 
+# Register with downstream tracking
+if [ -x "$DEV_INFRA_DIR/scripts/agy-sync" ]; then
+    "$DEV_INFRA_DIR/scripts/agy-sync" --register "$PROJECT_PATH" 2>/dev/null || true
+fi
+
+# Write version tracking file
+mkdir -p "$PROJECT_PATH/.antigravity"
+git -C "$DEV_INFRA_DIR" rev-parse --short HEAD > "$PROJECT_PATH/.antigravity/.dev-infra-version" 2>/dev/null || true
+
 echo ""
 echo -e "${GREEN}✅ Antigravity initialized!${NC}"
 echo ""
@@ -223,4 +232,8 @@ echo "  1. Edit .antigravity/config.json to add secrets and MCP servers"
 echo "  2. Edit .envrc to add environment variables"
 echo "  3. Run 'direnv allow' to enable the environment"
 echo "  4. Open project in Antigravity - setup runs automatically"
+echo ""
+echo "Sync commands:"
+echo "  agy-sync              # Check for dev-infra updates"
+echo "  agy-sync --update     # Apply updates to this project"
 echo ""
