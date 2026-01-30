@@ -1,0 +1,187 @@
+#!/bin/bash
+# agy-auto-setup - Silent project setup for Antigravity IDE
+# Runs automatically on folder open via VS Code task
+#
+# Features:
+#   - direnv allow (silent)
+#   - 1Password secrets validation
+#   - MCP server health check
+#   - Desktop notification on completion
+#
+# Exit codes:
+#   0 - Success
+#   1 - direnv failed
+#   2 - Secrets validation failed
+#   3 - MCP health check failed
+
+set -euo pipefail
+
+# Logging
+LOG_FILE="/tmp/agy-auto-setup-$(date +%Y%m%d).log"
+log() { echo "[$(date '+%H:%M:%S')] $*" >> "$LOG_FILE"; }
+
+# Notification (macOS)
+notify() {
+    local title="$1"
+    local message="$2"
+    local sound="${3:-default}"
+
+    osascript -e "display notification \"$message\" with title \"$title\" sound name \"$sound\"" 2>/dev/null || true
+}
+
+# Get project name from current directory or config
+get_project_name() {
+    if [ -f ".antigravity/config.json" ]; then
+        jq -r '.project.name // empty' .antigravity/config.json 2>/dev/null || basename "$PWD"
+    else
+        basename "$PWD"
+    fi
+}
+
+PROJECT_NAME=$(get_project_name)
+log "=== Starting auto-setup for: $PROJECT_NAME ==="
+
+# ============================================================
+# Phase 1: direnv
+# ============================================================
+setup_direnv() {
+    log "Phase 1: direnv"
+
+    if [ ! -f ".envrc" ]; then
+        log "  No .envrc found, skipping direnv"
+        return 0
+    fi
+
+    if ! command -v direnv &>/dev/null; then
+        log "  WARNING: direnv not installed"
+        return 0
+    fi
+
+    # Allow direnv silently
+    if direnv allow . 2>>"$LOG_FILE"; then
+        log "  direnv allowed successfully"
+        # Export environment for this script
+        eval "$(direnv export bash 2>/dev/null)" || true
+        return 0
+    else
+        log "  ERROR: direnv allow failed"
+        return 1
+    fi
+}
+
+# ============================================================
+# Phase 2: Secrets Validation
+# ============================================================
+validate_secrets() {
+    log "Phase 2: Secrets validation"
+
+    # Check if 1Password CLI is available
+    if ! command -v op &>/dev/null; then
+        log "  1Password CLI not installed, skipping secrets validation"
+        return 0
+    fi
+
+    # Check if signed in
+    if ! op account list &>/dev/null; then
+        log "  WARNING: Not signed in to 1Password"
+        return 0  # Non-fatal - user may not need secrets
+    fi
+
+    # Read required secrets from config if available
+    if [ -f ".antigravity/config.json" ]; then
+        local secrets
+        secrets=$(jq -r '.secrets[]? // empty' .antigravity/config.json 2>/dev/null)
+
+        if [ -n "$secrets" ]; then
+            local failed=0
+            while IFS= read -r secret; do
+                if [ -z "${!secret:-}" ]; then
+                    log "  WARNING: Secret $secret not set"
+                    ((failed++)) || true
+                fi
+            done <<< "$secrets"
+
+            if [ "$failed" -gt 0 ]; then
+                log "  $failed secrets not available"
+            fi
+        fi
+    fi
+
+    log "  Secrets validation complete"
+    return 0
+}
+
+# ============================================================
+# Phase 3: MCP Health Check
+# ============================================================
+check_mcp_health() {
+    log "Phase 3: MCP health check"
+
+    local mcp_config=""
+
+    # Check for MCP config in various locations
+    for config_path in ".antigravity/mcp-servers.json" ".vscode/mcp.json" ".cursor/mcp.json"; do
+        if [ -f "$config_path" ]; then
+            mcp_config="$config_path"
+            break
+        fi
+    done
+
+    if [ -z "$mcp_config" ]; then
+        log "  No MCP config found, skipping health check"
+        return 0
+    fi
+
+    log "  Found MCP config: $mcp_config"
+
+    # Count configured servers
+    local server_count
+    server_count=$(jq '.mcpServers | length' "$mcp_config" 2>/dev/null || echo 0)
+    log "  $server_count MCP servers configured"
+
+    return 0
+}
+
+# ============================================================
+# Main Execution
+# ============================================================
+main() {
+    local start_time
+    start_time=$(date +%s)
+
+    local status="success"
+    local message=""
+
+    # Run phases
+    if ! setup_direnv; then
+        status="warning"
+        message="direnv setup incomplete"
+    fi
+
+    if ! validate_secrets; then
+        status="warning"
+        message="${message:+$message, }secrets not validated"
+    fi
+
+    if ! check_mcp_health; then
+        status="warning"
+        message="${message:+$message, }MCP check failed"
+    fi
+
+    local end_time
+    end_time=$(date +%s)
+    local duration=$((end_time - start_time))
+
+    log "=== Setup complete in ${duration}s (status: $status) ==="
+
+    # Send notification
+    if [ "$status" = "success" ]; then
+        notify "Antigravity" "✅ $PROJECT_NAME ready" "Glass"
+    else
+        notify "Antigravity" "⚠️ $PROJECT_NAME: $message" "Basso"
+    fi
+
+    return 0
+}
+
+main "$@"

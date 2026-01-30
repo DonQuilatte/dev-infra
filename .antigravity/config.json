@@ -1,32 +1,54 @@
 {
+  "$schema": "./config.schema.json",
+  "version": "3.0",
+  "project": {
+    "name": "dev-infra",
+    "description": "Distributed development infrastructure for Mac environments",
+    "techStack": ["bash", "docker", "nodejs"]
+  },
   "onOpen": {
-    "setupScript": "scripts/post-restart-setup.sh",
+    "setupScript": "scripts/agy-auto-setup",
     "allowDirenv": true,
+    "validateSecrets": true,
+    "checkMcpHealth": true,
     "notification": {
       "enabled": true,
-      "message": "dev-infrastructure MCP environment loaded"
+      "successMessage": "dev-infra ready",
+      "sound": "Glass"
     }
   },
+  "secrets": [
+    "GITHUB_TOKEN",
+    "OPENAI_API_KEY"
+  ],
   "mcp": {
     "autoLoad": true,
+    "configPath": ".vscode/mcp.json",
     "servers": {
-      "github": {
+      "gitkraken": {
         "command": "bash",
         "args": ["${workspaceFolder}/scripts/mcp-gitkraken"]
       },
       "filesystem": {
         "command": "bash",
         "args": ["${workspaceFolder}/scripts/mcp-filesystem"]
-      },
-      "context7": {
-        "command": "bash",
-        "args": ["${workspaceFolder}/scripts/mcp-context7"]
       }
     }
   },
+  "claude": {
+    "autoStart": false,
+    "contextFiles": ["CLAUDE.md", "README.md"],
+    "defaultModel": "claude-sonnet-4-20250514"
+  },
+  "environment": {
+    "required": ["PROJECT_NAME", "PROJECT_ROOT"],
+    "optional": ["DOCKER_HOST"]
+  },
   "execution": {
     "remote": {
-      "enabled": false
+      "enabled": true,
+      "host": "192.168.1.245",
+      "user": "tywhitaker"
     }
   }
 }

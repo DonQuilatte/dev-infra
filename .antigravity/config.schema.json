@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Antigravity Project Configuration",
+  "description": "Configuration schema for Path 3 Zero-Command integration",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "enum": ["3.0"]
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Project name" },
+        "description": { "type": "string", "description": "Project description" },
+        "techStack": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Technologies used in the project"
+        }
+      },
+      "required": ["name"]
+    },
+    "onOpen": {
+      "type": "object",
+      "description": "Actions to perform when project folder is opened",
+      "properties": {
+        "setupScript": { "type": "string", "description": "Path to setup script" },
+        "allowDirenv": { "type": "boolean", "default": true },
+        "validateSecrets": { "type": "boolean", "default": true },
+        "checkMcpHealth": { "type": "boolean", "default": true },
+        "notification": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "successMessage": { "type": "string" },
+            "sound": { "type": "string", "default": "Glass" }
+          }
+        }
+      }
+    },
+    "secrets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Environment variable names for required secrets"
+    },
+    "mcp": {
+      "type": "object",
+      "description": "MCP server configuration",
+      "properties": {
+        "autoLoad": { "type": "boolean", "default": true },
+        "configPath": { "type": "string", "description": "Path to MCP config file" },
+        "servers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "command": { "type": "string" },
+              "args": { "type": "array", "items": { "type": "string" } },
+              "env": { "type": "object" }
+            },
+            "required": ["command"]
+          }
+        }
+      }
+    },
+    "claude": {
+      "type": "object",
+      "description": "Claude AI configuration",
+      "properties": {
+        "autoStart": { "type": "boolean", "default": false },
+        "contextFiles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files to load as context"
+        },
+        "defaultModel": { "type": "string" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "required": { "type": "array", "items": { "type": "string" } },
+        "optional": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "description": "Remote execution settings",
+      "properties": {
+        "remote": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "host": { "type": "string" },
+            "user": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "required": ["version", "project"]
+}
