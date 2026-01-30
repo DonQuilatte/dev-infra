@@ -1,8 +1,12 @@
 {
   "folders": [
     {
-      "name": "dev-infra",
+      "name": "dev-infra (Local)",
       "path": "."
+    },
+    {
+      "name": "dev-infra (TW Mac)",
+      "path": "/Users/jederlichman/tw-mac/Development/Projects/dev-infra"
     }
   ],
   "settings": {
