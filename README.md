@@ -1,4 +1,4 @@
-# dev-infrastructure
+# dev-infra
 
 Distributed development infrastructure for Mac environments.
 
@@ -21,31 +21,105 @@ npm run agents:wave1
 
 ## AntiGravity Scripts
 
-### `agy`
+Project engagement automation for local and distributed Claude sessions.
 
-Quick launcher for Claude engagement.
+### `agy` - Smart Router
 
-- Local (default): `agy` or `agy "prompt"`
-- Remote (TW Mac): `agy -r "prompt"`
-
-### `agy-local`
-
-Engage current project directory with Claude locally.
+Auto-detects context and routes to appropriate handler.
 
 ```bash
-cd ~/Development/Projects/myproject
-agy-local "analyze this codebase"
+# Smart mode - auto-detect project from current directory
+cd ~/Development/Projects/myapp && agy
+
+# Local execution (default)
+agy myapp                      # Start Claude in project
+agy myapp "analyze code"       # Start with prompt
+agy git@github.com:you/repo    # Clone + start local
+
+# Remote execution (TW Mac with job tracking)
+agy -r myapp "implement feature"
+agy -r status                  # View all remote jobs
 ```
 
-### `agy-project`
+**Flags:**
+- `-r, --remote` - Execute on TW Mac with job tracking
+- `-l, --local` - Force local execution (default)
 
-Clone and engage a project on TW Mac.
+### `agy-local` - Local Engagement
+
+Engage projects locally with Claude.
 
 ```bash
-agy-project https://github.com/user/repo "review security"
+agy-local myapp                          # Open existing project
+agy-local git@github.com:you/myapp.git   # Clone + open
+agy-local myapp "Review code"            # Open with prompt
+agy-local myapp --tw                     # Proxy to TW Mac
 ```
 
-Creates tmux session, clones repo, runs Claude headlessly.
+**What it does:**
+1. Clones repo if URL provided (or pulls latest if exists)
+2. Runs `scripts/project-setup.sh` if present
+3. Configures direnv if `.envrc` exists
+4. Starts Claude in project directory
+
+### `agy-project` - Remote Execution (TW Mac)
+
+Clone and engage projects on TW Mac with full job tracking.
+
+```bash
+# Start jobs
+agy-project git@github.com:you/repo "review security"
+agy-project myapp "implement feature X"
+
+# Job management
+agy-project status              # View all jobs
+agy-project logs <job-id>       # View job logs
+agy-project result <job-id>     # Get structured result
+agy-project attach <job-id>     # Attach to live session
+```
+
+**Features:**
+- Job ID tracking (`project-YYYYMMDD-HHMMSS`)
+- Metadata stored in `~/Development/.agy-jobs/`
+- macOS notifications on job start
+- tmux session per job for attachment
+- Input sanitization (command injection protection)
+
+### `agy-jobs` - Job Management (TW Mac)
+
+Runs on TW Mac to manage job state.
+
+```bash
+agy-jobs status           # List all jobs with status
+agy-jobs logs <job-id>    # View job log file
+agy-jobs result <job-id>  # Get structured result
+```
+
+### `agy-notify` - Notifications (TW Mac)
+
+Sends notifications for job events.
+
+```bash
+agy-notify "Job Started" "myapp-20260129-1423"
+```
+
+**Outputs to:**
+- macOS notification center
+- Log file: `~/Development/.agy-jobs/notifications.log`
+- Slack webhook (if `SLACK_WEBHOOK_URL` is set)
+
+### Shell Integration
+
+Add to `~/.zshrc` for auto-detection when entering project directories:
+
+```bash
+source ~/Development/Projects/dev-infra/scripts/agy-shell-integration.sh
+```
+
+**Provides:**
+- Auto-notification when entering project directories
+- Alias `a` for `agy`
+- Alias `agys` for `agy -r status`
 
 ## Previously: ClawdBot
 
