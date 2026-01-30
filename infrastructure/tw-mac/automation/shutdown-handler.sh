@@ -63,7 +63,7 @@ fi
 # Step 4: Stop LaunchAgents gracefully
 log "Stopping automation services..."
 for agent in "connection-monitor" "config-watcher" "scheduled-periodic"; do
-    PLIST="$HOME/Library/LaunchAgents/com.clawdbot.$agent.plist"
+    PLIST="$HOME/Library/LaunchAgents/com.dev-infra.$agent.plist"
     if [ -f "$PLIST" ]; then
         launchctl unload "$PLIST" 2>/dev/null && log "Stopped $agent"
     fi

@@ -1,6 +1,8 @@
-## Backlog Items
+# Backlog
 
-_No open items_
+## Open Items
+
+No open items
 
 ---
 

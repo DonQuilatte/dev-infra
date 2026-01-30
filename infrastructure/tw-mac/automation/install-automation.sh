@@ -78,14 +78,14 @@ mkdir -p "$HOME/bin"
 # Smart dispatcher shortcut
 cat > "$HOME/bin/tw-dispatch" << 'EOF'
 #!/bin/bash
-exec "$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/smart-dispatcher.sh" dispatch "$@"
+exec "$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/smart-dispatcher.sh" dispatch "$@"
 EOF
 chmod +x "$HOME/bin/tw-dispatch"
 
 # Queue shortcut
 cat > "$HOME/bin/tw-queue" << 'EOF'
 #!/bin/bash
-exec "$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/smart-dispatcher.sh" queue "$@"
+exec "$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/smart-dispatcher.sh" queue "$@"
 EOF
 chmod +x "$HOME/bin/tw-queue"
 
@@ -106,9 +106,9 @@ echo "Git Hooks:"
 [ -L "$PROJECT_ROOT/.git/hooks/post-commit" ] && log_done "post-commit" || log_warn "post-commit not linked"
 echo ""
 echo "LaunchAgents:"
-launchctl list | grep -q "com.clawdbot.config-watcher" && log_done "Config watcher running" || log_warn "Config watcher not running"
-launchctl list | grep -q "com.clawdbot.scheduled-periodic" && log_done "Periodic tasks scheduled" || log_warn "Periodic tasks not scheduled"
-launchctl list | grep -q "com.clawdbot.scheduled-daily" && log_done "Daily tasks scheduled" || log_warn "Daily tasks not scheduled"
+launchctl list | grep -q "com.dev-infra.config-watcher" && log_done "Config watcher running" || log_warn "Config watcher not running"
+launchctl list | grep -q "com.dev-infra.scheduled-periodic" && log_done "Periodic tasks scheduled" || log_warn "Periodic tasks not scheduled"
+launchctl list | grep -q "com.dev-infra.scheduled-daily" && log_done "Daily tasks scheduled" || log_warn "Daily tasks not scheduled"
 echo ""
 echo "Commands available:"
 echo "  tw-dispatch 'task'  - Smart task dispatch"

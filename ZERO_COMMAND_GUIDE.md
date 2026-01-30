@@ -29,7 +29,7 @@ cd ~/Development/Projects/myapp
    agy -r "task"    # Run task on TW Mac
 ```
 
-**Setup (one-time):**
+#### Setup (one-time)
 
 ```bash
 echo 'source ~/Development/Projects/dev-infra/scripts/agy-shell-integration.sh' >> ~/.zshrc
@@ -40,11 +40,11 @@ source ~/.zshrc
 
 ### Level 3: True Zero-Command (✅ IMPLEMENTED - Path 3)
 
-**Open folder in Antigravity → Environment ready → Notification appears**
+#### Open folder in Antigravity → Environment ready → Notification appears
 
 No terminal commands required. Just open your project.
 
-#### What Happens on Folder Open
+### What Happens on Folder Open
 
 1. **VS Code task triggers** via `runOn: folderOpen`
 2. **`agy-auto-setup` runs silently:**
@@ -114,13 +114,15 @@ Validates:
 - 1Password integration
 - dev-infra connectivity
 
+### Workflow Components
+
 ---
 
 ## Project Structure (Path 3)
 
 After running `agy-init`, your project has:
 
-```
+```text
 myapp/
 ├── .antigravity/
 │   ├── config.json          # Project config (v3.0)
@@ -183,7 +185,7 @@ agy
 
 ### After Path 3
 
-```
+```text
 1. Open folder in Antigravity
 2. [Notification: "✅ myapp ready"]
 3. Start working
@@ -269,4 +271,4 @@ agy-health
 
 ---
 
-_Last updated: 2026-01-30_
+Last updated: 2026-01-30

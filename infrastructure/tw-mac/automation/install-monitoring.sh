@@ -48,8 +48,8 @@ log_step "Installing connection monitor..."
 LAUNCHD_DIR="$HOME/Library/LaunchAgents"
 mkdir -p "$LAUNCHD_DIR"
 
-PLIST_SRC="$SCRIPT_DIR/launchd/com.clawdbot.connection-monitor.plist"
-PLIST_DEST="$LAUNCHD_DIR/com.clawdbot.connection-monitor.plist"
+PLIST_SRC="$SCRIPT_DIR/launchd/com.dev-infra.connection-monitor.plist"
+PLIST_DEST="$LAUNCHD_DIR/com.dev-infra.connection-monitor.plist"
 
 # Replace $HOME with actual path
 sed "s|\$HOME|$HOME|g" "$PLIST_SRC" > "$PLIST_DEST"
@@ -65,21 +65,21 @@ mkdir -p "$HOME/bin"
 # Daily report command
 cat > "$HOME/bin/tw-report" << 'EOF'
 #!/bin/bash
-exec "$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/daily-report-generator.sh" "$@"
+exec "$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/daily-report-generator.sh" "$@"
 EOF
 chmod +x "$HOME/bin/tw-report"
 
 # Connection check command
 cat > "$HOME/bin/tw-check" << 'EOF'
 #!/bin/bash
-exec "$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/connection-monitor.sh" check
+exec "$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/connection-monitor.sh" check
 EOF
 chmod +x "$HOME/bin/tw-check"
 
 # Reconnect command
 cat > "$HOME/bin/tw-reconnect" << 'EOF'
 #!/bin/bash
-exec "$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/connection-monitor.sh" reconnect
+exec "$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/connection-monitor.sh" reconnect
 EOF
 chmod +x "$HOME/bin/tw-reconnect"
 
@@ -127,7 +127,7 @@ echo "════════════════════════�
 echo ""
 
 echo "Services:"
-launchctl list | grep -q "com.clawdbot.connection-monitor" && log_done "Connection monitor running" || log_warn "Connection monitor not running"
+launchctl list | grep -q "com.dev-infra.connection-monitor" && log_done "Connection monitor running" || log_warn "Connection monitor not running"
 echo ""
 
 echo "Commands installed:"
