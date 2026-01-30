@@ -1,0 +1,21 @@
+# Upstream Dependencies
+# Tracks external repos that dev-infra should stay synced with
+
+upstream_repos:
+  mcp-deployment:
+    path: /Users/jederlichman/Development/mcp-deployment
+    watch:
+      - templates/
+      - scripts/
+      - docs/
+    sync_to: mcp/
+    check_frequency: weekly
+    
+  eval-everything-claude-code:
+    path: /Users/jederlichman/Development/Projects/eval-everything-claude-code
+    watch:
+      - agents/
+      - skills/
+      - commands/
+    sync_to: .claude/
+    check_frequency: weekly
