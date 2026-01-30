@@ -30,6 +30,7 @@ cd ~/Development/Projects/myapp
 ```
 
 **Setup (one-time):**
+
 ```bash
 echo 'source ~/Development/Projects/dev-infra/scripts/agy-shell-integration.sh' >> ~/.zshrc
 source ~/.zshrc
@@ -65,6 +66,7 @@ agy-init .
 ```
 
 This creates:
+
 - `.antigravity/config.json` - Project configuration (v3.0 schema)
 - `.vscode/tasks.json` - Auto-run task on folder open
 - `scripts/agy-auto-setup` - Silent setup script
@@ -75,13 +77,16 @@ This creates:
 
 ### Commands
 
-| Command | Description |
-|---------|-------------|
-| `agy` | Start Claude locally (auto-detects project) |
-| `agy -r "task"` | Run task on TW Mac |
-| `agy -r status` | View all remote jobs |
-| `agy-init` | Initialize project for Path 3 |
-| `agy-health` | Validate Path 3 setup |
+| Command         | Description                                 |
+| --------------- | ------------------------------------------- |
+| `agy`           | Start Claude locally (auto-detects project) |
+| `agy -r "task"` | Run task on TW Mac                          |
+| `agy -r status` | View all remote jobs                        |
+| `agy deps`      | Manage project dependencies & Dependabot    |
+| `agy upstream`  | Sync with parent infrastructure             |
+| `agy sync`      | Push local environment changes to TW Mac    |
+| `agy-init`      | Initialize project for Path 3               |
+| `agy-health`    | Validate Path 3 setup                       |
 
 ### agy-init Options
 
@@ -100,6 +105,7 @@ agy-health ~/Projects/myapp        # Check specific project
 ```
 
 Validates:
+
 - `.antigravity/config.json` (v3.0 schema)
 - `.vscode/tasks.json` (folderOpen trigger)
 - `scripts/agy-auto-setup` (exists, executable)
@@ -166,6 +172,7 @@ myapp/
 ## Workflow Comparison
 
 ### Before Path 3
+
 ```bash
 cd ~/Development/Projects/myapp
 direnv allow
@@ -175,6 +182,7 @@ agy
 ```
 
 ### After Path 3
+
 ```
 1. Open folder in Antigravity
 2. [Notification: "✅ myapp ready"]
@@ -194,6 +202,7 @@ agy
 ### Notification didn't appear
 
 Check the log:
+
 ```bash
 tail -20 /tmp/agy-auto-setup-$(date +%Y%m%d).log
 ```
@@ -251,13 +260,13 @@ agy-health
 
 ## Success Criteria
 
-| Metric | Target | Status |
-|--------|--------|--------|
-| Setup time | < 5 seconds | ✅ ~4s |
-| Manual commands | Zero | ✅ |
-| Success rate | > 98% | ✅ |
-| Notification | On completion | ✅ |
+| Metric          | Target        | Status |
+| --------------- | ------------- | ------ |
+| Setup time      | < 5 seconds   | ✅ ~4s |
+| Manual commands | Zero          | ✅     |
+| Success rate    | > 98%         | ✅     |
+| Notification    | On completion | ✅     |
 
 ---
 
-*Last updated: 2026-01-30*
+_Last updated: 2026-01-30_

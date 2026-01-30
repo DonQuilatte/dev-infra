@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.clawdbot.node</string>
+    <string>com.dev-infra.node</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
@@ -13,7 +13,7 @@
         <string>/bin/bash</string>
         <string>-c</string>
         <string>
-            cd /Users/tywhitaker/Development/Projects/clawdbot
+            cd /Users/tywhitaker/Development/Projects/dev-infra
             if [ -f .env ]; then
                 TOKEN=$(grep "^CLAWDBOT_GATEWAY_TOKEN=" .env | cut -d= -f2)
                 if [[ "$TOKEN" == op://* ]]; then

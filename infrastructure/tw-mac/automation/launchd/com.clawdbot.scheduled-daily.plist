@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.clawdbot.scheduled-daily</string>
+    <string>com.dev-infra.scheduled-daily</string>
 
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/scheduled-tasks.sh daily</string>
+        <string>$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/scheduled-tasks.sh daily</string>
     </array>
 
     <key>StartCalendarInterval</key>

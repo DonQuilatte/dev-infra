@@ -3,12 +3,12 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.clawdbot.connection-monitor</string>
+    <string>com.dev-infra.connection-monitor</string>
 
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/connection-monitor.sh</string>
+        <string>$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/connection-monitor.sh</string>
         <string>start</string>
     </array>
 

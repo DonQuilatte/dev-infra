@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.clawdbot.config-watcher</string>
+    <string>com.dev-infra.config-watcher</string>
 
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>$HOME/Development/Projects/clawdbot/infrastructure/tw-mac/automation/config-watcher.sh</string>
+        <string>$HOME/Development/Projects/dev-infra/infrastructure/tw-mac/automation/config-watcher.sh</string>
     </array>
 
     <key>RunAtLoad</key>
