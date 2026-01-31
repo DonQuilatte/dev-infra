@@ -114,30 +114,61 @@ dispatch() {
         return 1
     fi
 
-    echo -e "${BLUE}Dispatching to agent: $agent${NC}"
-
-    # Use existing handoff mechanism
-    "$PROJECT_ROOT/infrastructure/tw-mac/tw-handoff.sh" "$task" \
-        "Dispatched via 'agent dispatch' from Brain Mac" \
-        "Complete the task and use report-back to send results"
-
-    # Get handoff ID
-    local mount
-    mount=$(get_mount "$agent")
-    local handoff_id
-    handoff_id=$(ls -t "$mount/handoffs/handoff-"*.md 2>/dev/null | head -1 | sed 's/.*handoff-//' | sed 's/.md//')
-
-    if [[ -z "$handoff_id" ]]; then
-        echo -e "${RED}Error: Failed to create handoff${NC}"
-        return 1
-    fi
-
-    # Start tmux session with claude
     local host
     host=$(get_host "$agent")
-    ssh "$host" "tmux new-session -d -s $session 'claude'" 2>/dev/null || true
-    sleep 2
-    ssh "$host" "tmux send-keys -t $session 'Read ~/handoffs/handoff-$handoff_id.md and complete the task. When done, use report-back $handoff_id \"summary\"' Enter" 2>/dev/null
+    local mount
+    mount=$(get_mount "$agent")
+
+    echo -e "${BLUE}Dispatching to agent: $agent${NC}"
+
+    # Check if SMB mount is available
+    if [[ -d "$mount/handoffs" ]]; then
+        # SMB mode: use existing handoff mechanism
+        "$PROJECT_ROOT/infrastructure/tw-mac/tw-handoff.sh" "$task" \
+            "Dispatched via 'agent dispatch' from Brain Mac" \
+            "Complete the task and use report-back to send results"
+
+        local handoff_id
+        handoff_id=$(ls -t "$mount/handoffs/handoff-"*.md 2>/dev/null | head -1 | sed 's/.*handoff-//' | sed 's/.md//')
+
+        if [[ -z "$handoff_id" ]]; then
+            echo -e "${RED}Error: Failed to create handoff${NC}"
+            return 1
+        fi
+
+        # Start tmux session with claude
+        ssh "$host" "tmux new-session -d -s $session 'claude'" 2>/dev/null || true
+        sleep 2
+        ssh "$host" "tmux send-keys -t $session 'Read ~/handoffs/handoff-$handoff_id.md and complete the task. When done, use report-back $handoff_id \"summary\"' Enter" 2>/dev/null
+    else
+        # SSH-only mode: create handoff directly on agent
+        echo -e "${YELLOW}SMB not mounted, using SSH-only mode${NC}"
+        local handoff_id
+        handoff_id=$(date +%Y%m%d-%H%M%S)
+
+        # Create handoff file directly on agent via SSH
+        ssh "$host" "mkdir -p ~/handoffs && cat > ~/handoffs/handoff-$handoff_id.md" << EOF
+# Task Handoff: $handoff_id
+
+## Task
+$task
+
+## Context
+Dispatched via 'agent dispatch' from Brain Mac (SSH-only mode)
+
+## Instructions
+Complete the task and use report-back $handoff_id "summary" when done.
+
+## Git State
+$(git -C "$PROJECT_ROOT" log -1 --oneline 2>/dev/null || echo "Unknown")
+$(git -C "$PROJECT_ROOT" branch --show-current 2>/dev/null || echo "Unknown branch")
+EOF
+
+        # Start tmux session with claude
+        ssh "$host" "tmux new-session -d -s $session 'claude'" 2>/dev/null || true
+        sleep 2
+        ssh "$host" "tmux send-keys -t $session 'Read ~/handoffs/handoff-$handoff_id.md and complete the task. When done, use report-back $handoff_id \"summary\"' Enter" 2>/dev/null
+    fi
 
     echo ""
     echo -e "${GREEN}═══════════════════════════════════════${NC}"
