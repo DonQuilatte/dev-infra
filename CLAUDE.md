@@ -4,10 +4,10 @@
 
 **Purpose:** Distributed development infrastructure for Mac environments, including ClawdBot messaging gateway deployment
 
-**Architecture:**
-- Main Mac (192.168.1.230): Gateway/Controller
-- TW Mac (192.168.1.245): Worker node
-- Communication: WebSocket, SMB, SSH
+**Architecture (Brain/Agent Model):**
+- **Brain** (Main Mac, 192.168.1.230): Decision-making, orchestration, user interaction
+- **Agent Alpha** (TW Mac, 192.168.1.245): Task execution, builds, long-running processes
+- Communication: WebSocket, SMB, SSH, Tailscale
 
 ## Tech Stack
 
@@ -76,7 +76,12 @@ agy -r status                    # Check all jobs
 ./scripts/deploy-secure.sh       # Full deployment
 ./scripts/verify-security.sh     # Security audit
 
-# TW Mac operations
+# Agent operations (new)
+agent status                     # Check all agents
+agent dispatch "task"            # Send task to agent
+agent results                    # Collect results
+
+# TW Mac operations (legacy, still works)
 ~/bin/tw run "command"           # Execute on worker
 ~/bin/tw-health                  # Check worker status
 ```
@@ -85,14 +90,19 @@ agy -r status                    # Check all jobs
 
 **Abbreviations:**
 - MCP: Model Context Protocol
-- TW: TyWhitaker (worker Mac identifier)
+- TW: TyWhitaker (worker Mac identifier, now "Agent Alpha")
 - AGY: Antigravity IDE
 - SMB: Server Message Block (file sharing)
 
 **Conventions:**
 - `agy` command family for Claude engagement
-- `tw-*` scripts for worker management
+- `agent` command for Brain/Agent orchestration (new)
+- `tw-*` scripts for worker management (legacy, still works)
 - `op://` prefixes for 1Password references
+
+**Directory Structure:**
+- `~/agents/alpha/` → SMB mount of TW Mac (symlink to ~/tw-mac)
+- `~/.claude/orchestration/` → Brain-side coordination logs and registry
 
 ## Anti-Patterns
 
@@ -112,4 +122,4 @@ agy -r status                    # Check all jobs
 
 ---
 
-*Last updated: 2026-01-29*
+*Last updated: 2026-01-31*
