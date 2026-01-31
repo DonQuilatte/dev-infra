@@ -5,18 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - 2026-01-31
 
 ### Added
 
-- Initial project setup
-- Docker Compose configuration
-- Automated setup script
-- Comprehensive documentation suite
-- Security configuration guide
-- Troubleshooting guide
-- Quick reference guide
-- Docker configuration guide
+- **Brain/Agent distributed architecture** - Multi-Mac orchestration with Brain (decision-making) and Agent Alpha (task execution)
+- `agent` command family for distributed operations (`status`, `dispatch`, `results`, `shell`, `list`)
+- SSH-only dispatch mode when SMB not mounted
+- Brain/Agent E2E system test with manual CI trigger
+- Google Stitch MCP server configuration
+- Comprehensive distributed system documentation
+
+### Changed
+
+- Migrated from monolithic to Brain/Agent architecture (Phase 6 complete)
+- Connectivity tests now use Tailscale-first routing
+- Scripts refactored to source `common.sh` with fallback
+
+### Fixed
+
+- Resolved symlinks in `agent-control.sh` for correct PROJECT_ROOT detection
+- Added strict mode to `agy-notify` and `start-node.sh.template`
+- Fixed shellcheck warnings across all scripts (SC2155, SC2162, etc.)
+- Quoted values with spaces in `.env.example`
+
+### Documentation
+
+- Consolidated 35 docs into focused guides
+- Added DISTRIBUTED_QUICK_REFERENCE.md for Brain/Agent operations
+- Updated CLAUDE.md with Brain/Agent workflow rules
 
 ## [1.1.1] - 2026-01-25
 

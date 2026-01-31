@@ -2,13 +2,19 @@
 
 ## Open Items
 
+*No open items*
+
+---
+
+## Resolved
+
 ### Consolidate docs/ files
 
 **Priority:** Low
 
-35 markdown files is excessive. Merge related guides into fewer, more comprehensive documents.
+**Resolution:** ✅ Reduced from 35 to 14 top-level docs. Merged QUICK_REFERENCE with DISTRIBUTED_QUICK_REFERENCE. Archived 21 historical/session docs.
 
-**Added:** 2026-01-31
+**Resolved:** 2026-01-31
 
 ---
 
@@ -16,9 +22,9 @@
 
 **Priority:** Low
 
-Still shows [Unreleased]. Should bump version to reflect recent Brain/Agent work.
+**Resolution:** ✅ Updated [Unreleased] to [2.0.0] with Brain/Agent infrastructure changes.
 
-**Added:** 2026-01-31
+**Resolved:** 2026-01-31
 
 ---
 
@@ -26,13 +32,11 @@ Still shows [Unreleased]. Should bump version to reflect recent Brain/Agent work
 
 **Priority:** Low
 
-No git tags exist. Tag v1.2.0 for Brain/Agent infrastructure milestone.
+**Resolution:** ✅ Tagged v2.0.0 (v2.0.0-alpha already existed from Phase 6 migration).
 
-**Added:** 2026-01-31
+**Resolved:** 2026-01-31
 
 ---
-
-## Resolved
 
 ### Code review cleanup
 

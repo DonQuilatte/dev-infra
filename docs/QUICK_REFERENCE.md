@@ -1,260 +1,221 @@
 # Quick Reference
 
-Essential commands for daily Clawdbot operations.
+Essential commands for daily operations.
 
-## 🚀 Quick Start
+---
+
+## 🧠 Brain/Agent Architecture
+
+| Role | Machine | Purpose |
+|------|---------|---------|
+| **Brain** | Main Mac (192.168.1.230) | Decision-making, orchestration, user interaction |
+| **Agent Alpha** | TW Mac (192.168.1.245) | Task execution, builds, long-running processes |
+
+### Agent Commands
 
 ```bash
-# One-time setup
-./docker-setup.sh
-
-# Start gateway
-docker compose up -d clawdbot-gateway
-
-# Check status
-docker compose ps
-
-# View logs
-docker compose logs -f clawdbot-gateway
+agent status              # Check all agent connectivity
+agent dispatch "task"     # Send task to agent
+agent results             # Collect results from agent
+agent shell               # Open shell to agent
+agent list                # Show configured agents
 ```
 
-## 🔧 Common Commands
+### Legacy Commands (Still Work)
+
+```bash
+tw status                 # Check TW Mac connectivity
+tw run '<cmd>'            # Execute command on TW Mac
+tw-handoff                # Create task handoff
+```
+
+---
+
+## 🚀 Daily Operations
+
+### Start Everything
+
+```bash
+# 1. Start gateway on main Mac
+clawdbot gateway start
+
+# 2. Verify remote node connected
+clawdbot gateway status
+
+# 3. Open dashboard
+open http://localhost:18789
+```
+
+### Quick Status Check
+
+```bash
+# Full health check
+echo "Gateway: $(curl -s http://localhost:18789/health > /dev/null && echo ✅ || echo ❌)"
+echo "SSH: $(ssh -o ConnectTimeout=3 tywhitaker@192.168.1.245 'echo OK' 2>/dev/null && echo ✅ || echo ❌)"
+```
+
+---
+
+## 🐳 Docker Commands
 
 ### Gateway Control
 
 ```bash
 # Start
-docker compose up -d clawdbot-gateway
+docker compose --env-file .env -f config/docker-compose.secure.yml up -d
 
 # Stop
-docker compose down
-
-# Restart
-docker compose restart clawdbot-gateway
+docker compose --env-file .env -f config/docker-compose.secure.yml down
 
 # Status
-docker compose ps
+docker compose --env-file .env -f config/docker-compose.secure.yml ps
 
-# Logs (last 50 lines)
-docker compose logs --tail=50 clawdbot-gateway
-
-# Follow logs
-docker compose logs -f clawdbot-gateway
+# Logs
+docker compose --env-file .env -f config/docker-compose.secure.yml logs -f
 ```
 
-### Configuration
-
-```bash
-# List all settings
-docker compose run --rm clawdbot-cli config list
-
-# Get specific setting
-docker compose run --rm clawdbot-cli config get gateway.sandbox.enabled
-
-# Set setting
-docker compose run --rm clawdbot-cli config set gateway.bind localhost
-
-# Reset to defaults
-docker compose run --rm clawdbot-cli config reset
-
-# Export config
-docker compose run --rm clawdbot-cli config export > backup.json
-
-# Import config
-docker compose run --rm clawdbot-cli config import < backup.json
-```
-
-### Authentication
-
-```bash
-# List providers
-docker compose run --rm clawdbot-cli models list-providers
-
-# List authenticated providers
-docker compose run --rm clawdbot-cli models auth list
-
-# Authenticate provider
-docker compose run --rm clawdbot-cli models auth paste-token --provider anthropic
-
-# Set default provider
-docker compose run --rm clawdbot-cli models auth set-default --provider google-antigravity
-
-# Reset provider auth
-docker compose run --rm clawdbot-cli models auth reset --provider anthropic
-```
-
-### Health & Diagnostics
-
-```bash
-# Health check
-curl http://localhost:3000/health
-
-# Comprehensive diagnostics
-docker compose run --rm clawdbot-cli doctor
-
-# Verbose diagnostics
-docker compose run --rm clawdbot-cli doctor --verbose
-
-# Troubleshoot
-docker compose run --rm clawdbot-cli troubleshoot
-```
-
-### Plugins
-
-```bash
-# List plugins
-docker compose run --rm clawdbot-cli plugins list
-
-# Enable plugin
-docker compose run --rm clawdbot-cli plugins enable google-antigravity-auth
-
-# Disable plugin
-docker compose run --rm clawdbot-cli plugins disable <plugin-name>
-```
-
-## 🔒 Security Commands
-
-```bash
-# Enable strict sandbox
-docker compose run --rm clawdbot-cli config set gateway.sandbox.enabled true
-docker compose run --rm clawdbot-cli config set gateway.sandbox.mode strict
-
-# Localhost only
-docker compose run --rm clawdbot-cli config set gateway.bind localhost
-
-# Restrictive tools
-docker compose run --rm clawdbot-cli config set gateway.tools.policy restrictive
-
-# Enable audit logging
-docker compose run --rm clawdbot-cli config set gateway.audit.enabled true
-
-# Enable prompt injection protection
-docker compose run --rm clawdbot-cli config set gateway.security.promptInjection.enabled true
-
-# Enable rate limiting
-docker compose run --rm clawdbot-cli config set gateway.security.rateLimit.enabled true
-```
-
-## 🧹 Maintenance
+### Maintenance
 
 ```bash
 # Update images
 docker compose pull
-docker compose up -d clawdbot-gateway
 
-# Clean Docker system
+# Clean system
 docker system prune
-
-# Clean old logs (older than 30 days)
-find ~/Development/clawdbot-workspace/data/logs -name "*.log" -mtime +30 -delete
 
 # Check disk usage
 docker system df
-du -sh ~/Development/clawdbot-workspace/data/*
-
-# Backup configuration
-docker compose run --rm clawdbot-cli config export > config-backup-$(date +%Y%m%d).json
 ```
 
-## 🐛 Debugging
+---
+
+## 📊 Status Commands
+
+### Main Mac (Gateway)
 
 ```bash
-# Enable debug logging
-docker compose run --rm clawdbot-cli config set gateway.logLevel debug
-docker compose restart clawdbot-gateway
-
-# View errors only
-docker compose logs clawdbot-gateway | grep -i error
-
-# Check container stats
-docker stats clawdbot-gateway
-
-# Inspect container
-docker inspect clawdbot-gateway
-
-# Execute command in container
-docker compose exec clawdbot-gateway sh
+clawdbot gateway status   # Gateway status
+clawdbot gateway logs     # View logs
+clawdbot gateway logs -f  # Follow logs
+curl http://localhost:18789/health  # Health check
 ```
 
-## 📊 Monitoring
+### Remote Mac (Node)
 
 ```bash
-# Container status
-docker compose ps
-
-# Resource usage
-docker stats clawdbot-gateway
-
-# Health status
-docker inspect clawdbot-gateway | grep -A 10 Health
-
-# Recent logs
-docker compose logs --tail=100 clawdbot-gateway
-
-# Search logs
-docker compose logs clawdbot-gateway | grep "search-term"
+ssh tywhitaker@192.168.1.245 'clawdbot node status'  # Node status
+ssh tywhitaker@192.168.1.245 'clawdbot node logs'    # Node logs
+ssh tywhitaker@192.168.1.245 'launchctl list | grep clawdbot'  # Auto-restart
 ```
 
-## 🔄 Reset & Recovery
+---
+
+## 🔧 Restart Commands
 
 ```bash
-# Soft reset (restart)
-docker compose restart clawdbot-gateway
+# Gateway
+clawdbot gateway restart
 
-# Medium reset (rebuild)
-docker compose down
-docker compose pull
-docker compose up -d clawdbot-gateway
+# Remote Node
+ssh tywhitaker@192.168.1.245 'clawdbot node restart'
 
-# Hard reset (delete data - WARNING!)
-docker compose down -v
-rm -rf ~/Development/clawdbot-workspace/data
-./docker-setup.sh
+# Auto-start Service
+ssh tywhitaker@192.168.1.245 'launchctl unload ~/Library/LaunchAgents/com.clawdbot.node.plist && launchctl load ~/Library/LaunchAgents/com.clawdbot.node.plist'
 ```
 
-## 📁 File Locations
+---
+
+## 🔍 Troubleshooting
+
+### Network Tests
 
 ```bash
-# Configuration
-~/Development/clawdbot-workspace/data/config/
-
-# Logs
-~/Development/clawdbot-workspace/data/logs/
-
-# Cache
-~/Development/clawdbot-workspace/data/cache/
-
-# Docker files
-~/Development/clawdbot-workspace/clawdbot/
+curl -s http://localhost:18789/health  # Gateway reachable
+ping -c 1 192.168.1.245                # Remote reachable
+ssh -o ConnectTimeout=5 tywhitaker@192.168.1.245 'echo OK'  # SSH works
 ```
 
-## 🆘 Emergency Commands
+### Process Checks
 
 ```bash
-# Stop everything immediately
-docker compose down
-
-# Kill all Clawdbot containers
-docker ps -a | grep clawdbot | awk '{print $1}' | xargs docker rm -f
-
-# View crash logs
-docker compose logs --tail=200 clawdbot-gateway
-
-# Generate diagnostic report
-docker compose run --rm clawdbot-cli doctor --verbose > diagnostics-$(date +%Y%m%d).txt
+pgrep -fl clawdbot        # Gateway processes
+lsof -i :18789            # Port usage
+ssh tywhitaker@192.168.1.245 'pgrep -fl clawdbot'  # Remote processes
 ```
+
+### Log Checks
+
+```bash
+clawdbot gateway logs | grep -i error  # Gateway errors
+ssh tywhitaker@192.168.1.245 'tail -20 ~/.clawdbot/logs/startup.log'  # Remote log
+```
+
+---
+
+## 🔒 Security Commands
+
+```bash
+# Run security verification
+./scripts/verify-security.sh
+
+# Deploy with security hardening
+./scripts/deploy-secure.sh
+```
+
+---
+
+## 📁 Important Paths
+
+### Main Mac
+
+| Path | Description |
+|------|-------------|
+| `~/.clawdbot/clawdbot.json` | Gateway configuration |
+| `~/.ssh/config` | SSH configuration |
+| `~/Development/Projects/dev-infra/` | Project directory |
+
+### Remote Mac
+
+| Path | Description |
+|------|-------------|
+| `~/.clawdbot/clawdbot.json` | Node configuration |
+| `~/.clawdbot/logs/` | Node logs |
+| `~/Library/LaunchAgents/com.clawdbot.node.plist` | Auto-start config |
+
+---
+
+## 🌐 Network Info
+
+| Resource | Address |
+|----------|---------|
+| Main Mac | 192.168.1.230 |
+| Remote Mac | 192.168.1.245 |
+| Gateway Port | 18789 |
+| Dashboard | http://localhost:18789 |
+
+---
+
+## 🆘 Emergency
+
+```bash
+# Kill all processes
+pkill -f clawdbot
+ssh tywhitaker@192.168.1.245 'pkill -f clawdbot'
+
+# Clear locks and restart
+rm -f ~/.clawdbot/*.lock
+clawdbot gateway start
+```
+
+---
 
 ## 📚 Documentation
 
-- Full Setup: `README.md`
-- Security Guide: `SECURITY.md`
-- Troubleshooting: `TROUBLESHOOTING.md`
-- Online Docs: https://docs.clawd.bot
+- [Deployment Guide](DEPLOYMENT.md)
+- [Security Guide](SECURITY.md)
+- [Troubleshooting](TROUBLESHOOTING.md)
+- [Docker Guide](DOCKER_GUIDE.md)
 
-## 💡 Tips
+---
 
-- Use `docker compose` (not `docker-compose`) on newer Docker versions
-- Always check logs first when troubleshooting: `docker compose logs clawdbot-gateway`
-- Run `doctor` command regularly: `docker compose run --rm clawdbot-cli doctor`
-- Backup config before major changes: `docker compose run --rm clawdbot-cli config export > backup.json`
-- Keep Docker Desktop updated for best performance
+**Last Updated:** 2026-01-31
