@@ -11,6 +11,12 @@
     "context7": {
       "command": "bash",
       "args": ["./scripts/mcp-context7"]
+    },
+    "stitch": {
+      "url": "https://stitch.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "${GOOGLE_STITCH_API_KEY}"
+      }
     }
   }
 }

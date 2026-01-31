@@ -55,6 +55,11 @@
       "id": "/google/project-idx",
       "description": "Google Project IDX (Antigravity) cloud IDE documentation",
       "topics": ["nix", "devcontainers", "ai-assistance", "preview", "templates"]
+    },
+    "google-stitch": {
+      "id": "/google/stitch",
+      "description": "Google Stitch documentation - data pipeline orchestration and integration",
+      "topics": ["data-pipelines", "etl", "connectors", "transformations", "scheduling", "monitoring"]
     }
   },
   "context7Defaults": {
