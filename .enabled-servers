@@ -1,1 +1,3 @@
-tiger
+# MCP servers enabled for dev-infra
+# Add server names (one per line) to enable
+# Available: filesystem, github, gitkraken, context7, docker, tiger, stitch, postgres, sqlite, memory, brave-search, exa
